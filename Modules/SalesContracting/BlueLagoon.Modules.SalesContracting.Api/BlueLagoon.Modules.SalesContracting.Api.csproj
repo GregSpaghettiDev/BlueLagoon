@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\BlueLagoon.Shared.Abstractions\BlueLagoon.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\BlueLagoon.Modules.SalesContracting.Infrastructure\BlueLagoon.Modules.SalesContracting.Infrastructure.csproj" />
+    <ProjectReference Include="..\BlueLagoon.Modules.SalesContracting.Mapping\BlueLagoon.Modules.SalesContracting.Mapping.csproj" />
+  </ItemGroup>
+
+</Project>

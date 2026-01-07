@@ -1,0 +1,30 @@
+<Solution>
+  <Folder Name="/Modules/" />
+  <Folder Name="/Modules/BillingPayments/" />
+  <Folder Name="/Modules/CatalogPricing/" />
+  <Folder Name="/Modules/Crm/" />
+  <Folder Name="/Modules/CustomerOperations/" />
+  <Folder Name="/Modules/DeadlineManagement/" />
+  <Folder Name="/Modules/EmployeeIncetives/" />
+  <Folder Name="/Modules/Iam/" />
+  <Folder Name="/Modules/InfrastructureManagement/" />
+  <Folder Name="/Modules/Notifications/">
+    <Project Path="Modules/Notifications/BlueLagoon.Modules.Notifications.Api/BlueLagoon.Modules.Notifications.Api.csproj" Id="45647666-b48e-4fcb-aa2b-00b278b455a7" />
+    <Project Path="Modules/Notifications/BlueLagoon.Modules.Notifications.Core/BlueLagoon.Modules.Notifications.Core.csproj" Id="d12bccdf-07b7-4366-a6ce-61c2ba586fee" />
+  </Folder>
+  <Folder Name="/Modules/RetentionTerminations/" />
+  <Folder Name="/Modules/SalesContracting/">
+    <Project Path="Modules/SalesContracting/BlueLagoon.Modules.SalesContracting.Api/BlueLagoon.Modules.SalesContracting.Api.csproj" Id="e9367e6c-b655-4af7-a187-d3bb7cfb8f8b" />
+    <Project Path="Modules/SalesContracting/BlueLagoon.Modules.SalesContracting.Application/BlueLagoon.Modules.SalesContracting.Application.csproj" Id="c7198b72-23e0-4f09-8fe0-d193a6a489da" />
+    <Project Path="Modules/SalesContracting/BlueLagoon.Modules.SalesContracting.Core/BlueLagoon.Modules.SalesContracting.Core.csproj" Id="bb9d23b3-d18a-4061-a489-d543ecb634c9" />
+    <Project Path="Modules/SalesContracting/BlueLagoon.Modules.SalesContracting.Infrastructure/BlueLagoon.Modules.SalesContracting.Infrastructure.csproj" Id="3cd76f89-ed60-4af5-a7da-0a22823b31e6" />
+    <Project Path="Modules/SalesContracting/BlueLagoon.Modules.SalesContracting.Mapping/BlueLagoon.Modules.SalesContracting.Mapping.csproj" Id="7c5d6fb0-c907-4225-b093-103adc0f9bbb" />
+  </Folder>
+  <Folder Name="/Modules/TechnicalSupport/" />
+  <Folder Name="/Shared/">
+    <Project Path="Shared/BlueLagoon.Shared.Abstractions/BlueLagoon.Shared.Abstractions.csproj" Id="de71a750-9af9-4efb-9581-c51dd38fe07d" />
+    <Project Path="Shared/BlueLagoon.Shared.Infrastructure/BlueLagoon.Shared.Infrastructure.csproj" Id="3407b038-29be-4b68-977b-731e6a09e8c8" />
+    <Project Path="Shared/Common/Common.csproj" />
+  </Folder>
+  <Project Path="BlueLagoon.Bootstrapper/BlueLagoon.Bootstrapper.csproj" Id="01525f04-6094-4da3-9c3c-6df6c4c43b21" />
+</Solution>
