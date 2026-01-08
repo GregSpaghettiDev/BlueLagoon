@@ -1,16 +1,21 @@
+using BlueLagoon.Shared.DevTools.Modules;
+using BlueLagoon.Shared.DevTools.Modules.Abstractions;
+using BlueLagoon.Shared.Infrastructure;
+using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.ConfigureModules();
+builder.InstallInfrastructureBuilderProviders(builder.Configuration);
 
+IList<Assembly> assemblies = ModuleLoader.LoadAssemblies(builder.Configuration, "BlueLagoon.Modules.");
+IList<IModule> modules = ModuleLoader.LoadModules(assemblies);
 
-// Add services to the container.
+builder.Services.InstallInfrastructureServices(builder.Configuration, modules);
 
-builder.Services.AddControllers();
+foreach (var module in modules)
+    module.Register(builder.Services);
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-
-app.UseAuthorization();
-
-app.MapControllers();
+app.InstallInfrastructureMiddlewares();
 
 app.Run();

@@ -22,9 +22,8 @@
   </Folder>
   <Folder Name="/Modules/TechnicalSupport/" />
   <Folder Name="/Shared/">
-    <Project Path="Shared/BlueLagoon.Shared.Abstractions/BlueLagoon.Shared.Abstractions.csproj" Id="de71a750-9af9-4efb-9581-c51dd38fe07d" />
+    <Project Path="Shared/BlueLagoon.Shared.DevTools/BlueLagoon.Shared.DevTools.csproj" Id="0d3a1198-6c22-4ef0-a850-5e119c32a705" />
     <Project Path="Shared/BlueLagoon.Shared.Infrastructure/BlueLagoon.Shared.Infrastructure.csproj" Id="3407b038-29be-4b68-977b-731e6a09e8c8" />
-    <Project Path="Shared/Common/Common.csproj" />
   </Folder>
   <Project Path="BlueLagoon.Bootstrapper/BlueLagoon.Bootstrapper.csproj" Id="01525f04-6094-4da3-9c3c-6df6c4c43b21" />
 </Solution>

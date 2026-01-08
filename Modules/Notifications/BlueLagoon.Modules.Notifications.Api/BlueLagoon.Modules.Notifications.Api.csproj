@@ -7,7 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Shared\BlueLagoon.Shared.Abstractions\BlueLagoon.Shared.Abstractions.csproj" />
+    <None Remove="module.notifications.development.json" />
+    <None Remove="module.notifications.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="module.notifications.development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="module.notifications.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\BlueLagoon.Shared.DevTools\BlueLagoon.Shared.DevTools.csproj" />
     <ProjectReference Include="..\BlueLagoon.Modules.Notifications.Core\BlueLagoon.Modules.Notifications.Core.csproj" />
   </ItemGroup>
 

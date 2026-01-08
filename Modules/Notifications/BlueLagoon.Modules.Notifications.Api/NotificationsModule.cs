@@ -1,5 +1,5 @@
 ﻿using BlueLagoon.Modules.Notifications.Core;
-using BlueLagoon.Shared.Abstractions.Modules;
+using BlueLagoon.Shared.DevTools.Modules.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 

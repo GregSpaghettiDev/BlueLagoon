@@ -9,4 +9,10 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Modules\Notifications\BlueLagoon.Modules.Notifications.Api\BlueLagoon.Modules.Notifications.Api.csproj" />
+    <ProjectReference Include="..\Modules\SalesContracting\BlueLagoon.Modules.SalesContracting.Api\BlueLagoon.Modules.SalesContracting.Api.csproj" />
+    <ProjectReference Include="..\Shared\BlueLagoon.Shared.Infrastructure\BlueLagoon.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

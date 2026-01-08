@@ -1,0 +1,8 @@
+{
+  "sales-contracting": {
+    "module": {
+      "name": "SalesContracting",
+      "enabled": true
+    }
+  }
+}

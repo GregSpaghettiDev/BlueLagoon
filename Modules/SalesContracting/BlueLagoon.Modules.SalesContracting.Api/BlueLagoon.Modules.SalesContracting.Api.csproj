@@ -7,7 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Shared\BlueLagoon.Shared.Abstractions\BlueLagoon.Shared.Abstractions.csproj" />
+    <None Remove="module.sales-contracting.development.json" />
+    <None Remove="module.sales-contracting.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="module.sales-contracting.development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="module.sales-contracting.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\BlueLagoon.Shared.DevTools\BlueLagoon.Shared.DevTools.csproj" />
     <ProjectReference Include="..\BlueLagoon.Modules.SalesContracting.Infrastructure\BlueLagoon.Modules.SalesContracting.Infrastructure.csproj" />
     <ProjectReference Include="..\BlueLagoon.Modules.SalesContracting.Mapping\BlueLagoon.Modules.SalesContracting.Mapping.csproj" />
   </ItemGroup>

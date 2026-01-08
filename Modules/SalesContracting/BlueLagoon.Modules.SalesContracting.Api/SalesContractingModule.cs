@@ -2,7 +2,7 @@
 using BlueLagoon.Modules.SalesContracting.Core;
 using BlueLagoon.Modules.SalesContracting.Infrastructure;
 using BlueLagoon.Modules.SalesContracting.Mapping;
-using BlueLagoon.Shared.Abstractions.Modules;
+using BlueLagoon.Shared.DevTools.Modules.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
