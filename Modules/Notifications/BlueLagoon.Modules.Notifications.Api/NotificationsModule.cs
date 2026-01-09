@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BlueLagoon.Modules.Notifications.Api;
 
-internal class NotificationsModule : IModule
+public sealed class NotificationsModule : IModule
 {
     public const string BasePath = "notification-module";
 

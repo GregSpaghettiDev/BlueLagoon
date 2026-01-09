@@ -6,6 +6,8 @@ namespace BlueLagoon.Shared.Infrastructure.DI.WebApplicationExtensions;
 
 internal sealed class Cors : IMiddlewaresInstaller
 {
+    public int InstallOrder => 1;
+
     public void Install(WebApplication application)
     {
         if (application.Environment.IsDevelopment())

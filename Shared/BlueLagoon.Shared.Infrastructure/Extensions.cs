@@ -19,7 +19,10 @@ internal static class Extensions
 
     public static void InstallInfrastructureMiddlewares(this WebApplication application)
     {
-        foreach (var installer in InstallersFetcher.GetInstallers<DtProvider, IMiddlewaresInstaller>())
+        var installers = InstallersFetcher.GetInstallers<DtProvider, IMiddlewaresInstaller>();
+        installers = installers.OrderBy(x => x.InstallOrder).ToList();
+
+        foreach (var installer in installers)
             installer.Install(application);
     }
 

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using Microsoft.Extensions.Hosting;
 
 namespace BlueLagoon.Shared.DevTools.Modules;
@@ -47,7 +46,7 @@ public static class Extensions
         });
     }
 
-    public static IServiceCollection AddModuleControllers(this IServiceCollection services, IConfiguration configuration, IList<IModule> modules)
+    public static IServiceCollection AddModuleControllers(this IServiceCollection services, IConfiguration configuration)
     {
         var disabledModules = new List<string>();
         foreach (var (key, value) in configuration.AsEnumerable())

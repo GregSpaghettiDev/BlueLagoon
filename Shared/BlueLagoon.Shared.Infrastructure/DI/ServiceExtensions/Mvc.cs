@@ -10,6 +10,6 @@ internal sealed class Mvc : IServicesInstaller
 {
     public void Intstall(IServiceCollection services, IConfiguration configuration, IList<IModule> modules = null)
     {
-        services.AddModuleControllers(configuration, modules);
+        services.AddModuleControllers(configuration);
     }
 }

@@ -18,4 +18,9 @@ foreach (var module in modules)
 var app = builder.Build();
 app.InstallInfrastructureMiddlewares();
 
+app.Logger.LogInformation($"Loaded modules: {string.Join(", ", modules.Select(x => x.Name))}");
+
+assemblies.Clear();
+modules.Clear();
+
 app.Run();
