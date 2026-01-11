@@ -1,9 +1,16 @@
 using BlueLagoon.Shared.DevTools.Modules;
 using BlueLagoon.Shared.DevTools.Modules.Abstractions;
 using BlueLagoon.Shared.Infrastructure;
+using DotNetEnv;
 using System.Reflection;
 
+
 var builder = WebApplication.CreateBuilder(args);
+
+if (builder.Environment.IsDevelopment())
+    Env.Load(Path.Combine(builder.Environment.ContentRootPath, "..", "docker", ".env"));
+
+builder.Configuration.AddEnvironmentVariables(prefix: "Blue_");
 builder.Host.ConfigureModules();
 builder.InstallInfrastructureBuilderProviders(builder.Configuration);
 

@@ -11,5 +11,4 @@ internal sealed class AuthenticationAndAuthorization : IMiddlewaresInstaller
         application.UseAuthentication();
         application.UseAuthorization();
     }
-{
 }

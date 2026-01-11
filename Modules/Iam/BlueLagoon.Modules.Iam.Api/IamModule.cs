@@ -14,7 +14,7 @@ public sealed class IamModule : IModule
 
     public void Register(IServiceCollection services)
     {
-        services.Insall
+        
     }
 
     public void Use(IApplicationBuilder app)
