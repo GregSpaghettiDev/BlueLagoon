@@ -1,0 +1,8 @@
+{
+  "iam": {
+    "module": {
+      "name": "Iam",
+      "enabled": true
+    }
+  }
+}

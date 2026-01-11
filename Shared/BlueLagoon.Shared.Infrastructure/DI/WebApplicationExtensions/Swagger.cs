@@ -6,7 +6,7 @@ namespace BlueLagoon.Shared.Infrastructure.DI.WebApplicationExtensions;
 
 internal sealed class Swagger : IMiddlewaresInstaller
 {
-    public int InstallOrder => 2;
+    public int InstallOrder => 3;
 
     public void Install(WebApplication application)
     {

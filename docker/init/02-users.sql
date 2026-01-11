@@ -1,0 +1,12 @@
+CREATE ROLE iam_user LOGIN PASSWORD 'HasloJestMiekkieJakMaslo1';
+CREATE ROLE catalog_pricing_user LOGIN PASSWORD 'HasloJestMiekkieJakMaslo2';
+CREATE ROLE billing_payment_user LOGIN PASSWORD 'HasloJestMiekkieJakMaslo3';
+CREATE ROLE crm_user LOGIN PASSWORD 'HasloJestMiekkieJakMaslo4';
+CREATE ROLE customer_operation_user LOGIN PASSWORD 'HasloJestMiekkieJakMaslo5';
+CREATE ROLE deadline_management_user LOGIN PASSWORD 'HasloJestMiekkieJakMaslo6';
+CREATE ROLE employee_incetive_user LOGIN PASSWORD 'HasloJestMiekkieJakMaslo7';
+CREATE ROLE infrastructure_management_user LOGIN PASSWORD 'HasloJestMiekkieJakMaslo8';
+CREATE ROLE notification_user LOGIN PASSWORD 'HasloJestMiekkieJakMaslo9';
+CREATE ROLE retention_termination_user LOGIN PASSWORD 'HasloJestMiekkieJakMaslo10';
+CREATE ROLE sale_contracting_user LOGIN PASSWORD 'HasloJestMiekkieJakMaslo11';
+CREATE ROLE technical_support_user LOGIN PASSWORD 'HasloJestMiekkieJakMaslo12';

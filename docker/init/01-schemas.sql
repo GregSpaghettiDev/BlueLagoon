@@ -1,0 +1,12 @@
+CREATE SCHEMA iam;
+CREATE SCHEMA catalog_pricing;
+CREATE SCHEMA billing_payment;
+CREATE SCHEMA crm;
+CREATE SCHEMA customer_operation;
+CREATE SCHEMA deadline_management;
+CREATE SCHEMA employee_incetive;
+CREATE SCHEMA infrastructure_management;
+CREATE SCHEMA notification;
+CREATE SCHEMA retention_termination;
+CREATE SCHEMA sale_contracting;
+CREATE SCHEMA technical_support;
