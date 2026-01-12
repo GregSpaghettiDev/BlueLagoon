@@ -13,7 +13,11 @@ internal class PostgreSql : IServicesInstaller
 {
     public void Intstall(IServiceCollection services, IConfiguration configuration, IList<IModule> modules = null)
     {
-        services.AddDbContextPool<IamDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("IamDb"), x => x.MigrationsAssembly(typeof(IamDbContext).Assembly.FullName)));
+        services.AddDbContextPool<IamDbContext>(options =>
+        {
+            options.UseNpgsql(configuration.GetConnectionString("IamDb"), x => x.MigrationsAssembly(typeof(IamDbContext).Assembly.FullName));
+            options.UseOpenIddict();
+        });
         services.AddScoped<IIamDbContext>(provider => provider.GetRequiredService<IamDbContext>());
         services.AddScoped<DbContextProvider<IIamDbContext>>();
     }
