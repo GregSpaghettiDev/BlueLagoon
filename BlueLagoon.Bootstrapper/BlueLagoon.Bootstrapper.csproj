@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Modules\Iam\BlueLagoon.Modules.Iam.Api\BlueLagoon.Modules.Iam.Api.csproj" />
     <ProjectReference Include="..\Modules\Notifications\BlueLagoon.Modules.Notifications.Api\BlueLagoon.Modules.Notifications.Api.csproj" />
     <ProjectReference Include="..\Modules\SalesContracting\BlueLagoon.Modules.SalesContracting.Api\BlueLagoon.Modules.SalesContracting.Api.csproj" />
     <ProjectReference Include="..\Shared\BlueLagoon.Shared.Infrastructure\BlueLagoon.Shared.Infrastructure.csproj" />

@@ -1,0 +1,12 @@
+CREATE ROLE iam_user LOGIN PASSWORD 'changeMe!';
+CREATE ROLE catalog_pricing_user LOGIN PASSWORD 'changeMe!';
+CREATE ROLE billing_payment_user LOGIN PASSWORD 'changeMe!';
+CREATE ROLE crm_user LOGIN PASSWORD 'changeMe!';
+CREATE ROLE customer_operation_user LOGIN PASSWORD 'changeMe!';
+CREATE ROLE deadline_management_user LOGIN PASSWORD 'changeMe!';
+CREATE ROLE employee_incetive_user LOGIN PASSWORD 'changeMe!';
+CREATE ROLE infrastructure_management_user LOGIN PASSWORD 'changeMe!';
+CREATE ROLE notification_user LOGIN PASSWORD 'changeMe!';
+CREATE ROLE retention_termination_user LOGIN PASSWORD 'changeMe!';
+CREATE ROLE sale_contracting_user LOGIN PASSWORD 'changeMe!';
+CREATE ROLE technical_support_user LOGIN PASSWORD 'changeMe!';

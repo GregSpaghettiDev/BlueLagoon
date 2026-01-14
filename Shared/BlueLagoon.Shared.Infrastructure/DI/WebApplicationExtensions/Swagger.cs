@@ -13,7 +13,13 @@ internal sealed class Swagger : IMiddlewaresInstaller
         if (application.Environment.IsDevelopment())
         {
             application.UseSwagger();
-            application.UseSwaggerUI();
+            application.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Blue Lagoon API V1");
+                options.OAuthClientId("swagger-ui");
+                options.OAuthAppName("Swagger UI");
+                options.OAuthUsePkce();
+            });
         }
     }
 }

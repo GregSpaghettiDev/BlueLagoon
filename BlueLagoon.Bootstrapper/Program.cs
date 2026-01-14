@@ -20,7 +20,7 @@ IList<IModule> modules = ModuleLoader.LoadModules(assemblies);
 builder.Services.InstallInfrastructureServices(builder.Configuration, modules);
 
 foreach (var module in modules)
-    module.Register(builder.Services);
+    module.Register(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 app.InstallInfrastructureMiddlewares();

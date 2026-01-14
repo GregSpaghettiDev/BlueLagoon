@@ -4,12 +4,21 @@ namespace BlueLagoon.Shared.DevTools.Configuration;
 
 public static class Extensions
 {
-    public static T GetOptions<T>(this IConfiguration configuration, string sectionName) where T : class, new()
+    public static T GetSettings<T>(this IConfiguration configuration, string sectionName) where T : class, new()
     {
-        var options = new T();
+        var settings = new T();
         var section = configuration.GetSection(sectionName);
-        section.Bind(options);
+        section.Bind(settings);
 
-        return options;
+        return settings;
+    }
+
+    public static TSettings GetSettings<TSettings>(this IConfiguration configuration)
+        where TSettings : class, new()
+    {
+        TSettings settings = new();
+        configuration.Bind(typeof(TSettings).Name, settings);
+
+        return settings;
     }
 }

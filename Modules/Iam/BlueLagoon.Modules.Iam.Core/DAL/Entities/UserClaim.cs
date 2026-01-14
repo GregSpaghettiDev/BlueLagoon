@@ -6,15 +6,13 @@ namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
 internal class UserClaim : IdentityUserClaim<BaseId>, IBaseEntity
 {
-    public BaseEntity MetaData { get; set; } = new();
+    public BaseDate CreatedAt { get; private set; }
 
-    public BaseDate CreatedAt => MetaData.CreatedAt;
+    public BaseId CreatorId { get; private set; }
 
-    public BaseId CreatorId => MetaData.CreatorId;
+    public BaseDate ModifiedAt { get; private set; }
 
-    public BaseDate ModifiedAt => MetaData?.ModifiedAt;
+    public BaseId ModificatorId { get; private set; }
 
-    public BaseId ModificatorId => MetaData?.ModificatorId;
-
-    public bool IsActive => MetaData.IsActive;
+    public bool IsActive { get; private set; }
 }

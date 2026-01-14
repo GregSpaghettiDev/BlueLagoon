@@ -1,7 +1,9 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL;
-using BlueLagoon.Modules.Iam.Core.Identity;
+using BlueLagoon.Modules.Iam.Core.Services;
+using BlueLagoon.Shared.DevTools.Configuration;
 using BlueLagoon.Shared.DevTools.Installers;
 using BlueLagoon.Shared.DevTools.Modules.Abstractions;
+using BlueLagoon.Shared.Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +13,9 @@ internal sealed class Oauth2Oidc : IServicesInstaller
 {
     public void Intstall(IServiceCollection services, IConfiguration configuration, IList<IModule> modules = null)
     {
+
+        var oauthSettings = configuration.GetSettings<Oauth2OidcSettings>();
+
         services
             .AddOpenIddict()
             .AddCore(options =>
@@ -21,13 +26,12 @@ internal sealed class Oauth2Oidc : IServicesInstaller
             .AddServer(options =>
             {
                 options
-                    .SetAuthorizationEndpointUris("connect/authorize")
-                    .SetEndSessionEndpointUris("connect/logout")
-                    .SetTokenEndpointUris("connect/token");
+                    .SetAuthorizationEndpointUris(oauthSettings.Endpoints.AuthorizationEndpoint)
+                    .SetEndSessionEndpointUris(oauthSettings.Endpoints.LogoutEndpoint)
+                    .SetTokenEndpointUris(oauthSettings.Endpoints.TokenEndpoint);
 
                 options.AllowAuthorizationCodeFlow();
                 options.AllowRefreshTokenFlow();
-
 
                 options.AddDevelopmentEncryptionCertificate()
                        .AddDevelopmentSigningCertificate();

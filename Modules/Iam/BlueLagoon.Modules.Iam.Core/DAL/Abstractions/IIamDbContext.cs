@@ -10,13 +10,13 @@ interface IIamDbContext : IDbContextPool
 
     DbSet<Role> Roles { get; }
 
-    DbSet<UserRole> UserRoles { get; }
+    //DbSet<UserRole> UserRoles { get; }
 
-    DbSet<UserClaim> UserClaims { get; }
+    //DbSet<UserClaim> UserClaims { get; }
 
-    DbSet<UserLogin> UserLogins { get; }
+    //DbSet<UserLogin> UserLogins { get; }
 
-    DbSet<RoleClaim> RoleClaims { get; }
+    //DbSet<RoleClaim> RoleClaims { get; }
 
-    DbSet<UserToken> UserTokens { get; }
+    //DbSet<UserToken> UserTokens { get; }
 }

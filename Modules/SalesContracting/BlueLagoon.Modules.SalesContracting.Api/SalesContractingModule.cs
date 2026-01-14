@@ -4,6 +4,7 @@ using BlueLagoon.Modules.SalesContracting.Infrastructure;
 using BlueLagoon.Modules.SalesContracting.Mapping;
 using BlueLagoon.Shared.DevTools.Modules.Abstractions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BlueLagoon.Modules.SalesContracting.Api;
@@ -16,7 +17,7 @@ internal class SalesContractingModule : IModule
 
     public string Path => BasePath;
 
-    public void Register(IServiceCollection services)
+    public void Register(IServiceCollection services, IConfiguration configuration)
     {
         services.AddApplication();
         services.AddCore();
