@@ -9,9 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlueLagoon.Modules.Iam.Core.DAL;
 
-internal sealed class IamDbContext(DbContextOptions<IamDbContext> options)
-    : IdentityDbContext<User, Role, BaseId>(options), IIamDbContext
-//: IdentityDbContext<User, Role, BaseId, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>(options), IIamDbContext
+internal sealed class IamDbContext(DbContextOptions<IamDbContext> options) 
+    : IdentityDbContext<User, Role, BaseId, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>(options), IIamDbContext
 {
     private IDateTimeProvider _dateTimeProvider;
 
@@ -20,6 +19,7 @@ internal sealed class IamDbContext(DbContextOptions<IamDbContext> options)
         base.OnModelCreating(builder);
         builder.HasDefaultSchema("iam");
         builder.UseOpenIddict();
+        builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
 
         foreach (var entity in builder.Model.GetEntityTypes())
         {
@@ -29,7 +29,7 @@ internal sealed class IamDbContext(DbContextOptions<IamDbContext> options)
                 property.SetColumnName(property.Name.ToSnakeCase());
         }
 
-        builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+        
         builder.RestrictCascadeDelete();
     }
 

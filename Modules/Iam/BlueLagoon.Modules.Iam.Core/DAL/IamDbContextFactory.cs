@@ -18,7 +18,13 @@ internal sealed class IamDbContextFactory : IDesignTimeDbContextFactory<IamDbCon
             throw new InvalidOperationException($"Missing IamDb connection string");
 
         var options = new DbContextOptionsBuilder<IamDbContext>()
-            .UseNpgsql(connectionString)
+            .UseNpgsql(
+                connectionString,
+                x =>
+                {
+                    x.MigrationsAssembly(typeof(IamDbContext).Assembly.FullName);
+                    x.MigrationsHistoryTable("__EFMigrationsHistory", "iam");
+                })
             .UseOpenIddict()
             .Options;
 

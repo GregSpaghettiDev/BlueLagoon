@@ -18,8 +18,4 @@
     <ProjectReference Include="..\..\..\Shared\BlueLagoon.Shared.Infrastructure\BlueLagoon.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DAL\Migrations\" />
-  </ItemGroup>
-
 </Project>

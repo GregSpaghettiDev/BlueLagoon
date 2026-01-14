@@ -12,7 +12,7 @@ internal static class Extensions
         where TEntity : class, IBaseEntity
     {
         builder.Property(x => x.CreatedAt)
-                    .HasColumnType("datetime2(0)")
+                    .HasColumnType("timestamp(0)")
                     .HasConversion(x => x.Value, x => new BaseDate(x))
                     .IsRequired();
 
@@ -21,7 +21,7 @@ internal static class Extensions
                     .IsRequired();
 
         builder.Property(x => x.ModifiedAt)
-                    .HasColumnType("datetime2(0)")
+                    .HasColumnType("timestamp(0)")
                     .HasConversion(x => x.Value, x => new BaseDate(x))
                     .IsRequired(false);
 

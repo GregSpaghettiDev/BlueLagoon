@@ -49,12 +49,12 @@ public class ConfigureSwaggerOptions(IServiceProvider ServiceProvider) : IConfig
             }
         });
 
-        options.AddSecurityRequirement(doc => 
+        options.AddSecurityRequirement(doc =>
         {
-            var requirement = new OpenApiSecurityRequirement();
-
-            if (doc.Components.SecuritySchemes.TryGetValue("oauth2", out var scheme))
-                requirement.Add((OpenApiSecuritySchemeReference)scheme, scopesDictionary.Keys.ToList());
+            var requirement = new OpenApiSecurityRequirement
+            {
+                { new OpenApiSecuritySchemeReference("oauth2"), scopesDictionary.Keys.ToList() }
+            };
 
             return requirement;
         });

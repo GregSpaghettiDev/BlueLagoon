@@ -21,10 +21,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    ModificatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -42,10 +42,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    ModificatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     first_name = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
@@ -124,16 +124,15 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     role_id = table.Column<Guid>(type: "uuid", nullable: false),
                     claim_type = table.Column<string>(type: "text", nullable: true),
-                    claim_value = table.Column<string>(type: "text", nullable: true),
-                    Discriminator = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    ModificatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: true),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: true)
+                    claim_value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -154,16 +153,15 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     claim_type = table.Column<string>(type: "text", nullable: true),
-                    claim_value = table.Column<string>(type: "text", nullable: true),
-                    Discriminator = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    ModificatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: true),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: true)
+                    claim_value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -184,15 +182,14 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 {
                     login_provider = table.Column<string>(type: "text", nullable: false),
                     provider_key = table.Column<string>(type: "text", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     provider_display_name = table.Column<string>(type: "text", nullable: true),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Discriminator = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    ModificatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: true),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: true)
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -213,13 +210,12 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 {
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     role_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Discriminator = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    ModificatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: true),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: true)
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -248,14 +244,13 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     login_provider = table.Column<string>(type: "text", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
-                    value = table.Column<string>(type: "text", nullable: true),
-                    Discriminator = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
-                    ModificatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: true),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: true)
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
+                    value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

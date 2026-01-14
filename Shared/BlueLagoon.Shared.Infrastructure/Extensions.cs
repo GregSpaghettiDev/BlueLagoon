@@ -1,5 +1,4 @@
 ﻿using BlueLagoon.Shared.DevTools.Installers;
-using BlueLagoon.Shared.DevTools.Modules.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,10 +10,10 @@ namespace BlueLagoon.Shared.Infrastructure;
 
 internal static class Extensions
 {
-    public static void InstallInfrastructureServices(this IServiceCollection services, IConfiguration configuration, IList<IModule> modules)
+    public static void InstallInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         foreach (var installer in InstallersFetcher.GetInstallers<DtProvider, IServicesInstaller>())
-            installer.Intstall(services, configuration, modules);
+            installer.Intstall(services, configuration);
     }
 
     public static void InstallInfrastructureMiddlewares(this WebApplication application)

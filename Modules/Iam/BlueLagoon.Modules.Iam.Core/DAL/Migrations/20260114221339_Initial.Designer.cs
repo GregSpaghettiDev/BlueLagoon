@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlueLagoon.Modules.Iam.Core.Migrations
 {
     [DbContext(typeof(IamDbContext))]
-    [Migration("20260114100601_Initial")]
+    [Migration("20260114221339_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -39,20 +39,24 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("concurrency_stamp");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("created_at");
 
                     b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("creator_id");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
                     b.Property<Guid?>("ModificatorId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("modificator_id");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("modified_at");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -79,6 +83,60 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                     b.ToTable("asp_net_roles", "iam");
                 });
 
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.RoleClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text")
+                        .HasColumnName("claim_type");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text")
+                        .HasColumnName("claim_value");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("creator_id");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<Guid?>("ModificatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("modificator_id");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("modified_at");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("role_id");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("asp_net_role_claims", "iam");
+                });
+
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -95,10 +153,12 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("concurrency_stamp");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("created_at");
 
                     b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("creator_id");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -122,10 +182,12 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("lockout_end");
 
                     b.Property<Guid?>("ModificatorId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("modificator_id");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("modified_at");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -202,7 +264,7 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                     b.ToTable("asp_net_users", "iam");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<BlueLagoon.Shared.DevTools.Base.BaseId>", b =>
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.UserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -219,64 +281,44 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnType("text")
                         .HasColumnName("claim_value");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(34)
-                        .HasColumnType("character varying(34)");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("created_at");
 
-                    b.Property<Guid>("RoleId")
+                    b.Property<Guid>("CreatorId")
                         .HasColumnType("uuid")
-                        .HasColumnName("role_id");
+                        .HasColumnName("creator_id");
 
-                    b.HasKey("Id");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
 
-                    b.HasIndex("RoleId");
+                    b.Property<Guid?>("ModificatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("modificator_id");
 
-                    b.ToTable("asp_net_role_claims", "iam");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRoleClaim<BaseId>");
-
-                    b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<BlueLagoon.Shared.DevTools.Base.BaseId>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("text")
-                        .HasColumnName("claim_type");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("text")
-                        .HasColumnName("claim_value");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(34)
-                        .HasColumnType("character varying(34)");
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("modified_at");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("asp_net_user_claims", "iam");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserClaim<BaseId>");
-
-                    b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<BlueLagoon.Shared.DevTools.Base.BaseId>", b =>
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.UserLogin", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text")
@@ -286,10 +328,25 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnType("text")
                         .HasColumnName("provider_key");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(34)
-                        .HasColumnType("character varying(34)");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("creator_id");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<Guid?>("ModificatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("modificator_id");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("modified_at");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text")
@@ -299,18 +356,20 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("LoginProvider", "ProviderKey");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("asp_net_user_logins", "iam");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserLogin<BaseId>");
-
-                    b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<BlueLagoon.Shared.DevTools.Base.BaseId>", b =>
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.UserRole", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
@@ -320,23 +379,40 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("role_id");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(34)
-                        .HasColumnType("character varying(34)");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("creator_id");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<Guid?>("ModificatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("modificator_id");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("modified_at");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("asp_net_user_roles", "iam");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<BaseId>");
-
-                    b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<BlueLagoon.Shared.DevTools.Base.BaseId>", b =>
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.UserToken", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
@@ -350,22 +426,39 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(34)
-                        .HasColumnType("character varying(34)");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("creator_id");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<Guid?>("ModificatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("modificator_id");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("modified_at");
 
                     b.Property<string>("Value")
                         .HasColumnType("text")
                         .HasColumnName("value");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("asp_net_user_tokens", "iam");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserToken<BaseId>");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", b =>
@@ -625,187 +718,47 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.RoleClaim", b =>
                 {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRoleClaim<BlueLagoon.Shared.DevTools.Base.BaseId>");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("ModificatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.HasDiscriminator().HasValue("RoleClaim");
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.UserClaim", b =>
                 {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserClaim<BlueLagoon.Shared.DevTools.Base.BaseId>");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("ModificatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.HasDiscriminator().HasValue("UserClaim");
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.UserLogin", b =>
                 {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserLogin<BlueLagoon.Shared.DevTools.Base.BaseId>");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("ModificatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.HasDiscriminator().HasValue("UserLogin");
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.UserRole", b =>
                 {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<BlueLagoon.Shared.DevTools.Base.BaseId>");
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("ModificatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.HasDiscriminator().HasValue("UserRole");
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.UserToken", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserToken<BlueLagoon.Shared.DevTools.Base.BaseId>");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("ModificatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.HasDiscriminator().HasValue("UserToken");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<BlueLagoon.Shared.DevTools.Base.BaseId>", b =>
-                {
-                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<BlueLagoon.Shared.DevTools.Base.BaseId>", b =>
-                {
-                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<BlueLagoon.Shared.DevTools.Base.BaseId>", b =>
-                {
-                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<BlueLagoon.Shared.DevTools.Base.BaseId>", b =>
-                {
-                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<BlueLagoon.Shared.DevTools.Base.BaseId>", b =>
                 {
                     b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", null)
                         .WithMany()
