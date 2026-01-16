@@ -1,5 +1,7 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL;
+using BlueLagoon.Modules.Iam.Core.DAL.Entities;
 using BlueLagoon.Modules.Iam.Core.Services;
+using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Configuration;
 using BlueLagoon.Shared.DevTools.Installers;
 using BlueLagoon.Shared.Infrastructure.Settings;
@@ -20,7 +22,8 @@ internal sealed class Oauth2Oidc : IServicesInstaller
             .AddCore(options =>
             {
                 options.UseEntityFrameworkCore()
-                       .UseDbContext<IamDbContext>();
+                       .UseDbContext<IamDbContext>()
+                       .ReplaceDefaultEntities<Application, Authorization, Module, Token, BaseId>();
             })
             .AddServer(options =>
             {
@@ -46,6 +49,6 @@ internal sealed class Oauth2Oidc : IServicesInstaller
                 options.UseAspNetCore();
             });
 
-        services.AddHostedService<Worker>();
+        services.AddHostedService<Initializer>();
     }
 }

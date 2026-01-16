@@ -9,5 +9,7 @@ internal sealed class UserLoginConfiguration : IEntityTypeConfiguration<UserLogi
     public void Configure(EntityTypeBuilder<UserLogin> builder)
     {
         builder.GenerateBasePropertiesRules();
+
+        builder.ToTable("user_login");
     }
 }

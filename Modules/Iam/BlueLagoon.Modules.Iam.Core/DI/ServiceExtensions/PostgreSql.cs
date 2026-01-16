@@ -1,7 +1,8 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL;
-using BlueLagoon.Modules.Iam.Core.DAL.Abstractions;
+using BlueLagoon.Modules.Iam.Core.DAL.Entities;
+using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Installers;
-using BlueLagoon.Shared.Infrastructure.DAL;
+using BlueLagoon.Shared.Infrastructure.DAL.EfInterceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,7 @@ internal class PostgreSql : IServicesInstaller
 {
     public void Intstall(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContextPool<IamDbContext>(options =>
+        services.AddDbContextPool<IamDbContext>((serviceProvider, options) =>
         {
             options.UseNpgsql(
                 configuration.GetConnectionString("IamDb"),
@@ -22,9 +23,8 @@ internal class PostgreSql : IServicesInstaller
                     x.MigrationsHistoryTable("__EFMigrationsHistory", "iam");
                 });
 
-            options.UseOpenIddict();
+            options.UseOpenIddict<Application, Authorization, Module, Token, BaseId>();
+            options.AddInterceptors(serviceProvider.GetRequiredService<SaveChangesWithAuditInterceptor>());
         });
-        services.AddScoped<IIamDbContext>(provider => provider.GetRequiredService<IamDbContext>());
-        services.AddScoped<DbContextProvider<IIamDbContext>>();
     }
 }

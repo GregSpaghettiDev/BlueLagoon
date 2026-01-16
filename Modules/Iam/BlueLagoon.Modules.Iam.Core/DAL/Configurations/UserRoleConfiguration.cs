@@ -9,5 +9,7 @@ internal sealed class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
     public void Configure(EntityTypeBuilder<UserRole> builder)
     {
         builder.GenerateBasePropertiesRules();
+
+        builder.ToTable("user_role");
     }
 }

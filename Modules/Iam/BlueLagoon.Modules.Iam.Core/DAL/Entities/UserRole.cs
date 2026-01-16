@@ -15,4 +15,16 @@ internal class UserRole : IdentityUserRole<BaseId>, IBaseEntity
     public BaseId ModificatorId { get; private set; }
 
     public bool IsActive { get; private set; }
+
+    public void SetCreatorAuditProperties(BaseDate createdAt, BaseId creatorId)
+    {
+        CreatedAt = createdAt;
+        CreatorId = creatorId;
+    }
+
+    public void SetModificatorAuditProperties(BaseDate modifiedAt, BaseId modificatorId)
+    {
+        ModifiedAt = modifiedAt;
+        ModificatorId = modificatorId;
+    }
 }

@@ -9,5 +9,7 @@ internal sealed class RoleClaimConfiguration : IEntityTypeConfiguration<RoleClai
     public void Configure(EntityTypeBuilder<RoleClaim> builder)
     {
         builder.GenerateBasePropertiesRules();
+
+        builder.ToTable("role_claim");
     }
 }

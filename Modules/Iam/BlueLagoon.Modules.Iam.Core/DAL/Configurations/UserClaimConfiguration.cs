@@ -9,5 +9,7 @@ internal sealed class UserClaimConfiguration : IEntityTypeConfiguration<UserClai
     public void Configure(EntityTypeBuilder<UserClaim> builder)
     {
         builder.GenerateBasePropertiesRules();
+
+        builder.ToTable("user_claim");
     }
 }

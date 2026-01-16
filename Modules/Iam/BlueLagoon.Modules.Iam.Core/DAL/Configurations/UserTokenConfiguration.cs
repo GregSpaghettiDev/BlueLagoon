@@ -9,5 +9,7 @@ internal sealed class UserTokenConfiguration : IEntityTypeConfiguration<UserToke
     public void Configure(EntityTypeBuilder<UserToken> builder)
     {
         builder.GenerateBasePropertiesRules();
+
+        builder.ToTable("user_token");
     }
 }

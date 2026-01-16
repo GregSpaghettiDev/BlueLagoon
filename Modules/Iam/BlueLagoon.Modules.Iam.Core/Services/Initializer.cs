@@ -1,12 +1,14 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL;
+using BlueLagoon.Modules.Iam.Core.DAL.Entities;
 using BlueLagoon.Modules.Iam.Core.Dictionaries;
+using BlueLagoon.Shared.Infrastructure.Settings;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenIddict.Abstractions;
-using BlueLagoon.Shared.Infrastructure.Settings;
 namespace BlueLagoon.Modules.Iam.Core.Services;
 
-internal sealed class Worker(IServiceProvider serviceProvider) : IHostedService
+internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -18,14 +20,17 @@ internal sealed class Worker(IServiceProvider serviceProvider) : IHostedService
 
         var frontendAppSettings = scope.ServiceProvider.GetRequiredService<FrontendAppSettings>();
 
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+        var defaultSystemUser = scope.ServiceProvider.GetRequiredService<DefaultSystemUser>();
+
         if (await scopeManager.FindByNameAsync(Scope.Iam.Name) == null)
             await scopeManager.CreateAsync(new OpenIddictScopeDescriptor { Name = Scope.Iam.Name, DisplayName = Scope.Iam.Description });
 
-        if (await appManager.FindByClientIdAsync(frontendAppSettings.Name) == null)
+        if (await appManager.FindByClientIdAsync(frontendAppSettings.OauthClientId) == null)
         {
             await appManager.CreateAsync(new OpenIddictApplicationDescriptor
             {
-                ClientId = frontendAppSettings.Name,
+                ClientId = frontendAppSettings.OauthClientId,
                 DisplayName = frontendAppSettings.Description,
                 RedirectUris = 
                 { 
@@ -74,6 +79,17 @@ internal sealed class Worker(IServiceProvider serviceProvider) : IHostedService
                 }
             });
         }
+
+        await userManager.CreateAsync(
+            new User
+            {
+                Id = defaultSystemUser.Id,
+                UserName = defaultSystemUser.Username,
+                FirstName = defaultSystemUser.FirstName,
+                LastName = defaultSystemUser.LastName,
+                Email = defaultSystemUser.Email,
+                EmailConfirmed = true
+            }, defaultSystemUser.Password);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

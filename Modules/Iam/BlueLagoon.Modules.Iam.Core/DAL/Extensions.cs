@@ -1,5 +1,4 @@
-﻿using BlueLagoon.Modules.Iam.Core.DAL.Abstractions;
-using BlueLagoon.Shared.DevTools.Base;
+﻿using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Base.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

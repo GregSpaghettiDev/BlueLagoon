@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BlueLagoon.Modules.Iam.Core.DAL.Configurations;
 
-internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
+internal class Authorizationfiguration : IEntityTypeConfiguration<Authorization>
 {
-    public void Configure(EntityTypeBuilder<Role> builder)
+    public void Configure(EntityTypeBuilder<Authorization> builder)
     {
         builder.HasKey(x => x.Id);
 
@@ -17,6 +17,6 @@ internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
 
         builder.GenerateBasePropertiesRules();
 
-        builder.ToTable("role");
+        builder.ToTable("authorization");
     }
 }

@@ -4,5 +4,14 @@
       "name": "Iam",
       "enabled": true
     }
+  },
+
+  "DefaultSystemUser": {
+    "Id": "661B5F1A-02D3-48A3-908C-9499AD1F60F4",
+    "Username": "system.user",
+    "Password": "ChangeMe",
+    "FirstName": "System",
+    "LastName": "User",
+    "Email": "system.user@blue-lagoon"
   }
 }

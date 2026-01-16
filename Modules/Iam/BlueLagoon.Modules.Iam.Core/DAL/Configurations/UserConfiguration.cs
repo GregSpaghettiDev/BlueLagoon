@@ -37,5 +37,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
             cpb.IsRequired();
         });
+
+        builder.ToTable("user");
     }
 }

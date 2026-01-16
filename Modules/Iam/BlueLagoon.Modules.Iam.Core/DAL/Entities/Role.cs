@@ -1,5 +1,4 @@
-﻿using BlueLagoon.Modules.Iam.Core.DAL.Abstractions;
-using BlueLagoon.Shared.DevTools.Base;
+﻿using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Base.Abstractions;
 using Microsoft.AspNetCore.Identity;
 
@@ -16,4 +15,16 @@ public class Role : IdentityRole<BaseId>, IBaseEntity
     public BaseId ModificatorId { get; private set; }
 
     public bool IsActive { get; private set; }
+
+    public void SetCreatorAuditProperties(BaseDate createdAt, BaseId creatorId)
+    {
+        CreatedAt = createdAt;
+        CreatorId = creatorId;
+    }
+
+    public void SetModificatorAuditProperties(BaseDate modifiedAt, BaseId modificatorId)
+    {
+        ModifiedAt = modifiedAt;
+        ModificatorId = modificatorId;
+    }
 }

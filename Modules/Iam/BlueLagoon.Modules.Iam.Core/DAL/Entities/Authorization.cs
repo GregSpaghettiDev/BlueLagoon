@@ -1,10 +1,11 @@
 ﻿using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Base.Abstractions;
-using Microsoft.AspNetCore.Identity;
+using OpenIddict.EntityFrameworkCore.Models;
+
 
 namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
-internal class RoleClaim : IdentityRoleClaim<BaseId>, IBaseEntity
+internal class Authorization : OpenIddictEntityFrameworkCoreAuthorization<BaseId, Application, Token>, IBaseEntity
 {
     public BaseDate CreatedAt { get; private set; }
 

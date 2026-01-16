@@ -2,7 +2,7 @@
 
 public class FrontendAppSettings
 {
-    public string Name { get; init; }
+    public string OauthClientId { get; init; }
 
     public string Description { get; init; }
 

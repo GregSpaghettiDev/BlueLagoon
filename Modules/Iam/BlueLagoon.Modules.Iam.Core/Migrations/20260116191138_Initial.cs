@@ -16,7 +16,66 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 name: "iam");
 
             migrationBuilder.CreateTable(
-                name: "asp_net_roles",
+                name: "application",
+                schema: "iam",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
+                    application_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    client_id = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    client_secret = table.Column<string>(type: "text", nullable: true),
+                    client_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    concurrency_token = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    consent_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    display_name = table.Column<string>(type: "text", nullable: true),
+                    display_names = table.Column<string>(type: "text", nullable: true),
+                    json_web_key_set = table.Column<string>(type: "text", nullable: true),
+                    permissions = table.Column<string>(type: "text", nullable: true),
+                    post_logout_redirect_uris = table.Column<string>(type: "text", nullable: true),
+                    properties = table.Column<string>(type: "text", nullable: true),
+                    redirect_uris = table.Column<string>(type: "text", nullable: true),
+                    requirements = table.Column<string>(type: "text", nullable: true),
+                    settings = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_application", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "module",
+                schema: "iam",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
+                    concurrency_token = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    description = table.Column<string>(type: "text", nullable: true),
+                    descriptions = table.Column<string>(type: "text", nullable: true),
+                    display_name = table.Column<string>(type: "text", nullable: true),
+                    display_names = table.Column<string>(type: "text", nullable: true),
+                    name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    properties = table.Column<string>(type: "text", nullable: true),
+                    resources = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_module", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "role",
                 schema: "iam",
                 columns: table => new
                 {
@@ -33,11 +92,11 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_asp_net_roles", x => x.id);
+                    table.PrimaryKey("PK_role", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "asp_net_users",
+                name: "user",
                 schema: "iam",
                 columns: table => new
                 {
@@ -67,58 +126,44 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_asp_net_users", x => x.id);
+                    table.PrimaryKey("PK_user", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "open_iddict_applications",
+                name: "authorization",
                 schema: "iam",
                 columns: table => new
                 {
-                    id = table.Column<string>(type: "text", nullable: false),
-                    application_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    client_id = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    client_secret = table.Column<string>(type: "text", nullable: true),
-                    client_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
+                    application_id = table.Column<Guid>(type: "uuid", nullable: true),
                     concurrency_token = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    consent_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    display_name = table.Column<string>(type: "text", nullable: true),
-                    display_names = table.Column<string>(type: "text", nullable: true),
-                    json_web_key_set = table.Column<string>(type: "text", nullable: true),
-                    permissions = table.Column<string>(type: "text", nullable: true),
-                    post_logout_redirect_uris = table.Column<string>(type: "text", nullable: true),
+                    creation_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     properties = table.Column<string>(type: "text", nullable: true),
-                    redirect_uris = table.Column<string>(type: "text", nullable: true),
-                    requirements = table.Column<string>(type: "text", nullable: true),
-                    settings = table.Column<string>(type: "text", nullable: true)
+                    scopes = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    subject = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
+                    type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_open_iddict_applications", x => x.id);
+                    table.PrimaryKey("PK_authorization", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_authorization_application_application_id",
+                        column: x => x.application_id,
+                        principalSchema: "iam",
+                        principalTable: "application",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "open_iddict_scopes",
-                schema: "iam",
-                columns: table => new
-                {
-                    id = table.Column<string>(type: "text", nullable: false),
-                    concurrency_token = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    description = table.Column<string>(type: "text", nullable: true),
-                    descriptions = table.Column<string>(type: "text", nullable: true),
-                    display_name = table.Column<string>(type: "text", nullable: true),
-                    display_names = table.Column<string>(type: "text", nullable: true),
-                    name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    properties = table.Column<string>(type: "text", nullable: true),
-                    resources = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_open_iddict_scopes", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "asp_net_role_claims",
+                name: "role_claim",
                 schema: "iam",
                 columns: table => new
                 {
@@ -136,18 +181,18 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_asp_net_role_claims", x => x.id);
+                    table.PrimaryKey("PK_role_claim", x => x.id);
                     table.ForeignKey(
-                        name: "FK_asp_net_role_claims_asp_net_roles_role_id",
+                        name: "FK_role_claim_role_role_id",
                         column: x => x.role_id,
                         principalSchema: "iam",
-                        principalTable: "asp_net_roles",
+                        principalTable: "role",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "asp_net_user_claims",
+                name: "user_claim",
                 schema: "iam",
                 columns: table => new
                 {
@@ -165,18 +210,18 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_asp_net_user_claims", x => x.id);
+                    table.PrimaryKey("PK_user_claim", x => x.id);
                     table.ForeignKey(
-                        name: "FK_asp_net_user_claims_asp_net_users_user_id",
+                        name: "FK_user_claim_user_user_id",
                         column: x => x.user_id,
                         principalSchema: "iam",
-                        principalTable: "asp_net_users",
+                        principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "asp_net_user_logins",
+                name: "user_login",
                 schema: "iam",
                 columns: table => new
                 {
@@ -193,18 +238,18 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_asp_net_user_logins", x => new { x.login_provider, x.provider_key });
+                    table.PrimaryKey("PK_user_login", x => new { x.login_provider, x.provider_key });
                     table.ForeignKey(
-                        name: "FK_asp_net_user_logins_asp_net_users_user_id",
+                        name: "FK_user_login_user_user_id",
                         column: x => x.user_id,
                         principalSchema: "iam",
-                        principalTable: "asp_net_users",
+                        principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "asp_net_user_roles",
+                name: "user_role",
                 schema: "iam",
                 columns: table => new
                 {
@@ -219,25 +264,25 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_asp_net_user_roles", x => new { x.user_id, x.role_id });
+                    table.PrimaryKey("PK_user_role", x => new { x.user_id, x.role_id });
                     table.ForeignKey(
-                        name: "FK_asp_net_user_roles_asp_net_roles_role_id",
+                        name: "FK_user_role_role_role_id",
                         column: x => x.role_id,
                         principalSchema: "iam",
-                        principalTable: "asp_net_roles",
+                        principalTable: "role",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_asp_net_user_roles_asp_net_users_user_id",
+                        name: "FK_user_role_user_user_id",
                         column: x => x.user_id,
                         principalSchema: "iam",
-                        principalTable: "asp_net_users",
+                        principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "asp_net_user_tokens",
+                name: "user_token",
                 schema: "iam",
                 columns: table => new
                 {
@@ -254,51 +299,30 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_asp_net_user_tokens", x => new { x.user_id, x.login_provider, x.name });
+                    table.PrimaryKey("PK_user_token", x => new { x.user_id, x.login_provider, x.name });
                     table.ForeignKey(
-                        name: "FK_asp_net_user_tokens_asp_net_users_user_id",
+                        name: "FK_user_token_user_user_id",
                         column: x => x.user_id,
                         principalSchema: "iam",
-                        principalTable: "asp_net_users",
+                        principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "open_iddict_authorizations",
+                name: "token",
                 schema: "iam",
                 columns: table => new
                 {
-                    id = table.Column<string>(type: "text", nullable: false),
-                    application_id = table.Column<string>(type: "text", nullable: true),
-                    concurrency_token = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    creation_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    properties = table.Column<string>(type: "text", nullable: true),
-                    scopes = table.Column<string>(type: "text", nullable: true),
-                    status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    subject = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
-                    type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_open_iddict_authorizations", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_open_iddict_authorizations_open_iddict_applications_applica~",
-                        column: x => x.application_id,
-                        principalSchema: "iam",
-                        principalTable: "open_iddict_applications",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "open_iddict_tokens",
-                schema: "iam",
-                columns: table => new
-                {
-                    id = table.Column<string>(type: "text", nullable: false),
-                    application_id = table.Column<string>(type: "text", nullable: true),
-                    authorization_id = table.Column<string>(type: "text", nullable: true),
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
+                    application_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    authorization_id = table.Column<Guid>(type: "uuid", nullable: true),
                     concurrency_token = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     creation_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     expiration_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -312,152 +336,152 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_open_iddict_tokens", x => x.id);
+                    table.PrimaryKey("PK_token", x => x.id);
                     table.ForeignKey(
-                        name: "FK_open_iddict_tokens_open_iddict_applications_application_id",
+                        name: "FK_token_application_application_id",
                         column: x => x.application_id,
                         principalSchema: "iam",
-                        principalTable: "open_iddict_applications",
+                        principalTable: "application",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_open_iddict_tokens_open_iddict_authorizations_authorization~",
+                        name: "FK_token_authorization_authorization_id",
                         column: x => x.authorization_id,
                         principalSchema: "iam",
-                        principalTable: "open_iddict_authorizations",
+                        principalTable: "authorization",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_asp_net_role_claims_role_id",
+                name: "IX_application_client_id",
                 schema: "iam",
-                table: "asp_net_role_claims",
-                column: "role_id");
+                table: "application",
+                column: "client_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_authorization_application_id_status_subject_type",
+                schema: "iam",
+                table: "authorization",
+                columns: new[] { "application_id", "status", "subject", "type" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_module_name",
+                schema: "iam",
+                table: "module",
+                column: "name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 schema: "iam",
-                table: "asp_net_roles",
+                table: "role",
                 column: "normalized_name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_asp_net_user_claims_user_id",
+                name: "IX_role_claim_role_id",
                 schema: "iam",
-                table: "asp_net_user_claims",
-                column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_asp_net_user_logins_user_id",
-                schema: "iam",
-                table: "asp_net_user_logins",
-                column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_asp_net_user_roles_role_id",
-                schema: "iam",
-                table: "asp_net_user_roles",
+                table: "role_claim",
                 column: "role_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_token_application_id_status_subject_type",
+                schema: "iam",
+                table: "token",
+                columns: new[] { "application_id", "status", "subject", "type" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_token_authorization_id",
+                schema: "iam",
+                table: "token",
+                column: "authorization_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_token_reference_id",
+                schema: "iam",
+                table: "token",
+                column: "reference_id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 schema: "iam",
-                table: "asp_net_users",
+                table: "user",
                 column: "normalized_email");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 schema: "iam",
-                table: "asp_net_users",
+                table: "user",
                 column: "normalized_user_name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_open_iddict_applications_client_id",
+                name: "IX_user_claim_user_id",
                 schema: "iam",
-                table: "open_iddict_applications",
-                column: "client_id",
-                unique: true);
+                table: "user_claim",
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_open_iddict_authorizations_application_id_status_subject_ty~",
+                name: "IX_user_login_user_id",
                 schema: "iam",
-                table: "open_iddict_authorizations",
-                columns: new[] { "application_id", "status", "subject", "type" });
+                table: "user_login",
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_open_iddict_scopes_name",
+                name: "IX_user_role_role_id",
                 schema: "iam",
-                table: "open_iddict_scopes",
-                column: "name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_open_iddict_tokens_application_id_status_subject_type",
-                schema: "iam",
-                table: "open_iddict_tokens",
-                columns: new[] { "application_id", "status", "subject", "type" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_open_iddict_tokens_authorization_id",
-                schema: "iam",
-                table: "open_iddict_tokens",
-                column: "authorization_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_open_iddict_tokens_reference_id",
-                schema: "iam",
-                table: "open_iddict_tokens",
-                column: "reference_id",
-                unique: true);
+                table: "user_role",
+                column: "role_id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "asp_net_role_claims",
+                name: "module",
                 schema: "iam");
 
             migrationBuilder.DropTable(
-                name: "asp_net_user_claims",
+                name: "role_claim",
                 schema: "iam");
 
             migrationBuilder.DropTable(
-                name: "asp_net_user_logins",
+                name: "token",
                 schema: "iam");
 
             migrationBuilder.DropTable(
-                name: "asp_net_user_roles",
+                name: "user_claim",
                 schema: "iam");
 
             migrationBuilder.DropTable(
-                name: "asp_net_user_tokens",
+                name: "user_login",
                 schema: "iam");
 
             migrationBuilder.DropTable(
-                name: "open_iddict_scopes",
+                name: "user_role",
                 schema: "iam");
 
             migrationBuilder.DropTable(
-                name: "open_iddict_tokens",
+                name: "user_token",
                 schema: "iam");
 
             migrationBuilder.DropTable(
-                name: "asp_net_roles",
+                name: "authorization",
                 schema: "iam");
 
             migrationBuilder.DropTable(
-                name: "asp_net_users",
+                name: "role",
                 schema: "iam");
 
             migrationBuilder.DropTable(
-                name: "open_iddict_authorizations",
+                name: "user",
                 schema: "iam");
 
             migrationBuilder.DropTable(
-                name: "open_iddict_applications",
+                name: "application",
                 schema: "iam");
         }
     }

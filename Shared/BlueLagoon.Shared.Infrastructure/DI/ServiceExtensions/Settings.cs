@@ -16,5 +16,13 @@ internal sealed class Settings : IServicesInstaller
         Oauth2OidcSettings oauth2OidcSettings = new();
         configuration.Bind(nameof(Oauth2OidcSettings), oauth2OidcSettings);
         services.AddSingleton(oauth2OidcSettings);
+
+        SwaggerSettings swaggerSettings = new();
+        configuration.Bind(nameof(SwaggerSettings), swaggerSettings);
+        services.AddSingleton(swaggerSettings);
+
+        DefaultSystemUser defaultSystemUser = new();
+        configuration.Bind(nameof(DefaultSystemUser), defaultSystemUser);
+        services.AddSingleton(defaultSystemUser);
     }
 }
