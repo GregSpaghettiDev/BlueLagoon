@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
+using BlueLagoon.Shared.DevTools.Base.Abstractions;
 
 namespace BlueLagoon.Shared.DevTools.Pagination;
 
@@ -33,7 +34,7 @@ public class PaginatedList<TDto> where TDto : class
     }
 
     public static async Task<PaginatedList<TDto>> GetPaginatedPageAsync<TEntity>(IQueryable<TEntity> queryable, PaginationParameters paginationParameters, IConfigurationProvider configurationProvider, object projectionParameters = null)
-        where TEntity : class
+        where TEntity : IBaseEntity
     {
         var count = await queryable.CountAsync();
 
@@ -48,38 +49,6 @@ public class PaginatedList<TDto> where TDto : class
             projectionParameters is { } ?
                 await queryable.ProjectTo<TDto>(configurationProvider, projectionParameters).ToListAsync() :
                 await queryable.ProjectTo<TDto>(configurationProvider).ToListAsync();
-
-        return new PaginatedList<TDto>
-        {
-            PageSize = (int)paginationParameters.PageSize,
-            PageNumber = (int)paginationParameters.PageNumber,
-            TotalPages = (int)Math.Ceiling(count / (double)paginationParameters.PageSize),
-            TotalCount = count,
-            Items = result
-        };
-    }
-
-    public static async Task<PaginatedList<TDto>> GetPaginatedPageWithOrderingAfterProjectionAsync<TEntity>(IQueryable<TEntity> queryable, PaginationParameters paginationParameters, IConfigurationProvider configurationProvider, object projectionParameters = null) 
-        where TEntity : class
-    {
-        var count = await queryable.CountAsync();
-
-        paginationParameters = PaginationParameters.CreatePaginationParametersIfNotExists(paginationParameters);
-
-        var result =
-            projectionParameters is { }
-                ? await queryable
-                            .ProjectTo<TDto>(configurationProvider, projectionParameters)
-                            .OrderBy(paginationParameters.OrderByColumn + " " + paginationParameters.SortBy)
-                            .Skip(((int)paginationParameters.PageNumber - 1) * (int)paginationParameters.PageSize)
-                            .Take((int)paginationParameters.PageSize)
-                            .ToListAsync()
-                : await queryable
-                            .ProjectTo<TDto>(configurationProvider)
-                            .OrderBy(paginationParameters.OrderByColumn + " " + paginationParameters.SortBy)
-                            .Skip(((int)paginationParameters.PageNumber - 1) * (int)paginationParameters.PageSize)
-                            .Take((int)paginationParameters.PageSize)
-                            .ToListAsync();
 
         return new PaginatedList<TDto>
         {

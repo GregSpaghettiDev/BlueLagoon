@@ -1,14 +1,13 @@
-﻿using BlueLagoon.Shared.DevTools.Base;
-using BlueLagoon.Shared.DevTools.Base.Abstractions;
+﻿using BlueLagoon.Shared.DevTools.Base.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BlueLagoon.Shared.Infrastructure.DAL;
+namespace BlueLagoon.Shared.DevTools.Base;
 
 public static class Extensions
 {
     public static void GenerateBasePropertiesRules<TEntity>(this EntityTypeBuilder<TEntity> builder)
-        where TEntity : BaseEntity
+        where TEntity : BaseEntity<TEntity>
     {
         builder.HasKey(x => x.Id);
 
@@ -17,7 +16,7 @@ public static class Extensions
                     .IsRequired();
 
         builder.Property(x => x.CreatedAt)
-                    .HasColumnType("datetime2(0)")
+                    .HasColumnType("timestamp(0)")
                     .HasConversion(x => x.Value, x => new BaseDate(x))
                     .IsRequired();
 
@@ -26,16 +25,17 @@ public static class Extensions
                     .IsRequired();
 
         builder.Property(x => x.ModifiedAt)
-                    .HasColumnType("datetime2(0)")
-                    .HasConversion(x => x.Value, x => new BaseDate(x))
+                    .HasColumnType("timestamp(0)")
+                    .HasConversion(x => x == null ? (DateTime?)null : x.Value, x => x != null ? new BaseDate(x.Value) : null)
                     .IsRequired(false);
 
         builder.Property(x => x.ModificatorId)
-                    .HasConversion(x => x.Value, x => new BaseId(x))
+                    .HasConversion(x => x == null ? (Guid?)null : x.Value, x => x != null ? new BaseId(x.Value) : null)
                     .IsRequired(false);
 
         builder.Property(x => x.IsActive)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasDefaultValue(true);
 
         builder.Property<uint>("xmin")
                .IsRowVersion();

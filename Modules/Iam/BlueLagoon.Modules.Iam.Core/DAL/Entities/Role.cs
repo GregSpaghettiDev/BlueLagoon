@@ -1,10 +1,12 @@
 ﻿using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Base.Abstractions;
+using BlueLagoon.Shared.DevTools.Base.Exceptions;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
-public class Role : IdentityRole<BaseId>, IBaseEntity
+internal class Role : IdentityRole<BaseId>, IBaseEntity
 {
     public BaseDate CreatedAt { get; private set; }
 
@@ -27,4 +29,28 @@ public class Role : IdentityRole<BaseId>, IBaseEntity
         ModifiedAt = modifiedAt;
         ModificatorId = modificatorId;
     }
+
+    public void Activate()
+    {
+        if (IsActive)
+            throw new InvalidActivationFlagException(nameof(Role));
+
+        if (!IsActive)
+            IsActive = true;
+    }
+
+    public void Deactivate()
+    {
+        if (!IsActive)
+            throw new InvalidDeactivationFlagException(nameof(Role));
+
+        if (IsActive)
+            IsActive = false;
+    }
+
+    [InverseProperty(nameof(User.RoleCreators))]
+    public virtual User Creator { get; private set; }
+
+    [InverseProperty(nameof(User.RoleModificators))]
+    public virtual User Modificator { get; private set; }
 }

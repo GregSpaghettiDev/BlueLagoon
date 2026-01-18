@@ -1,8 +1,9 @@
-﻿using BlueLagoon.Shared.DevTools.Uniqueidentifier;
+﻿using BlueLagoon.Shared.DevTools.Base.Exceptions;
 
 namespace BlueLagoon.Shared.DevTools.Base.Abstractions;
 
-public abstract class BaseEntity
+public abstract class BaseEntity<TEntity> : IBaseEntity
+    where TEntity : class, IBaseEntity
 {
     protected BaseEntity()
     {
@@ -30,5 +31,23 @@ public abstract class BaseEntity
     {
         ModifiedAt = modifiedAt;
         ModificatorId = modificatorId;
+    }
+
+    public void Activate()
+    {
+        if (IsActive)
+            throw new InvalidActivationFlagException(typeof(TEntity).Name);
+
+        if (!IsActive)
+            IsActive = true;
+    }
+
+    public void Deactivate()
+    {
+        if (!IsActive)
+            throw new InvalidActivationFlagException(typeof(TEntity).Name);
+
+        if (IsActive)
+            IsActive = false;
     }
 }

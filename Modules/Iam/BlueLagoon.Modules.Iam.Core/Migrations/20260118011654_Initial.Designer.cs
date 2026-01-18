@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlueLagoon.Modules.Iam.Core.Migrations
 {
     [DbContext(typeof(IamDbContext))]
-    [Migration("20260116191138_Initial")]
+    [Migration("20260118011654_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -81,7 +81,9 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("display_names");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<string>("JsonWebKeySet")
@@ -131,6 +133,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                     b.HasIndex("ClientId")
                         .IsUnique();
 
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
+
                     b.ToTable("application", "iam");
                 });
 
@@ -164,7 +170,9 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("creator_id");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<Guid?>("ModificatorId")
@@ -206,6 +214,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
+
                     b.HasIndex("ApplicationId", "Status", "Subject", "Type");
 
                     b.ToTable("authorization", "iam");
@@ -217,6 +229,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<string>("BaseUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("base_url");
 
                     b.Property<string>("ConcurrencyToken")
                         .IsConcurrencyToken()
@@ -249,7 +265,9 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("display_names");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<Guid?>("ModificatorId")
@@ -264,6 +282,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
                         .HasColumnName("name");
+
+                    b.Property<string>("OpenApiPath")
+                        .HasColumnType("text")
+                        .HasColumnName("open_api_path");
 
                     b.Property<string>("Properties")
                         .HasColumnType("text")
@@ -281,10 +303,113 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
+
                     b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("module", "iam");
+                });
+
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("creator_id");
+
+                    b.Property<string>("HttpMethod")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("http_method");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<Guid?>("ModificatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("modificator_id");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("modified_at");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "ModuleName", "BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint.ModuleName#ModuleName", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("module_name");
+                        });
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "OperationDescription", "BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint.OperationDescription#OperationDescription", b1 =>
+                        {
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(500)
+                                .HasColumnType("character varying(500)")
+                                .HasColumnName("operation_description");
+                        });
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "OperationId", "BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint.OperationId#OperationId", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("operation_id");
+                        });
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "OperationSummary", "BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint.OperationSummary#OperationSummary", b1 =>
+                        {
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(500)
+                                .HasColumnType("character varying(500)")
+                                .HasColumnName("operation_summary");
+                        });
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Path", "BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint.Path#Path", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("path");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
+
+                    b.ToTable("registered_endpoint", "iam");
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", b =>
@@ -307,7 +432,9 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("creator_id");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<Guid?>("ModificatorId")
@@ -335,6 +462,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("xmin");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
@@ -369,7 +500,9 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("creator_id");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<Guid?>("ModificatorId")
@@ -391,6 +524,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("xmin");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
 
                     b.HasIndex("RoleId");
 
@@ -435,7 +572,9 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("expiration_date");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<Guid?>("ModificatorId")
@@ -488,6 +627,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
 
                     b.HasIndex("AuthorizationId");
 
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
+
                     b.HasIndex("ReferenceId")
                         .IsUnique();
 
@@ -529,7 +672,9 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("email_confirmed");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<bool>("LockoutEnabled")
@@ -613,6 +758,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -649,7 +798,9 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("creator_id");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<Guid?>("ModificatorId")
@@ -671,6 +822,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("xmin");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
 
                     b.HasIndex("UserId");
 
@@ -696,7 +851,9 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("creator_id");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<Guid?>("ModificatorId")
@@ -723,6 +880,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("user_login", "iam");
@@ -747,7 +908,9 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("creator_id");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<Guid?>("ModificatorId")
@@ -765,6 +928,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("xmin");
 
                     b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
 
                     b.HasIndex("RoleId");
 
@@ -794,7 +961,9 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasColumnName("creator_id");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<Guid?>("ModificatorId")
@@ -817,7 +986,30 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
+
                     b.ToTable("user_token", "iam");
+                });
+
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Application", b =>
+                {
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("ApplicationCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("ApplicationModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Authorization", b =>
@@ -827,16 +1019,104 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasForeignKey("ApplicationId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("AuthorizationCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("AuthorizationModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Application");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
+                });
+
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Module", b =>
+                {
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("ModuleCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("ModuleModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
+                });
+
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint", b =>
+                {
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("RegisteredEndpointCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("RegisteredEndpointModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
+                });
+
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", b =>
+                {
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("RoleCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("RoleModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.RoleClaim", b =>
                 {
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("RoleClaimCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("RoleClaimModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Token", b =>
@@ -851,31 +1131,110 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasForeignKey("AuthorizationId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("TokenCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("TokenModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Application");
 
                     b.Navigation("Authorization");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
+                });
+
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", b =>
+                {
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("UserCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("UserModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.UserClaim", b =>
                 {
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("UserClaimCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("UserClaimModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.UserLogin", b =>
                 {
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("UserLoginCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("UserLoginModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.UserRole", b =>
                 {
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("UserRoleCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("UserRoleModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
@@ -887,15 +1246,35 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.UserToken", b =>
                 {
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("UserTokenCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("UserTokenModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Application", b =>
@@ -908,6 +1287,57 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Authorization", b =>
                 {
                     b.Navigation("Tokens");
+                });
+
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", b =>
+                {
+                    b.Navigation("ApplicationCreators");
+
+                    b.Navigation("ApplicationModificators");
+
+                    b.Navigation("AuthorizationCreators");
+
+                    b.Navigation("AuthorizationModificators");
+
+                    b.Navigation("ModuleCreators");
+
+                    b.Navigation("ModuleModificators");
+
+                    b.Navigation("RegisteredEndpointCreators");
+
+                    b.Navigation("RegisteredEndpointModificators");
+
+                    b.Navigation("RoleClaimCreators");
+
+                    b.Navigation("RoleClaimModificators");
+
+                    b.Navigation("RoleCreators");
+
+                    b.Navigation("RoleModificators");
+
+                    b.Navigation("TokenCreators");
+
+                    b.Navigation("TokenModificators");
+
+                    b.Navigation("UserClaimCreators");
+
+                    b.Navigation("UserClaimModificators");
+
+                    b.Navigation("UserCreators");
+
+                    b.Navigation("UserLoginCreators");
+
+                    b.Navigation("UserLoginModificators");
+
+                    b.Navigation("UserModificators");
+
+                    b.Navigation("UserRoleCreators");
+
+                    b.Navigation("UserRoleModificators");
+
+                    b.Navigation("UserTokenCreators");
+
+                    b.Navigation("UserTokenModificators");
                 });
 #pragma warning restore 612, 618
         }

@@ -8,7 +8,7 @@ namespace BlueLagoon.Modules.Notifications.Api;
 
 public sealed class NotificationsModule : IModule
 {
-    public const string BasePath = "notification-module";
+    public const string BasePath = "notifications";
 
     public string Name { get; } = "Notifications";
 

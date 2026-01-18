@@ -1,8 +1,10 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL;
 using BlueLagoon.Modules.Iam.Core.DAL.Entities;
 using BlueLagoon.Modules.Iam.Core.Dictionaries;
+using BlueLagoon.Shared.DevTools.Uniqueidentifier;
 using BlueLagoon.Shared.Infrastructure.Settings;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenIddict.Abstractions;
@@ -14,6 +16,7 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
     {
         using var scope = serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IamDbContext>();
+        await context.Database.MigrateAsync(cancellationToken);
 
         var appManager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
         var scopeManager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
@@ -80,7 +83,9 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
             });
         }
 
-        await userManager.CreateAsync(
+        if (!await userManager.Users.AnyAsync(x => x.Id == defaultSystemUser.Id.ToBaseId(), cancellationToken: cancellationToken))
+        {
+            var result = await userManager.CreateAsync(
             new User
             {
                 Id = defaultSystemUser.Id,
@@ -90,6 +95,10 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
                 Email = defaultSystemUser.Email,
                 EmailConfirmed = true
             }, defaultSystemUser.Password);
+
+            if (!result.Succeeded)
+                throw new InvalidOperationException($"Nieudana inicjalizacja użytkownika systemowego.", new Exception(result.Errors.FirstOrDefault()?.Description ?? string.Empty));
+        }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

@@ -8,7 +8,7 @@ namespace BlueLagoon.Modules.Iam.Api;
 
 public sealed class IamModule : IModule
 {
-    public const string BasePath = "iam-module";
+    public const string BasePath = "iam";
 
     public string Name { get; } = "Iam";
 

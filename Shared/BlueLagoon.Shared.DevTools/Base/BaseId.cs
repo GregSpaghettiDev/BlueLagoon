@@ -14,5 +14,10 @@ public record BaseId(Guid Id)
 
     public static bool operator ==(BaseId id1, Guid id2) => id1.Value == id2;
 
+    public static bool operator ==(Guid id1, BaseId id2) => id1 == id2.Value;
+
     public static bool operator !=(BaseId id1, Guid id2) => id1.Value != id2;
+
+    public static bool operator !=(Guid id1, BaseId id2) => id1 != id2.Value;
+
 }

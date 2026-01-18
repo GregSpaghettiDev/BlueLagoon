@@ -3,6 +3,7 @@ using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using BlueLagoon.Shared.DevTools.Base.Abstractions;
 
 namespace BlueLagoon.Modules.Iam.Core.DAL.Configurations;
 
@@ -37,6 +38,16 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
             cpb.IsRequired();
         });
+
+        builder.HasOne(x => x.Creator)
+                    .WithMany(x => x.UserCreators)
+                    .HasForeignKey(x => x.CreatorId)
+                    .IsRequired();
+
+        builder.HasOne(x => x.Modificator)
+                    .WithMany(x => x.UserModificators)
+                    .HasForeignKey(x => x.ModificatorId)
+                    .IsRequired();
 
         builder.ToTable("user");
     }

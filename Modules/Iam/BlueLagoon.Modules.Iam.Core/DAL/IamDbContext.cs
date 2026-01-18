@@ -17,6 +17,8 @@ internal sealed class IamDbContext(DbContextOptions<IamDbContext> options)
 
     public DbSet<Module> Module { get; set; }
 
+    public DbSet<RegisteredEndpoint> RegisteredEndpoint { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

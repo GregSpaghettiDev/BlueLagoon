@@ -16,4 +16,7 @@ public interface IBaseEntity
 
     void SetModificatorAuditProperties(BaseDate modifiedAt, BaseId modificatorId);
 
+    void Activate();
+
+    void Deactivate();
 }

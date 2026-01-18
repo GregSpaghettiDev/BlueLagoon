@@ -1,11 +1,18 @@
-﻿using BlueLagoon.Shared.DevTools.Base;
+﻿using BlueLagoon.Modules.Iam.Core.DI.ServiceExtensions;
+using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Base.Abstractions;
+using BlueLagoon.Shared.DevTools.Base.Exceptions;
 using OpenIddict.EntityFrameworkCore.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
 internal class Application : OpenIddictEntityFrameworkCoreApplication<BaseId, Authorization, Token>, IBaseEntity
 {
+    protected Application()
+    {
+    }
+
     public BaseDate CreatedAt { get; private set; }
 
     public BaseId CreatorId { get; private set; }
@@ -27,4 +34,28 @@ internal class Application : OpenIddictEntityFrameworkCoreApplication<BaseId, Au
         ModifiedAt = modifiedAt;
         ModificatorId = modificatorId;
     }
+
+    public void Activate()
+    {
+        if (IsActive)
+            throw new InvalidActivationFlagException(nameof(Application));
+
+        if (!IsActive)
+            IsActive = true;
+    }
+
+    public void Deactivate()
+    {
+        if (!IsActive)
+            throw new InvalidDeactivationFlagException(nameof(Application));
+
+        if (IsActive)
+            IsActive = false;
+    }
+
+    [InverseProperty(nameof(User.ApplicationCreators))]
+    public virtual User Creator { get; private set; }
+
+    [InverseProperty(nameof(User.ApplicationModificators))]
+    public virtual User Modificator { get; private set; }
 }

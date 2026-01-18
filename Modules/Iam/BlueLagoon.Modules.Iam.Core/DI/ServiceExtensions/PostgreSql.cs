@@ -6,6 +6,7 @@ using BlueLagoon.Shared.Infrastructure.DAL.EfInterceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Reader;
 
 namespace BlueLagoon.Modules.Iam.Core.DI.ServiceExtensions;
 
@@ -14,7 +15,8 @@ internal class PostgreSql : IServicesInstaller
     public void Intstall(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContextPool<IamDbContext>((serviceProvider, options) =>
-        {
+        { 
+            var interceptor = serviceProvider.GetRequiredService<SaveChangesWithAuditInterceptor>();
             options.UseNpgsql(
                 configuration.GetConnectionString("IamDb"),
                 x =>
@@ -24,7 +26,7 @@ internal class PostgreSql : IServicesInstaller
                 });
 
             options.UseOpenIddict<Application, Authorization, Module, Token, BaseId>();
-            options.AddInterceptors(serviceProvider.GetRequiredService<SaveChangesWithAuditInterceptor>());
+            options.AddInterceptors(interceptor);
         });
     }
 }

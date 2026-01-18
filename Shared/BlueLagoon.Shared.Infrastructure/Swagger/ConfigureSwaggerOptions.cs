@@ -16,7 +16,6 @@ public class ConfigureSwaggerOptions(IServiceProvider ServiceProvider) : IConfig
         using var scope = ServiceProvider.CreateScope();
 
         var scopeManager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
-        var frontendAppSettings = scope.ServiceProvider.GetRequiredService<FrontendAppSettings>();
         var oauthSettings = scope.ServiceProvider.GetRequiredService<Oauth2OidcSettings>();
 
         var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();

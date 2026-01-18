@@ -9,6 +9,6 @@ internal sealed class EfInterceptors : IServicesInstaller
 {
     public void Intstall(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<SaveChangesWithAuditInterceptor>();
+        services.AddSingleton<SaveChangesWithAuditInterceptor>();
     }
 }
