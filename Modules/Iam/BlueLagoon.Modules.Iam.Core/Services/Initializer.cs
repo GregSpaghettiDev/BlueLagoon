@@ -1,6 +1,7 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL;
 using BlueLagoon.Modules.Iam.Core.DAL.Entities;
 using BlueLagoon.Modules.Iam.Core.Dictionaries;
+using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
 using BlueLagoon.Shared.DevTools.Uniqueidentifier;
 using BlueLagoon.Shared.Infrastructure.Settings;
 using Microsoft.AspNetCore.Identity;
@@ -19,16 +20,28 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
         await context.Database.MigrateAsync(cancellationToken);
 
         var appManager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
-        var scopeManager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
-
         var frontendAppSettings = scope.ServiceProvider.GetRequiredService<FrontendAppSettings>();
-
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
         var defaultSystemUser = scope.ServiceProvider.GetRequiredService<DefaultSystemUser>();
+        var moduleService = scope.ServiceProvider.GetRequiredService<IModuleService>();
+        
+        if (!await userManager.Users.AnyAsync(x => x.Id == defaultSystemUser.Id.ToBaseId(), cancellationToken: cancellationToken))
+        {
+            var result = await userManager.CreateAsync(
+            new User
+            {
+                Id = defaultSystemUser.Id,
+                UserName = defaultSystemUser.Username,
+                FirstName = defaultSystemUser.FirstName,
+                LastName = defaultSystemUser.LastName,
+                Email = defaultSystemUser.Email,
+                EmailConfirmed = true
+            }, defaultSystemUser.Password);
 
-        if (await scopeManager.FindByNameAsync(Scope.Iam.Name) == null)
-            await scopeManager.CreateAsync(new OpenIddictScopeDescriptor { Name = Scope.Iam.Name, DisplayName = Scope.Iam.Description });
-
+            if (!result.Succeeded)
+                throw new InvalidOperationException($"Nieudana inicjalizacja użytkownika systemowego.", new Exception(result.Errors.FirstOrDefault()?.Description ?? string.Empty));
+        }
+            
         if (await appManager.FindByClientIdAsync(frontendAppSettings.OauthClientId) == null)
         {
             await appManager.CreateAsync(new OpenIddictApplicationDescriptor
@@ -81,23 +94,6 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
                     OpenIddictConstants.Permissions.Prefixes.Scope + "sales-contracting"
                 }
             });
-        }
-
-        if (!await userManager.Users.AnyAsync(x => x.Id == defaultSystemUser.Id.ToBaseId(), cancellationToken: cancellationToken))
-        {
-            var result = await userManager.CreateAsync(
-            new User
-            {
-                Id = defaultSystemUser.Id,
-                UserName = defaultSystemUser.Username,
-                FirstName = defaultSystemUser.FirstName,
-                LastName = defaultSystemUser.LastName,
-                Email = defaultSystemUser.Email,
-                EmailConfirmed = true
-            }, defaultSystemUser.Password);
-
-            if (!result.Succeeded)
-                throw new InvalidOperationException($"Nieudana inicjalizacja użytkownika systemowego.", new Exception(result.Errors.FirstOrDefault()?.Description ?? string.Empty));
         }
     }
 

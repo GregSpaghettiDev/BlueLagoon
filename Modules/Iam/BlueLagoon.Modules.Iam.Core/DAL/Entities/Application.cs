@@ -1,5 +1,4 @@
-﻿using BlueLagoon.Modules.Iam.Core.DI.ServiceExtensions;
-using BlueLagoon.Shared.DevTools.Base;
+﻿using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Base.Abstractions;
 using BlueLagoon.Shared.DevTools.Base.Exceptions;
 using OpenIddict.EntityFrameworkCore.Models;
@@ -11,6 +10,7 @@ internal class Application : OpenIddictEntityFrameworkCoreApplication<BaseId, Au
 {
     protected Application()
     {
+        Activate();
     }
 
     public BaseDate CreatedAt { get; private set; }

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlueLagoon.Modules.Iam.Core.Migrations
 {
     [DbContext(typeof(IamDbContext))]
-    [Migration("20260118011654_Initial")]
+    [Migration("20260118214853_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -381,15 +381,6 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                                 .HasMaxLength(50)
                                 .HasColumnType("character varying(50)")
                                 .HasColumnName("operation_id");
-                        });
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "OperationSummary", "BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint.OperationSummary#OperationSummary", b1 =>
-                        {
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(500)
-                                .HasColumnType("character varying(500)")
-                                .HasColumnName("operation_summary");
                         });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Path", "BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint.Path#Path", b1 =>

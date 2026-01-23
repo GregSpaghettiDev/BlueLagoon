@@ -380,15 +380,6 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                                 .HasColumnName("operation_id");
                         });
 
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "OperationSummary", "BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint.OperationSummary#OperationSummary", b1 =>
-                        {
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(500)
-                                .HasColumnType("character varying(500)")
-                                .HasColumnName("operation_summary");
-                        });
-
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Path", "BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint.Path#Path", b1 =>
                         {
                             b1.IsRequired();

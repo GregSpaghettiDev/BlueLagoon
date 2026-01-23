@@ -8,7 +8,10 @@ namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
 internal class Token : OpenIddictEntityFrameworkCoreToken<BaseId, Application, Authorization>, IBaseEntity
 {
-    protected Token() { }
+    protected Token() 
+    {
+        Activate();
+    }
 
     public BaseDate CreatedAt { get; private set; }
 

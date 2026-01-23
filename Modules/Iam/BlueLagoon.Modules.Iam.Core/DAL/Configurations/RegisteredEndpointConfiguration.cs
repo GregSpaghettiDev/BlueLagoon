@@ -53,14 +53,5 @@ internal sealed class RegisteredEndpointConfiguration : IEntityTypeConfiguration
                 .IsRequired();
             cpb.IsRequired(false);
         });
-
-        builder.ComplexProperty(x => x.OperationSummary, cpb =>
-        {
-            cpb.Property(x => x.Value)
-                .HasColumnName(nameof(RegisteredEndpoint.OperationSummary).ToSnakeCase())
-                .HasMaxLength(500)
-                .IsRequired();
-            cpb.IsRequired(false);
-        });
     }
 }

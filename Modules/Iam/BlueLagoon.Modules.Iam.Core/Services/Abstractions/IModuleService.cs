@@ -6,4 +6,6 @@ namespace BlueLagoon.Modules.Iam.Core.Services.Abstractions;
 public interface IModuleService
 {
     Task<PaginatedList<ModuleDto>> GetModulesAsync(string searchValue, PaginationParameters paginationParameters = null);
+
+    Task<IEnumerable<EndpointDefinitionDto>> GetEndpointDefinitionsFromOpenApi(string uri, string moduleCode);
 }

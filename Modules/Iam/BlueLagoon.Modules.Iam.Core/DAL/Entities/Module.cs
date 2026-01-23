@@ -8,8 +8,9 @@ namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
 internal class Module : OpenIddictEntityFrameworkCoreScope<BaseId>, IBaseEntity
 {
-    protected Module()
+    public Module()
     {
+        Activate();
     }
 
     public BaseDate CreatedAt { get; private set; }
@@ -25,6 +26,16 @@ internal class Module : OpenIddictEntityFrameworkCoreScope<BaseId>, IBaseEntity
     public string BaseUrl { get; private set; }
 
     public string OpenApiPath { get; private set; }
+
+    public void SetBaseUrl(string baseUrl)
+    {
+        BaseUrl = baseUrl;
+    }
+
+    public void SetOpenApiPath(string openApiPath)
+    {
+        OpenApiPath = openApiPath;
+    }
 
     public void SetCreatorAuditProperties(BaseDate createdAt, BaseId creatorId)
     {

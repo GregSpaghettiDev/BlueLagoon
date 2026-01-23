@@ -8,6 +8,11 @@ namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
 internal class User : IdentityUser<BaseId>, IBaseEntity
 {
+    public User()
+    {
+        Activate();
+    }
+
     public UserFirstName FirstName { get; set; }
 
     public UserLastName LastName { get; set; }

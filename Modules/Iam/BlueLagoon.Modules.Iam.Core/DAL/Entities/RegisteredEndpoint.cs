@@ -9,15 +9,18 @@ internal class RegisteredEndpoint : BaseEntity<RegisteredEndpoint>
 {
     protected RegisteredEndpoint()
     {
+        Activate();
     }
 
-    private RegisteredEndpoint(ModuleName moduleName, HttpMethod httpMethod, Path endpointPath, OperationId operationId, OperationDescription description, OperationSummary summary)
+    private RegisteredEndpoint(ModuleName moduleName, HttpMethod httpMethod, Path endpointPath, OperationId operationId, OperationDescription description)
     {
+        Id = Guid.NewGuid();
         ModuleName = moduleName;
         HttpMethod = httpMethod;
         Path = endpointPath;
         OperationId = operationId;
         OperationDescription = description;
+        Activate();
     }
 
     public ModuleName ModuleName { get; private set; }
@@ -30,10 +33,8 @@ internal class RegisteredEndpoint : BaseEntity<RegisteredEndpoint>
 
     public OperationDescription OperationDescription { get; private set; }
 
-    public OperationSummary OperationSummary { get; private set; }
-
-    public static RegisteredEndpoint Create(ModuleName moduleName, HttpMethod httpMethod, Path endpointPath, OperationId operationId, OperationDescription description, OperationSummary summary)
-       => new(moduleName, httpMethod, endpointPath, operationId, description, summary);
+    public static RegisteredEndpoint Create(ModuleName moduleName, HttpMethod httpMethod, Path endpointPath, OperationId operationId, OperationDescription description)
+       => new(moduleName, httpMethod, endpointPath, operationId, description);
 
     [InverseProperty(nameof(User.RegisteredEndpointCreators))]
     public virtual User Creator { get; private set; }

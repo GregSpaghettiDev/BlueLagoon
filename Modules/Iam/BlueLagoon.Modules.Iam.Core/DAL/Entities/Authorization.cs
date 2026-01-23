@@ -10,6 +10,7 @@ internal class Authorization : OpenIddictEntityFrameworkCoreAuthorization<BaseId
 {
     protected Authorization()
     {
+        Activate();
     }
 
     public BaseDate CreatedAt { get; private set; }

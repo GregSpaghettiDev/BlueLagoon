@@ -4,6 +4,7 @@ using BlueLagoon.Shared.DevTools.Api;
 using BlueLagoon.Shared.DevTools.Pagination;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Abstractions;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 using System.Net.Mime;
@@ -29,17 +30,20 @@ public sealed class ModuleController(IModuleService moduleService) : BaseControl
         return ContentResult(result, HttpStatusCode.OK);
     }
 
-    //[HttpPost("discovery")]
+    //[HttpPost()]
     //[Consumes(MediaTypeNames.Application.Json)]
-    //[ProducesResponseType(typeof(DiscoveredModuleDto), (int)HttpStatusCode.OK)]
+    //[ProducesResponseType((int)HttpStatusCode.NoContent)]
     //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
     //[ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     //[ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    //[SwaggerOperation(OperationId = nameof(DiscoverAvailableModules))]
-    //public async Task<IActionResult> DiscoverAvailableModules([FromBody] PaginationParameters PaginationParameters)
+    //[SwaggerOperation(OperationId = nameof(CreateModule), Summary = "Dodanie modułu do rejestru IAM", Description = "Dodaje wskazany moduł do rejestru IAM")]
+    //public async Task<IActionResult> CreateModule([FromBody] string Name, string Description, string OpenApiUri, string BaseUrl)
     //{
-    //    var result = await moduleService.DiscoverAvailableModules(PaginationParameters);
+    //    var result = await moduleService.CreateModuleAsync(PaginationParameters);
 
     //    return ContentResult(result, HttpStatusCode.OK);
+
+    //    if (await scopeManager.FindByNameAsync(Scope.Iam.Name) == null)
+    //        await scopeManager.CreateAsync(new OpenIddictScopeDescriptor { Name = Scope.Iam.Name, DisplayName = Scope.Iam.Description });
     //}
 }

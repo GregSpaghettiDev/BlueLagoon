@@ -36,7 +36,7 @@ internal sealed class ModuleService(IamDbContext dbContext, IMapper mapper, IHtt
         if (result.Diagnostic.Errors.Any())
             throw new InvalidOperationException("Dokumentacja Open Api zawiera błędy: " + string.Join(", ", result.Diagnostic.Errors.Select(x => x.Message)));
 
-        var endpoints =
+        var discoveredEndpoints =
             result.Document.Paths
                             .SelectMany(p => p.Value.Operations.Select(o => 
                             new EndpointDefinitionDto
@@ -50,6 +50,14 @@ internal sealed class ModuleService(IamDbContext dbContext, IMapper mapper, IHtt
                             .Where(e => e.Tags != null && e.Tags.Contains(moduleCode))
                             .ToList();
 
-        return endpoints;
+        var registeredEndpoints = await dbContext.RegisteredEndpoint
+                                                        .AsNoTracking()
+                                                        .Where(x => x.ModuleName == moduleCode)
+                                                        .Select(x => x.Path)
+                                                        .ToListAsync();
+
+        discoveredEndpoints.RemoveAll(x => registeredEndpoints.Contains(x.Path));
+
+        return discoveredEndpoints;
     }
 }

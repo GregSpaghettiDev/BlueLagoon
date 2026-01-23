@@ -48,7 +48,5 @@ internal sealed class Oauth2Oidc : IServicesInstaller
                 options.UseLocalServer();
                 options.UseAspNetCore();
             });
-
-        services.AddHostedService<Initializer>();
     }
 }

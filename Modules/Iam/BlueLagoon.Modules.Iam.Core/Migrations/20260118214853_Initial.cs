@@ -163,7 +163,6 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                     module_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     operation_description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     operation_id = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    operation_summary = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     path = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
                     creator_id = table.Column<Guid>(type: "uuid", nullable: false),
