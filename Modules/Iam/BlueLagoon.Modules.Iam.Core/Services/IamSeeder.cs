@@ -2,6 +2,10 @@
 using BlueLagoon.Modules.Iam.Core.DAL.Entities;
 using BlueLagoon.Modules.Iam.Core.Dictionaries;
 using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
+using BlueLagoon.Shared.DevTools.Uniqueidentifier;
+using BlueLagoon.Shared.Infrastructure.Settings;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,12 +23,13 @@ internal sealed class IamSeeder(IHostApplicationLifetime lifetime, IServiceProvi
             _ = Task.Run(async () =>
             {
                 using var scope = serviceProvider.CreateScope();
-                logger.LogInformation("Aplikacja w pełni uruchomiona. Rozpoczęcie importu endpointów modułu IAM...");
+                logger.LogInformation("Aplikacja w pełni uruchomiona. Rozpoczęcie importu endpointów modułu IAM oraz inicjalnych danych słownikowych.");
 
                 var moduleService = scope.ServiceProvider.GetRequiredService<IModuleService>();
                 var context = scope.ServiceProvider.GetRequiredService<IamDbContext>();
-
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
                 var scopeManager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
                 var module = await scopeManager.FindByNameAsync(Scope.Iam.Name);
                 module ??= await scopeManager.CreateAsync(new OpenIddictScopeDescriptor { Name = Scope.Iam.Name, DisplayName = Scope.Iam.Description });
@@ -61,6 +66,15 @@ internal sealed class IamSeeder(IHostApplicationLifetime lifetime, IServiceProvi
 
                     await context.SaveChangesAsync();
                 }
+
+                if (!await roleManager.RoleExistsAsync(ValueObjects.Role.IamAdmin))
+                    await roleManager.CreateAsync(Role.Create(ValueObjects.Role.IamAdmin));
+
+                var defaultSystemUser = scope.ServiceProvider.GetRequiredService<DefaultSystemUser>();
+                var user = await context.Users.Where(x => x.Id == defaultSystemUser.Id.ToBaseId()).SingleOrDefaultAsync();
+                if (user is not null && !await userManager.IsInRoleAsync(user, ValueObjects.Role.IamAdmin))
+                    await userManager.AddToRoleAsync(user, ValueObjects.Role.IamAdmin);
+
             });
         });
 

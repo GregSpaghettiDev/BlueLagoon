@@ -5,6 +5,7 @@ using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Configuration;
 using BlueLagoon.Shared.DevTools.Installers;
 using BlueLagoon.Shared.Infrastructure.Settings;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

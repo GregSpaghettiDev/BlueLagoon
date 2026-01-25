@@ -7,8 +7,6 @@ namespace BlueLagoon.Shared.DevTools.Http;
 
 public static class HttpContextExtensions
 {
-    public const string CreatedResourceIdName = "CreatedResourceId";
-
     public static string GetUserId(this HttpContext httpContext)
     {
         return httpContext?.User?.Claims?.SingleOrDefault(x => x.Type == "id")?.Value ?? string.Empty;
@@ -65,6 +63,11 @@ public static class HttpContextExtensions
 
     public static void AddCreatedResourceId(this HttpContext httpContext, Guid resourceId)
     {
-        httpContext?.Items.Add(CreatedResourceIdName, resourceId.ToString());
+        httpContext?.Items.Add(nameof(CreatedResource.CreatedResourceId), resourceId.ToString());
     }
+}
+
+public class CreatedResource
+{
+    public Guid CreatedResourceId { get; set; }
 }

@@ -8,8 +8,21 @@ namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
 internal class Role : IdentityRole<BaseId>, IBaseEntity
 {
-    public Role()
+    protected Role() { }
+
+    protected Role(Guid id, string roleName)
     {
+        Id = id;
+        Name = roleName;
+        NormalizedName = roleName.ToUpperInvariant();
+        Activate();
+    }
+
+    protected Role(ValueObjects.Role role)
+    {
+        Id = role.Id;
+        Name = role.Value;
+        NormalizedName = role.Value.ToUpperInvariant();
         Activate();
     }
 
@@ -22,6 +35,12 @@ internal class Role : IdentityRole<BaseId>, IBaseEntity
     public BaseId ModificatorId { get; private set; }
 
     public bool IsActive { get; private set; }
+
+    public static Role Create(ValueObjects.Role role)
+        => new(role);
+
+    public static Role Create(BaseId id, ValueObjects.Role role)
+        => new(id, role);
 
     public void SetCreatorAuditProperties(BaseDate createdAt, BaseId creatorId)
     {

@@ -27,8 +27,7 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
         
         if (!await userManager.Users.AnyAsync(x => x.Id == defaultSystemUser.Id.ToBaseId(), cancellationToken: cancellationToken))
         {
-            var result = await userManager.CreateAsync(
-            new User
+            var user = new User
             {
                 Id = defaultSystemUser.Id,
                 UserName = defaultSystemUser.Username,
@@ -36,10 +35,14 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
                 LastName = defaultSystemUser.LastName,
                 Email = defaultSystemUser.Email,
                 EmailConfirmed = true
-            }, defaultSystemUser.Password);
+            };
+
+            var result = await userManager.CreateAsync(user, defaultSystemUser.Password);
 
             if (!result.Succeeded)
                 throw new InvalidOperationException($"Nieudana inicjalizacja użytkownika systemowego.", new Exception(result.Errors.FirstOrDefault()?.Description ?? string.Empty));
+
+            await userManager.SetLockoutEnabledAsync(user, false);
         }
             
         if (await appManager.FindByClientIdAsync(frontendAppSettings.OauthClientId) == null)
@@ -50,8 +53,7 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
                 DisplayName = frontendAppSettings.Description,
                 RedirectUris = 
                 { 
-                    new Uri(frontendAppSettings.CallbackUri), 
-                    new Uri("https://localhost:5000/swagger/oauth2-redirect.html") 
+                    new Uri(frontendAppSettings.CallbackUri)
                 },
                 PostLogoutRedirectUris = { new Uri(frontendAppSettings.Uri) },
                 Permissions =

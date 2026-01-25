@@ -11,9 +11,7 @@ namespace BlueLagoon.Modules.Iam.Core.Services;
 
 internal sealed class AuthorizationService(IHttpContextAccessor contextAccessor,
                                            SignInManager<User> signInManager,
-                                           UserManager<User> userManager,
-                                           IOpenIddictApplicationManager applicationManager,
-                                           IOpenIddictScopeManager openIddictScopeManager) 
+                                           UserManager<User> userManager) 
     : IAuthorizationService
 {
     private readonly HttpContext httpContext = contextAccessor.HttpContext;
@@ -30,16 +28,33 @@ internal sealed class AuthorizationService(IHttpContextAccessor contextAccessor,
         var user = await userManager.GetUserAsync(httpContext.User);
         var principal = await signInManager.CreateUserPrincipalAsync(user);
 
-        var userAllowedScopes = new List<string>();
+        var userAllowedScopes = await GetAuthorizedModuleScopesAsync(user, principal);
+        principal.SetScopes(userAllowedScopes);
 
-        //openIddictScopeManager.
-        //if (/* Sprawdź w DB czy user ma dostęp do Utrzymania */) userAllowedScopes.Add("retention");
-        //if (/* Sprawdź w DB czy user ma dostęp do Motywacji */) userAllowedScopes.Add("motivation");
 
-        return Task.FromResult(new AuthorizationResultDto
+        return new AuthorizationResultDto
         {
             IsChallenge = false,
             Principal = principal
-        }).Result;
+        };
+    }
+
+    public async Task<IEnumerable<string>> GetAuthorizedModuleScopesAsync(User user, ClaimsPrincipal principal)
+    {
+        var permissions = principal.Claims
+                                    .Where(c => c.Type == "permission")
+                                    .Select(c => c.Value)
+                                    .ToList();
+
+        var authorizedModules = permissions
+                                    .Select(p => p.Split('.')[0])
+                                    .Distinct()
+                                    .ToList();
+
+        if (principal.IsInRole(ValueObjects.Role.IamAdmin))
+            authorizedModules.Add(ValueObjects.Role.IamAdmin);
+
+
+        return authorizedModules;
     }
 }

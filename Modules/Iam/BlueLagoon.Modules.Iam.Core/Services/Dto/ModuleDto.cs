@@ -12,9 +12,13 @@ public class ModuleDto
 
     public Guid CreatorId { get; set; }
 
+    public string CreatorName { get; set; }
+
     public DateTime? ModifiedAt { get; set; }
 
     public Guid? ModificatorId { get; set; }
+
+    public string ModificatorName { get; set; }
 
     public bool IsActive { get; set; }
 

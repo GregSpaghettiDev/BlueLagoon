@@ -9,7 +9,7 @@ internal sealed record ModuleName(string Value)
 
     public string Value { get; } = (string.IsNullOrWhiteSpace(Value) || Value.Length is < MinCharactersNumber or > MaxCharactersNumber)
                                         ? throw new InvalidModuleNameException(MinCharactersNumber, MaxCharactersNumber)
-                                        : Value;
+                                        : Value.ToLowerInvariant();
 
     public static implicit operator ModuleName(string name) => new(name);
 
