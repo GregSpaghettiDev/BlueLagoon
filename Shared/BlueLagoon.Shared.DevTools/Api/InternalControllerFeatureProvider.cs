@@ -22,7 +22,7 @@ internal class InternalControllerFeatureProvider : ControllerFeatureProvider
         if (typeInfo.IsDefined(typeof(NonControllerAttribute)))
             return false;
 
-        if (!typeInfo.Name.EndsWith(ControllerTypeNameSuffix, StringComparison.OrdinalIgnoreCase) && !typeInfo.IsDefined(typeof(ControllerAttribute)))
+        if (!typeInfo.Name.EndsWith(ControllerTypeNameSuffix, StringComparison.OrdinalIgnoreCase) && !typeInfo.IsDefined(typeof(ControllerAttribute)) && !typeInfo.IsDefined(typeof(ApiControllerAttribute)))
             return false;
 
         return true;

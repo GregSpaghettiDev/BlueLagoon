@@ -1,7 +1,7 @@
 ﻿using BlueLagoon.Shared.DevTools.Base.Abstractions;
 using BlueLagoon.Shared.DevTools.DateAndTime.Abstractions;
+using BlueLagoon.Shared.DevTools.Http;
 using BlueLagoon.Shared.DevTools.Uniqueidentifier;
-using BlueLagoon.Shared.Infrastructure.RequestContext;
 using BlueLagoon.Shared.Infrastructure.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -20,17 +20,17 @@ public sealed class SaveChangesWithAuditInterceptor(IDateTimeProvider dateTimePr
     {
         var context = eventData.Context;
         var currentDateTime = dateTimeProvider.Current();
-        var userId = httpContext.GetUserId();
-        if (userId is null && (systemUser?.Id.IsNullOrEmpty() ?? true))
+        var userId = httpContext.GetUserIdAsGuid();
+        if (userId.IsNullOrEmpty() && (systemUser?.Id.IsNullOrEmpty() ?? true))
             return base.SavingChangesAsync(eventData, result, cancellationToken);
 
         foreach (var entry in context.ChangeTracker.Entries<IBaseEntity>())
         {
             if (entry.State == EntityState.Added)
-                entry.Entity.SetCreatorAuditProperties(currentDateTime, userId ?? systemUser.Id);
+                entry.Entity.SetCreatorAuditProperties(currentDateTime, userId.IsNullOrEmpty() ? systemUser.Id : Guid.Empty);
 
             if (entry.State == EntityState.Modified)
-                entry.Entity.SetModificatorAuditProperties(currentDateTime, userId ?? systemUser.Id);
+                entry.Entity.SetModificatorAuditProperties(currentDateTime, userId.IsNullOrEmpty() ? systemUser.Id : Guid.Empty);
         }
 
         return base.SavingChangesAsync(eventData, result, cancellationToken);

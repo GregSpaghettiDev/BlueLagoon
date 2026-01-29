@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlueLagoon.Modules.Iam.Core.Migrations
 {
     [DbContext(typeof(IamDbContext))]
-    [Migration("20260118214853_Initial")]
+    [Migration("20260128233856_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -316,6 +316,7 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -406,6 +407,7 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -633,6 +635,7 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 

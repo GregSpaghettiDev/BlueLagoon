@@ -1,8 +1,16 @@
 ﻿namespace BlueLagoon.Shared.Infrastructure.Settings;
 
-internal sealed class SwaggerSettings
+public sealed class SwaggerSettings
 {
     public string OauthClientId { get; init; }
+
+    public string OauthClientSecret { get; init; }
+    
+    public string OauthRelativeRedirectUri { get; init; }
+    
+    public string RelativeOpenApiPath { get; init; }
+
+    public string RelativeUiPath { get; init; }
 
     public string Name { get; init;  }
 

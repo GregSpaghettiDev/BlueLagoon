@@ -9,7 +9,6 @@ internal sealed class IamProfile : Profile
     public IamProfile()
     {
         CreateMap<Module, ModuleDto>()
-            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id.Value))
             .ForMember(d => d.Code, o => o.MapFrom(s => s.Name))
             .ForMember(d => d.CreatorName, o => o.MapFrom(s => s.Creator != null ? s.Creator.FirstName + " " + s.Creator.LastName : string.Empty))
             .ForMember(d => d.ModificatorName, o => o.MapFrom(s => s.Modificator != null ? s.Modificator.FirstName + " " + s.Modificator.LastName : string.Empty))

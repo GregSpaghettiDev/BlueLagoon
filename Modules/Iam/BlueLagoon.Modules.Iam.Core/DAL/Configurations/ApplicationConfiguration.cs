@@ -13,7 +13,6 @@ internal class ApplicationConfiguration : IEntityTypeConfiguration<Application>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-                    .HasConversion(x => x.Value, x => new BaseId(x))
                     .IsRequired();
 
         builder.GenerateBasePropertiesRules();

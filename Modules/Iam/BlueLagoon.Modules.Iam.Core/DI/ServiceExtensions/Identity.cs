@@ -1,6 +1,7 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL;
 using BlueLagoon.Modules.Iam.Core.DAL.Entities;
 using BlueLagoon.Shared.DevTools.Installers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,5 +19,14 @@ internal sealed class Identity : IServicesInstaller
         })
         .AddEntityFrameworkStores<IamDbContext>()
         .AddDefaultTokenProviders();
+
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/account/login";
+            options.AccessDeniedPath = "/account/access-denied";
+            options.Cookie.Name = "BlueLagoon.Iam.Identity";
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        });
     }
 }

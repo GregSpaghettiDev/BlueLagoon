@@ -1,12 +1,11 @@
-﻿using BlueLagoon.Shared.DevTools.Base;
-using BlueLagoon.Shared.DevTools.Base.Abstractions;
+﻿using BlueLagoon.Shared.DevTools.Base.Abstractions;
 using BlueLagoon.Shared.DevTools.Base.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
-internal class Role : IdentityRole<BaseId>, IBaseEntity
+internal class Role : IdentityRole<Guid>, IBaseEntity
 {
     protected Role() { }
 
@@ -26,29 +25,29 @@ internal class Role : IdentityRole<BaseId>, IBaseEntity
         Activate();
     }
 
-    public BaseDate CreatedAt { get; private set; }
+    public DateTime CreatedAt { get; private set; }
 
-    public BaseId CreatorId { get; private set; }
+    public Guid CreatorId { get; private set; }
 
-    public BaseDate ModifiedAt { get; private set; }
+    public DateTime? ModifiedAt { get; private set; }
 
-    public BaseId ModificatorId { get; private set; }
+    public Guid? ModificatorId { get; private set; }
 
     public bool IsActive { get; private set; }
 
     public static Role Create(ValueObjects.Role role)
         => new(role);
 
-    public static Role Create(BaseId id, ValueObjects.Role role)
+    public static Role Create(Guid id, ValueObjects.Role role)
         => new(id, role);
 
-    public void SetCreatorAuditProperties(BaseDate createdAt, BaseId creatorId)
+    public void SetCreatorAuditProperties(DateTime createdAt, Guid creatorId)
     {
         CreatedAt = createdAt;
         CreatorId = creatorId;
     }
 
-    public void SetModificatorAuditProperties(BaseDate modifiedAt, BaseId modificatorId)
+    public void SetModificatorAuditProperties(DateTime modifiedAt, Guid modificatorId)
     {
         ModifiedAt = modifiedAt;
         ModificatorId = modificatorId;

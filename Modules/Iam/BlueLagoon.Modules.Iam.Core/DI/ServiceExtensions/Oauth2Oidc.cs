@@ -1,11 +1,9 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL;
 using BlueLagoon.Modules.Iam.Core.DAL.Entities;
-using BlueLagoon.Modules.Iam.Core.Services;
 using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Configuration;
 using BlueLagoon.Shared.DevTools.Installers;
 using BlueLagoon.Shared.Infrastructure.Settings;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,7 +22,7 @@ internal sealed class Oauth2Oidc : IServicesInstaller
             {
                 options.UseEntityFrameworkCore()
                        .UseDbContext<IamDbContext>()
-                       .ReplaceDefaultEntities<Application, Authorization, Module, Token, BaseId>();
+                       .ReplaceDefaultEntities<Application, Authorization, Module, Token, Guid>();
             })
             .AddServer(options =>
             {
@@ -36,13 +34,21 @@ internal sealed class Oauth2Oidc : IServicesInstaller
                 options.AllowAuthorizationCodeFlow();
                 options.AllowRefreshTokenFlow();
 
+                options.RequireProofKeyForCodeExchange();
+
                 options.AddDevelopmentEncryptionCertificate()
                        .AddDevelopmentSigningCertificate();
 
                 options.UseAspNetCore()
                        .EnableEndSessionEndpointPassthrough()
                        .EnableAuthorizationEndpointPassthrough()
-                       .EnableTokenEndpointPassthrough();
+                       .EnableTokenEndpointPassthrough()
+                       .EnableStatusCodePagesIntegration().DisableTransportSecurityRequirement();
+
+                //var environment = configuration["ASPNETCORE_ENVIRONMENT"];
+                //if (environment == "Development")
+                //    options.DisableTransportSecurityRequirement();
+
             })
             .AddValidation(options =>
             {

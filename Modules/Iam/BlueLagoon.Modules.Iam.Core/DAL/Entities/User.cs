@@ -1,12 +1,11 @@
 ﻿using BlueLagoon.Modules.Iam.Core.ValueObjects;
-using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Base.Abstractions;
 using BlueLagoon.Shared.DevTools.Base.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
 namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
-internal class User : IdentityUser<BaseId>, IBaseEntity
+internal class User : IdentityUser<Guid>, IBaseEntity
 {
     public User()
     {
@@ -17,23 +16,23 @@ internal class User : IdentityUser<BaseId>, IBaseEntity
 
     public UserLastName LastName { get; set; }
 
-    public BaseDate CreatedAt { get; private set; }
+    public DateTime CreatedAt { get; private set; }
 
-    public BaseId CreatorId { get; private set; }
+    public Guid CreatorId { get; private set; }
 
-    public BaseDate ModifiedAt { get; private set; }
+    public DateTime? ModifiedAt { get; private set; }
 
-    public BaseId ModificatorId { get; private set; }
+    public Guid? ModificatorId { get; private set; }
 
     public bool IsActive { get; private set; }
 
-    public void SetCreatorAuditProperties(BaseDate createdAt, BaseId creatorId)
+    public void SetCreatorAuditProperties(DateTime createdAt, Guid creatorId)
     {
         CreatedAt = createdAt;
         CreatorId = creatorId;
     }
 
-    public void SetModificatorAuditProperties(BaseDate modifiedAt, BaseId modificatorId)
+    public void SetModificatorAuditProperties(DateTime modifiedAt, Guid modificatorId)
     {
         ModifiedAt = modifiedAt;
         ModificatorId = modificatorId;

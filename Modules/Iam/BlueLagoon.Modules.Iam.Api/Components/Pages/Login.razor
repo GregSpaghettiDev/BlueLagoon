@@ -1,0 +1,37 @@
+﻿@page "/login"
+
+<PageTitle>Logowanie</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title text-center">Zaloguj się</h3>
+                <form method="post" action="/account/login">
+                    <AntiforgeryToken />
+                    <input type="hidden" name="returnUrl" value="@ReturnUrl" />
+                    <div class="mb-3">
+                        <label class="form-label">Użytkownik</label>
+                        <input name="Username" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Hasło</label>
+                        <input name="Password" type="password" class="form-control" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Zaloguj</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string ReturnUrl { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Error { get; set; }
+}

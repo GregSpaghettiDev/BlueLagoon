@@ -11,5 +11,6 @@ internal sealed class ApplicationServices : IServicesInstaller
     public void Intstall(IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IModuleService, ModuleService>();
+        services.AddScoped<IAuthorizationService, AuthorizationService>();
     }
 }

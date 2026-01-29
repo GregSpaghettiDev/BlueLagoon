@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BlueLagoon.Modules.Iam.Core.DAL;
 
 internal sealed class IamDbContext(DbContextOptions<IamDbContext> options) 
-    : IdentityDbContext<User, Role, BaseId, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>(options)
+    : IdentityDbContext<User, Role, Guid, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>(options)
 {
     public DbSet<Application> Application { get; set; }
 
@@ -23,7 +23,7 @@ internal sealed class IamDbContext(DbContextOptions<IamDbContext> options)
     {
         base.OnModelCreating(builder);
         builder.HasDefaultSchema("iam");
-        builder.UseOpenIddict<Application, Authorization, Module, Token, BaseId>();
+        builder.UseOpenIddict<Application, Authorization, Module, Token, Guid>();
         builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
 
         foreach (var entity in builder.Model.GetEntityTypes())

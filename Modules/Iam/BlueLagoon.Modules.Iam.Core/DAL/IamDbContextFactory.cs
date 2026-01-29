@@ -28,7 +28,7 @@ internal sealed class IamDbContextFactory : IDesignTimeDbContextFactory<IamDbCon
                     x.MigrationsAssembly(typeof(IamDbContext).Assembly.FullName);
                     x.MigrationsHistoryTable("__EFMigrationsHistory", "iam");
                 });
-        builder.UseOpenIddict<Application, Authorization, Module, Token, BaseId>();
+        builder.UseOpenIddict<Application, Authorization, Module, Token, Guid>();
             
         return new IamDbContext(builder.Options);
     }

@@ -6,6 +6,7 @@ using BlueLagoon.Shared.DevTools.Uniqueidentifier;
 using BlueLagoon.Shared.Infrastructure.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenIddict.Abstractions;
@@ -24,8 +25,10 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
         var defaultSystemUser = scope.ServiceProvider.GetRequiredService<DefaultSystemUser>();
         var moduleService = scope.ServiceProvider.GetRequiredService<IModuleService>();
-        
-        if (!await userManager.Users.AnyAsync(x => x.Id == defaultSystemUser.Id.ToBaseId(), cancellationToken: cancellationToken))
+        var swaggerSettings = scope.ServiceProvider.GetRequiredService<SwaggerSettings>();
+        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+        if (!await userManager.Users.AnyAsync(x => x.Id == defaultSystemUser.Id, cancellationToken: cancellationToken))
         {
             var user = new User
             {
@@ -76,13 +79,13 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
             });
         }
 
-        if (await appManager.FindByClientIdAsync("swagger-ui") == null)
+        if (await appManager.FindByClientIdAsync(swaggerSettings.OauthClientId) == null)
         {
             await appManager.CreateAsync(new OpenIddictApplicationDescriptor
             {
-                ClientId = "swagger-ui",
-                DisplayName = "Dokumentacja API (Swagger)",
-                RedirectUris = { new Uri("https://localhost:5000/swagger/oauth2-redirect.html") },
+                ClientId = swaggerSettings.OauthClientId,
+                DisplayName = swaggerSettings.Name,
+                RedirectUris = { new Uri("http://localhost:5000/swagger/oauth2-redirect.html") },
                 Permissions = 
                 {
                     OpenIddictConstants.Permissions.Endpoints.Authorization,

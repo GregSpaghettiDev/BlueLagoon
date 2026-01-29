@@ -313,6 +313,7 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -403,6 +404,7 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -630,6 +632,7 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 

@@ -25,7 +25,7 @@ internal class PostgreSql : IServicesInstaller
                     x.MigrationsHistoryTable("__EFMigrationsHistory", "iam");
                 });
 
-            options.UseOpenIddict<Application, Authorization, Module, Token, BaseId>();
+            options.UseOpenIddict<Application, Authorization, Module, Token, Guid>();
             options.AddInterceptors(interceptor);
         });
     }

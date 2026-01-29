@@ -25,10 +25,11 @@ public static class ModuleLoader
                 continue;
 
             var moduleName = file.Split(modulePartName)[1].Split(".")[0].ToLowerInvariant();
-            var enabled = configuration.GetValue<bool>($"{moduleName}:module:enabled");
+            var section = configuration.GetSection(moduleName);
+            var enabled = section.GetValue<bool?>("module:enabled") ?? false;
 
             if (!enabled)
-                disabledModules.Add(moduleName);
+                disabledModules.Add(file);
         }
 
         foreach (var disabledModule in disabledModules)

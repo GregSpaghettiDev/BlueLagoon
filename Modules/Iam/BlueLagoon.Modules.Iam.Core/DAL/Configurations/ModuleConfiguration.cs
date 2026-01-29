@@ -13,7 +13,6 @@ internal class ModuleConfiguration : IEntityTypeConfiguration<Module>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-                    .HasConversion(x => x.Value, x => new BaseId(x))
                     .IsRequired();
 
         builder.GenerateBasePropertiesRules();

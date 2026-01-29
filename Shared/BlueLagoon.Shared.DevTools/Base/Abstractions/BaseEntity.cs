@@ -9,25 +9,25 @@ public abstract class BaseEntity<TEntity> : IBaseEntity
     {
     }
 
-    public virtual BaseId Id { get; protected set; }
+    public virtual Guid Id { get; protected set; }
 
-    public virtual BaseDate CreatedAt { get; protected set; }
+    public virtual DateTime CreatedAt { get; protected set; }
 
-    public virtual BaseId CreatorId { get; protected set; }
+    public virtual Guid CreatorId { get; protected set; }
 
-    public virtual BaseDate ModifiedAt { get; protected set; }
+    public virtual DateTime? ModifiedAt { get; protected set; }
 
-    public virtual BaseId ModificatorId { get; protected set; }
+    public virtual Guid? ModificatorId { get; protected set; }
 
     public virtual bool IsActive { get; protected set; }
 
-    public void SetCreatorAuditProperties(BaseDate createdAt, BaseId creatorId)
+    public void SetCreatorAuditProperties(DateTime createdAt, Guid creatorId)
     {
         CreatedAt = createdAt;
         CreatorId = creatorId;
     }
 
-    public void SetModificatorAuditProperties(BaseDate modifiedAt, BaseId modificatorId)
+    public void SetModificatorAuditProperties(DateTime modifiedAt, Guid modificatorId)
     {
         ModifiedAt = modifiedAt;
         ModificatorId = modificatorId;
