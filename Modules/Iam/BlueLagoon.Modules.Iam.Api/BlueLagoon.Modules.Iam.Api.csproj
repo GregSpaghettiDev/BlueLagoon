@@ -6,6 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Components\logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="module.iam.development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

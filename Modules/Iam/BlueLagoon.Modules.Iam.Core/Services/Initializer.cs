@@ -2,7 +2,6 @@
 using BlueLagoon.Modules.Iam.Core.DAL.Entities;
 using BlueLagoon.Modules.Iam.Core.Dictionaries;
 using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
-using BlueLagoon.Shared.DevTools.Uniqueidentifier;
 using BlueLagoon.Shared.Infrastructure.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -47,13 +46,14 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
 
             await userManager.SetLockoutEnabledAsync(user, false);
         }
-            
+
         if (await appManager.FindByClientIdAsync(frontendAppSettings.OauthClientId) == null)
         {
             await appManager.CreateAsync(new OpenIddictApplicationDescriptor
             {
                 ClientId = frontendAppSettings.OauthClientId,
                 DisplayName = frontendAppSettings.Description,
+                ConsentType = OpenIddictConstants.ConsentTypes.Implicit,
                 RedirectUris = 
                 { 
                     new Uri(frontendAppSettings.CallbackUri)
@@ -85,12 +85,16 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
             {
                 ClientId = swaggerSettings.OauthClientId,
                 DisplayName = swaggerSettings.Name,
+                ConsentType = OpenIddictConstants.ConsentTypes.Implicit,
                 RedirectUris = { new Uri("http://localhost:5000/swagger/oauth2-redirect.html") },
+                PostLogoutRedirectUris = { new Uri("http://localhost:5000/swagger/index.html") },
                 Permissions = 
                 {
                     OpenIddictConstants.Permissions.Endpoints.Authorization,
                     OpenIddictConstants.Permissions.Endpoints.Token,
+                    OpenIddictConstants.Permissions.Endpoints.EndSession,
                     OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
+                    OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
                     OpenIddictConstants.Permissions.ResponseTypes.Code,
                     OpenIddictConstants.Permissions.Scopes.Email,
                     OpenIddictConstants.Permissions.Scopes.Profile,

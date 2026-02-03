@@ -7,7 +7,7 @@ namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
 internal class Token : OpenIddictEntityFrameworkCoreToken<Guid, Application, Authorization>, IBaseEntity
 {
-    protected Token() 
+    public Token() 
     {
         Activate();
     }

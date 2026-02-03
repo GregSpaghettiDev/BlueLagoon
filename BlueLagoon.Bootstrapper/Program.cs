@@ -1,4 +1,3 @@
-using BlueLagoon.Modules.Iam.Api;
 using BlueLagoon.Shared.DevTools.Modules;
 using BlueLagoon.Shared.DevTools.Modules.Abstractions;
 using BlueLagoon.Shared.Infrastructure;
@@ -23,9 +22,9 @@ foreach (var module in modules)
     module.Register(builder.Services, builder.Configuration);
 
 var app = builder.Build();
-app.InstallInfrastructureMiddlewares();
-app.MapRazorComponents<BlueLagoon.Modules.Iam.Api.Components.App>();
+app.InstallInfrastructureMiddlewares(assemblies);
 app.MapControllers();
+app.MapRazorComponents<BlueLagoon.Modules.Iam.Api.Components.App>();
 
 app.Logger.LogInformation($"Loaded modules: {string.Join(", ", modules.Select(x => x.Name))}");
 

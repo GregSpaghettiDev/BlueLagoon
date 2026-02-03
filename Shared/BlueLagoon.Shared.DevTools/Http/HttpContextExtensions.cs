@@ -1,8 +1,8 @@
 ﻿using BlueLagoon.Shared.DevTools.Base;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.Net.Http.Headers;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 
 namespace BlueLagoon.Shared.DevTools.Http;
 
@@ -10,12 +10,12 @@ public static class HttpContextExtensions
 {
     public static string GetUserId(this HttpContext httpContext)
     {
-        return httpContext?.User?.Claims?.SingleOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        return httpContext?.User?.Claims?.SingleOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value ?? string.Empty;
     }
 
     public static Guid GetUserIdAsGuid(this HttpContext httpContext)
     {
-        var userId = httpContext?.User?.Claims?.SingleOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var userId = httpContext?.User?.Claims?.SingleOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value ?? string.Empty;
         if (Guid.TryParse(userId, out var parsedUserId))
         {
             return parsedUserId;

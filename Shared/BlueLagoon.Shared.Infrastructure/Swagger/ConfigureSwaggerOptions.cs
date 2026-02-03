@@ -43,7 +43,7 @@ public class ConfigureSwaggerOptions(IServiceProvider ServiceProvider) : IConfig
                 {
                     AuthorizationUrl = new Uri(new Uri(baseUri), oauthSettings.Endpoints.AuthorizationEndpoint),
                     TokenUrl = new Uri(new Uri(baseUri), oauthSettings.Endpoints.TokenEndpoint),
-                    Scopes = scopesDictionary
+                    Scopes = scopesDictionary,
                 }
             }
         });

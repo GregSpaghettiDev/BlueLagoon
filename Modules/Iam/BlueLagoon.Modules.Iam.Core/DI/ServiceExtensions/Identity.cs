@@ -26,7 +26,15 @@ internal sealed class Identity : IServicesInstaller
             options.AccessDeniedPath = "/account/access-denied";
             options.Cookie.Name = "BlueLagoon.Iam.Identity";
             options.Cookie.HttpOnly = true;
-            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            //options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            options.SlidingExpiration = true;
+            options.Events.OnRedirectToAccessDenied = context =>
+            {
+                context.Response.Redirect(context.RedirectUri);
+                return Task.CompletedTask;
+            };
         });
     }
 }

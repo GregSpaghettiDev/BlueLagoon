@@ -1,11 +1,12 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL;
 using BlueLagoon.Modules.Iam.Core.DAL.Entities;
-using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Configuration;
 using BlueLagoon.Shared.DevTools.Installers;
 using BlueLagoon.Shared.Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BlueLagoon.Modules.Iam.Core.DI.ServiceExtensions;
 
@@ -15,6 +16,8 @@ internal sealed class Oauth2Oidc : IServicesInstaller
     {
 
         var oauthSettings = configuration.GetSettings<Oauth2OidcSettings>();
+        var provider = services.BuildServiceProvider();
+        var env = provider.GetRequiredService<IHostEnvironment>();
 
         services
             .AddOpenIddict()
@@ -36,18 +39,35 @@ internal sealed class Oauth2Oidc : IServicesInstaller
 
                 options.RequireProofKeyForCodeExchange();
 
-                options.AddDevelopmentEncryptionCertificate()
-                       .AddDevelopmentSigningCertificate();
+                if (env.IsProduction())
+                {
+                    var settings = configuration.GetSettings<Oauth2OidcSettings>();
 
-                options.UseAspNetCore()
+                    options.AddSigningKey(new SymmetricSecurityKey(Convert.FromBase64String(settings.SigningKey)));
+
+                    options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String(settings.EncryptionKey)));
+
+                    options.UseAspNetCore()
                        .EnableEndSessionEndpointPassthrough()
                        .EnableAuthorizationEndpointPassthrough()
                        .EnableTokenEndpointPassthrough()
-                       .EnableStatusCodePagesIntegration().DisableTransportSecurityRequirement();
+                       .EnableStatusCodePagesIntegration();
+                }
+                else
+                {
+                    options.AddDevelopmentEncryptionCertificate()
+                           .AddDevelopmentSigningCertificate();
 
-                //var environment = configuration["ASPNETCORE_ENVIRONMENT"];
-                //if (environment == "Development")
-                //    options.DisableTransportSecurityRequirement();
+                    options.UseAspNetCore()
+                       .EnableEndSessionEndpointPassthrough()
+                       .EnableAuthorizationEndpointPassthrough()
+                       .EnableTokenEndpointPassthrough()
+                       .EnableStatusCodePagesIntegration()
+                       .DisableTransportSecurityRequirement();//Tylko dla developmentu. Pozwala na żądania bez https.
+                }
+
+                options.SetAccessTokenLifetime(TimeSpan.FromMinutes(10));
+                options.SetRefreshTokenLifetime(TimeSpan.FromMinutes(30));
 
             })
             .AddValidation(options =>

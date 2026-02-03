@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using DtProvider = BlueLagoon.Shared.Infrastructure.DI.ServiceExtensions.DateTimeProvider;
 
@@ -16,13 +17,13 @@ internal static class Extensions
             installer.Intstall(services, configuration);
     }
 
-    public static void InstallInfrastructureMiddlewares(this WebApplication application)
+    public static void InstallInfrastructureMiddlewares(this WebApplication application, IEnumerable<Assembly> loadedAssemblies = null)
     {
         var installers = InstallersFetcher.GetInstallers<DtProvider, IMiddlewaresInstaller>();
         installers = installers.OrderBy(x => x.InstallOrder).ToList();
 
         foreach (var installer in installers)
-            installer.Install(application);
+            installer.Install(application, loadedAssemblies);
     }
 
     public static void InstallInfrastructureBuilderProviders(this WebApplicationBuilder builder, IConfiguration configuration)

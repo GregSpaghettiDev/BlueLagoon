@@ -1,10 +1,10 @@
-﻿using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
+using IAuthorizationService = BlueLagoon.Modules.Iam.Core.Services.Abstractions.IAuthorizationService;
 
 namespace BlueLagoon.Modules.Iam.Api.Controllers;
 
@@ -28,20 +28,28 @@ public class AuthorizationController(IAuthorizationService authorizationService)
     [IgnoreAntiforgeryToken]
     public async Task<IActionResult> Exchange()
     {
-        var request = HttpContext.GetOpenIddictServerRequest();
+        var exchangeResult = await authorizationService.ExchangeAuthorizationCodeForTokensOrRefreshSessionAsync();
 
-        if (request.IsAuthorizationCodeGrantType() || request.IsRefreshTokenGrantType())
-        {
-            var result = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
-            return SignIn(result.Principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
-        }
+        if ((exchangeResult?.ExchangeResult?.Succeeded ?? true) == false && exchangeResult.IsRefreshTokenGrant)
+            return Forbid(
+                new AuthenticationProperties(new Dictionary<string, string>
+                {
+                    [OpenIddictServerAspNetCoreConstants.Properties.Error] = OpenIddictConstants.Errors.InvalidGrant,
+                    [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "Sesja użytkownika wygasła lub token jest nieważny."
+                }),
+                OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+
+        if (exchangeResult?.ExchangeResult?.Succeeded ?? false)
+            return SignIn(exchangeResult.ExchangeResult.Principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
         return BadRequest(new OpenIddictResponse
         {
-            Error = OpenIddictConstants.Errors.UnsupportedGrantType
+            Error = OpenIddictConstants.Errors.UnsupportedGrantType,
+            ErrorDescription = "Nieobsługiwany typ żądania podczas próby wymiany tokenów."
         });
     }
 
+    [AllowAnonymous]
     [HttpGet("~/connect/logout")]
     [HttpPost("~/connect/logout")]
     public async Task<IActionResult> Logout()

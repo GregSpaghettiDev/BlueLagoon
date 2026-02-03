@@ -3,6 +3,10 @@
 public sealed class Oauth2OidcSettings
 {
     public Oauth2Endpoints Endpoints { get; init; }
+
+    public string SigningKey { get; init; }
+
+    public string EncryptionKey { get; init; }
 }
 
 public class Oauth2Endpoints

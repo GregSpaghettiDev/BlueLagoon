@@ -1,39 +1,46 @@
 ﻿using BlueLagoon.Modules.Iam.Api.Controllers.Account.Requests;
 using BlueLagoon.Modules.Iam.Core.DAL.Entities;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Abstractions;
+using System.Security.Claims;
 
 namespace BlueLagoon.Modules.Iam.Api.Controllers.Account;
 
 [ApiController]
 [Route("account")]
-internal class AccountController(SignInManager<User> signInManager) : Controller // Używamy Controller zamiast ControllerBase, by móc zwracać widoki
+[Tags(IamModule.BasePath)]
+[ApiExplorerSettings(IgnoreApi = true)]
+internal class AccountController(SignInManager<User> signInManager, UserManager<User> userManager) : Controller
 {
-    // POST: /login
-    // To tutaj trafiają dane z formularza (login/hasło)
     [HttpPost("login")]
     [Consumes("application/x-www-form-urlencoded")]
     public async Task<IActionResult> Login([FromForm] LoginRequest request)
     {
-        // 1. Logowanie przez SignInManager (to wystawi ciasteczko)
-        var result = await signInManager.PasswordSignInAsync(request.UserName, request.Password, false, false);
-
-        if (result.Succeeded)
+        var user = await userManager.FindByNameAsync(request.UserName);
+        if (user != null && await userManager.CheckPasswordAsync(user, request.Password))
         {
-            // 2. Sukces! Wracamy pod adres, który był w ReturnUrl 
-            // (czyli z powrotem do Twojego ~/connect/authorize)
+            var principal = await signInManager.CreateUserPrincipalAsync(user);
+
+            if (principal.Identity is ClaimsIdentity identity)
+                identity.AddClaim(new Claim(OpenIddictConstants.Claims.Subject, user.Id.ToString()));
+
+            await signInManager.Context.SignInAsync(IdentityConstants.ApplicationScheme, principal, new AuthenticationProperties { IsPersistent = false });
+
             return LocalRedirect(request.ReturnUrl);
         }
 
         var encodedReturnUrl = System.Net.WebUtility.UrlEncode(request.ReturnUrl ?? "");
-        return Redirect($"/login?error=invalid_credentials&returnUrl={encodedReturnUrl}");
+        return Redirect($"/account/login?error=invalid_credentials&returnUrl={encodedReturnUrl}");
     }
 
+    [AllowAnonymous]
     [HttpGet("access-denied")]
     public IActionResult AccessDenied()
     {
-        // Możesz zwrócić widok HTML z ładnym komunikatem
-        // lub po prostu wynik JSON, jeśli to API
         return StatusCode(403, "Brak wystarczających uprawnień do wykonania tej akcji w module IAM.");
     }
 }

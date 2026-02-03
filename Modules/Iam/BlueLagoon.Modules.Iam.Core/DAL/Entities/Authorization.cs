@@ -8,7 +8,7 @@ namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
 internal class Authorization : OpenIddictEntityFrameworkCoreAuthorization<Guid, Application, Token>, IBaseEntity
 {
-    protected Authorization()
+    public Authorization()
     {
         Activate();
     }
