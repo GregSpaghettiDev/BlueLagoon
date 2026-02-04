@@ -13,13 +13,13 @@ builder.Configuration.AddEnvironmentVariables(prefix: "Blue_");
 builder.Host.ConfigureModules();
 builder.InstallInfrastructureBuilderProviders(builder.Configuration);
 
-builder.Services.InstallInfrastructureServices(builder.Configuration);
-
 IList<Assembly> assemblies = ModuleLoader.LoadAssemblies(builder.Configuration, "BlueLagoon.Modules.");
 IList<IModule> modules = ModuleLoader.LoadModules(assemblies);
 
 foreach (var module in modules)
     module.Register(builder.Services, builder.Configuration);
+
+builder.Services.InstallInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
 app.InstallInfrastructureMiddlewares(assemblies);

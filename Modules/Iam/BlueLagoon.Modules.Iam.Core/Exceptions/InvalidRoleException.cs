@@ -1,9 +1,9 @@
 ﻿using BlueLagoon.Modules.Iam.Core.Exceptions.Abstractions;
+using System.Net;
 
 namespace BlueLagoon.Modules.Iam.Core.Exceptions;
 
-public sealed class InvalidRoleException(int MinCharactersNumber, int MaxCharactersNumber) : BaseCoreException
+public sealed class InvalidRoleException(int MinCharactersNumber, int MaxCharactersNumber) : BaseIamCoreException($"Niepoprawna rola. Rola może zawierać od {MinCharactersNumber} do {MaxCharactersNumber} znaków.", "007")
 {
-    public override string Message { get; }
-        = $"Niepoprawna rola. Rola może zawierać od {MinCharactersNumber} do {MaxCharactersNumber} znaków.";
+    public override HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
 }
