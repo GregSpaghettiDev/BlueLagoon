@@ -1,4 +1,5 @@
 ﻿using BlueLagoon.Modules.Iam.Api.Controllers.Module.Requests;
+using BlueLagoon.Modules.Iam.Core.Dictionaries;
 using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
 using BlueLagoon.Modules.Iam.Core.Services.Dto;
 using BlueLagoon.Shared.DevTools.Api;
@@ -13,14 +14,15 @@ using System.Net.Mime;
 
 namespace BlueLagoon.Modules.Iam.Api.Controllers.Module;
 
-[Tags(IamModule.BasePath)]
 [ApiController]
+[Tags(IamModule.BasePath)]
 [Route(IamModule.BasePath + "/modules")]
-[Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, Policy = AuthorizationPolicies.IamScopeRequirement)]
 public sealed class ModuleController(IModuleService moduleService, IHttpContextAccessor httpContextAccessor)
     : BaseController(httpContextAccessor)
 {
     [HttpGet]
+    [Authorize(Policy = AuthorizationPolicies.ListModules)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ModuleDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -34,7 +36,8 @@ public sealed class ModuleController(IModuleService moduleService, IHttpContextA
         return ContentResult(result, HttpStatusCode.OK);
     }
 
-    [HttpPost()]
+    [HttpPost]
+    [Authorize(Policy = AuthorizationPolicies.AddModule)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -49,6 +52,7 @@ public sealed class ModuleController(IModuleService moduleService, IHttpContextA
     }
 
     [HttpPut("{moduleId:guid}/open-api-path")]
+    [Authorize(Policy = AuthorizationPolicies.UpdateModule)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -63,6 +67,7 @@ public sealed class ModuleController(IModuleService moduleService, IHttpContextA
     }
 
     [HttpPut("{moduleId:guid}/open-api-url")]
+    [Authorize(Policy = AuthorizationPolicies.UpdateModule)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -77,6 +82,7 @@ public sealed class ModuleController(IModuleService moduleService, IHttpContextA
     }
 
     [HttpPut("{moduleId:guid}/deactivated")]
+    [Authorize(Policy = AuthorizationPolicies.UpdateModule)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -91,6 +97,7 @@ public sealed class ModuleController(IModuleService moduleService, IHttpContextA
     }
 
     [HttpPut("{moduleId:guid}/activated")]
+    [Authorize(Policy = AuthorizationPolicies.UpdateModule)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]

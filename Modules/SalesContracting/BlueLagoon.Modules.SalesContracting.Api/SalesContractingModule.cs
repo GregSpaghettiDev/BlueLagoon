@@ -3,6 +3,7 @@ using BlueLagoon.Modules.SalesContracting.Core;
 using BlueLagoon.Modules.SalesContracting.Infrastructure;
 using BlueLagoon.Modules.SalesContracting.Mapping;
 using BlueLagoon.Shared.DevTools.Modules.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +14,7 @@ internal class SalesContractingModule : IModule
 {
     public const string BasePath = "sales-contracting";
 
-    public string Name { get; } = "SalesContracting";
+    public string Name { get; } = "Sales and Contracting";
 
     public string Path => BasePath;
 
@@ -26,6 +27,10 @@ internal class SalesContractingModule : IModule
     }
 
     public void Use(IApplicationBuilder app)
+    {
+    }
+
+    public void ConfigureAuthorization(AuthorizationOptions options)
     {
     }
 }

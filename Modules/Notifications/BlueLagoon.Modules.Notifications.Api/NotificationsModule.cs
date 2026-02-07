@@ -1,5 +1,6 @@
 ﻿using BlueLagoon.Modules.Notifications.Core;
 using BlueLagoon.Shared.DevTools.Modules.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,10 @@ public sealed class NotificationsModule : IModule
     }
 
     public void Use(IApplicationBuilder app)
+    {
+    }
+
+    public void ConfigureAuthorization(AuthorizationOptions options)
     {
     }
 }

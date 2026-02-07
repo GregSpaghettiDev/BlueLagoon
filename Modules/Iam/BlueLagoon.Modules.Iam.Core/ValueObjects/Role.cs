@@ -28,6 +28,8 @@ internal sealed record Role
 
     public static Role IamAdmin => new(new("81B75834-5CDA-4C7D-BC44-2CD49A118C06"), "iam-admin");
 
+    public const string IamAdminRoleName = "iam-admin";
+
     public static implicit operator Role(string name) => new(name);
     public static implicit operator string(Role name) => name.Value;
 

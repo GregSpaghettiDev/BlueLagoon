@@ -19,6 +19,12 @@ IList<IModule> modules = ModuleLoader.LoadModules(assemblies);
 foreach (var module in modules)
     module.Register(builder.Services, builder.Configuration);
 
+builder.Services.AddAuthorization(options =>
+{
+    foreach(var module in modules)
+        module.ConfigureAuthorization(options);
+});
+
 builder.Services.InstallInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();

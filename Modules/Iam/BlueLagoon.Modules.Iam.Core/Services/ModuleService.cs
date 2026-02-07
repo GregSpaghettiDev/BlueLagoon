@@ -88,20 +88,20 @@ internal sealed class ModuleService(IamDbContext dbContext,
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task SetOpenApiPathAsync(BaseId moduleId, string path)
+    public async Task SetOpenApiPathAsync(Guid moduleId, string path)
     {
         var pathVo = new ValueObjects.Path(path);
 
-        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId.Id && x.IsActive, true)
+        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId && x.IsActive, true)
             ?? throw new ModuleNotFoundException(moduleId);
 
         module.SetOpenApiPath(pathVo);
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task SetOpenApiUrlAsync(BaseId moduleId, string url)
+    public async Task SetOpenApiUrlAsync(Guid moduleId, string url)
     {
-        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId.Id && x.IsActive, true)
+        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId && x.IsActive, true)
             ?? throw new ModuleNotFoundException(moduleId);
 
         if (string.IsNullOrWhiteSpace(url))
@@ -111,9 +111,9 @@ internal sealed class ModuleService(IamDbContext dbContext,
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task SetOpenApiUrlAndOrPathAsync(BaseId moduleId, string url = null, string path = null)
+    public async Task SetOpenApiUrlAndOrPathAsync(Guid moduleId, string url = null, string path = null)
     {
-        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId.Id && x.IsActive, true)
+        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId && x.IsActive, true)
             ?? throw new ModuleNotFoundException(moduleId);
 
         if (!string.IsNullOrWhiteSpace(url))
@@ -129,27 +129,27 @@ internal sealed class ModuleService(IamDbContext dbContext,
             await dbContext.SaveChangesAsync();
     }
 
-    public async Task DeactivateModuleAsync(BaseId moduleId)
+    public async Task DeactivateModuleAsync(Guid moduleId)
     {
-        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId.Id && x.IsActive, true)
+        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId && x.IsActive, true)
             ?? throw new ModuleNotFoundException(moduleId);
 
         module.Deactivate();
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task ActivateModuleAsync(BaseId moduleId)
+    public async Task ActivateModuleAsync(Guid moduleId)
     {
-        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId.Id && !x.IsActive, true)
+        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId && !x.IsActive, true)
             ?? throw new ModuleNotFoundException(moduleId);
 
         module.Activate();
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task ChangeNameAsync(BaseId moduleId, string newName)
+    public async Task ChangeNameAsync(Guid moduleId, string newName)
     {
-        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId.Id, true)
+        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId, true)
             ?? throw new ModuleNotFoundException(moduleId);
 
         module.Name = newName;

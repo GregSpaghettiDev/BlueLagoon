@@ -55,7 +55,8 @@ internal sealed class Oauth2Oidc : IServicesInstaller
                 }
                 else
                 {
-                    options.AddDevelopmentEncryptionCertificate()
+                    options.DisableAccessTokenEncryption()
+                           .AddDevelopmentEncryptionCertificate()
                            .AddDevelopmentSigningCertificate();
 
                     options.UseAspNetCore()
