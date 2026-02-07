@@ -19,8 +19,7 @@ internal sealed class GlobalExceptionHandler(IProblemDetailsService ProblemDetai
             {
                 Detail = exception.Message,
                 Status = StatusCodes.Status500InternalServerError,
-                Title = "Nieznany błąd w module IAM",
-                Instance = httpContext.Request.Path
+                Title = "Nieznany błąd w module IAM"
             }
         });
     }

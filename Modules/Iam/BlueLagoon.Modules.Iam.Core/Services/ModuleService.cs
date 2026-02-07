@@ -78,7 +78,8 @@ internal sealed class ModuleService(IamDbContext dbContext,
             await scopeManager.CreateAsync(new OpenIddictScopeDescriptor
             {
                 Name = name,
-                DisplayName = description
+                DisplayName = description,
+                Resources = { Dictionaries.Scope.Resource }
             });
 
         ((Module)module).SetBaseUrl(baseUrl);
@@ -121,7 +122,7 @@ internal sealed class ModuleService(IamDbContext dbContext,
         if (!string.IsNullOrWhiteSpace(path))
         {
             var pathVo = new ValueObjects.Path(path);
-            module.SetBaseUrl(pathVo);
+            module.SetOpenApiPath(pathVo);
         }
 
         if (dbContext.ChangeTracker.HasChanges())

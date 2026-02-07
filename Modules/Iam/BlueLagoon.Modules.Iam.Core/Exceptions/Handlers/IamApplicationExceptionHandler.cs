@@ -10,10 +10,10 @@ internal sealed class IamApplicationExceptionHandler(IProblemDetailsService Prob
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        if (exception is not BaseIamApplicationException coreException)
+        if (exception is not BaseIamApplicationException applicationException)
             return false;
 
-        Logger.LogError(exception, "Wystąpił wyjątek aplikacyjny ({Code}) modułu Iam: {Message}", coreException.ErrorCode, coreException.Message);
+        Logger.LogError(exception, "Wystąpił wyjątek aplikacyjny ({Code}) modułu Iam: {Message}", applicationException.ErrorCode, applicationException.Message);
 
         return await ProblemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
@@ -21,10 +21,10 @@ internal sealed class IamApplicationExceptionHandler(IProblemDetailsService Prob
             Exception = exception,
             ProblemDetails = new ProblemDetails
             {
-                Detail = coreException.Message,
-                Status = (int)coreException.StatusCode,
+                Detail = applicationException.Message,
+                Status = (int)applicationException.StatusCode,
                 Title = "Naruszenie reguły aplikacyjnej w module IAM",
-                Instance = httpContext.Request.Path
+                Extensions = { ["errorCode"] = applicationException.ErrorCode }
             }
         });
     }

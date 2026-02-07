@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenIddict.Abstractions;
+
 namespace BlueLagoon.Modules.Iam.Core.Services;
 
 internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedService
@@ -26,6 +27,7 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
         var moduleService = scope.ServiceProvider.GetRequiredService<IModuleService>();
         var swaggerSettings = scope.ServiceProvider.GetRequiredService<SwaggerSettings>();
         var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+        var currentUrl = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5000";
 
         if (!await userManager.Users.AnyAsync(x => x.Id == defaultSystemUser.Id, cancellationToken: cancellationToken))
         {
@@ -86,9 +88,9 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
                 ClientId = swaggerSettings.OauthClientId,
                 DisplayName = swaggerSettings.Name,
                 ConsentType = OpenIddictConstants.ConsentTypes.Implicit,
-                RedirectUris = { new Uri("http://localhost:5000/swagger/oauth2-redirect.html") },
-                PostLogoutRedirectUris = { new Uri("http://localhost:5000/swagger/index.html") },
-                Permissions = 
+                RedirectUris = { new Uri(new Uri(currentUrl), swaggerSettings.OauthRelativeRedirectUri) },
+                PostLogoutRedirectUris = { new Uri(new Uri(currentUrl), swaggerSettings.RelativeUiPath) },
+                Permissions =
                 {
                     OpenIddictConstants.Permissions.Endpoints.Authorization,
                     OpenIddictConstants.Permissions.Endpoints.Token,

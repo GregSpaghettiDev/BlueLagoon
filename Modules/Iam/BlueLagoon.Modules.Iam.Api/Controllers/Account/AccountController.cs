@@ -26,8 +26,9 @@ internal class AccountController(SignInManager<User> signInManager, UserManager<
             var principal = await signInManager.CreateUserPrincipalAsync(user);
 
             if (principal.Identity is ClaimsIdentity identity)
+            {
                 identity.AddClaim(new Claim(OpenIddictConstants.Claims.Subject, user.Id.ToString()));
-
+            }
             await signInManager.Context.SignInAsync(IdentityConstants.ApplicationScheme, principal, new AuthenticationProperties { IsPersistent = false });
 
             return LocalRedirect(request.ReturnUrl);

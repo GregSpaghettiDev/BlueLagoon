@@ -14,6 +14,7 @@ internal sealed class IamCoreExceptionHandler(IProblemDetailsService ProblemDeta
             return false;
        
         Logger.LogError(exception, "Wystąpił wyjątek biznesowy ({Code}) modułu Iam: {Message}", coreException.ErrorCode, coreException.Message);
+        httpContext.Response.StatusCode = (int)coreException.StatusCode;
 
         return await ProblemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
@@ -24,7 +25,7 @@ internal sealed class IamCoreExceptionHandler(IProblemDetailsService ProblemDeta
                 Detail = coreException.Message,
                 Status = (int)coreException.StatusCode,
                 Title = "Naruszenie reguły biznesowej w module IAM",
-                Instance = httpContext.Request.Path
+                Extensions = { ["errorCode"] = coreException.ErrorCode }
             }
         });
     }

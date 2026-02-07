@@ -2,7 +2,6 @@
 using BlueLagoon.Modules.Iam.Core.DAL.Entities;
 using BlueLagoon.Modules.Iam.Core.Dictionaries;
 using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
-using BlueLagoon.Shared.DevTools.Uniqueidentifier;
 using BlueLagoon.Shared.Infrastructure.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +31,7 @@ internal sealed class IamSeeder(IHostApplicationLifetime lifetime, IServiceProvi
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
                 var module = await scopeManager.FindByNameAsync(Scope.Iam.Name);
-                module ??= await scopeManager.CreateAsync(new OpenIddictScopeDescriptor { Name = Scope.Iam.Name, DisplayName = Scope.Iam.Description });
+                module ??= await scopeManager.CreateAsync(new OpenIddictScopeDescriptor { Name = Scope.Iam.Name, DisplayName = Scope.Iam.Description, Resources = { Scope.Resource } });
 
                 var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
                 var openApiPath = configuration.GetSection("iam:module:openApiPath");

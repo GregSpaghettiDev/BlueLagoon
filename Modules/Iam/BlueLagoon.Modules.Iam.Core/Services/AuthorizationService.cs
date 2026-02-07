@@ -1,4 +1,5 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL.Entities;
+using BlueLagoon.Modules.Iam.Core.DI.ServiceExtensions;
 using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
 using BlueLagoon.Modules.Iam.Core.Services.Dto;
 using BlueLagoon.Shared.DevTools.Http;
@@ -39,6 +40,8 @@ internal sealed class AuthorizationService(IHttpContextAccessor contextAccessor,
         var user = await userManager.FindByIdAsync(userId);
         var principal = await signInManager.CreateUserPrincipalAsync(user);
         principal.SetClaim(OpenIddictConstants.Claims.Subject, userId);
+        principal.SetClaim(OpenIddictConstants.Claims.GivenName, user.FirstName.ToString());
+        principal.SetClaim(OpenIddictConstants.Claims.FamilyName, user.LastName.ToString());
 
         var scopesRequestedByApplication = request.GetScopes();
         var userAllowedScopes = await GetAuthorizedModuleScopesAsync(principal);

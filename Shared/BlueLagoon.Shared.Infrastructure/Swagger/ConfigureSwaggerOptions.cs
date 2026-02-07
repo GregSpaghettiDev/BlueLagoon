@@ -1,5 +1,4 @@
-﻿using BlueLagoon.Shared.DevTools.Url;
-using BlueLagoon.Shared.Infrastructure.Settings;
+﻿using BlueLagoon.Shared.Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -31,7 +30,11 @@ public class ConfigureSwaggerOptions(IServiceProvider ServiceProvider) : IConfig
                 scopesDictionary.Add(name, displayName ?? name);
         }
 
-        string baseUri = configuration["applicationUrl"] ?? scope.ServiceProvider.GetAppUrl();
+        var hostUrls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+        if (string.IsNullOrWhiteSpace(hostUrls))
+            throw new InvalidOperationException("Aplikacja nie ma zdefiniowanych adresów hosta w zmiennych środowiskowych");
+
+        var baseUri = hostUrls.Split(";").First();
 
         options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
         {
@@ -43,19 +46,11 @@ public class ConfigureSwaggerOptions(IServiceProvider ServiceProvider) : IConfig
                 {
                     AuthorizationUrl = new Uri(new Uri(baseUri), oauthSettings.Endpoints.AuthorizationEndpoint),
                     TokenUrl = new Uri(new Uri(baseUri), oauthSettings.Endpoints.TokenEndpoint),
-                    Scopes = scopesDictionary,
+                    Scopes = scopesDictionary
                 }
             }
         });
 
-        options.AddSecurityRequirement(doc =>
-        {
-            var requirement = new OpenApiSecurityRequirement
-            {
-                { new OpenApiSecuritySchemeReference("oauth2"), scopesDictionary.Keys.ToList() }
-            };
-
-            return requirement;
-        });
+        options.AddSecurityRequirement(document => new OpenApiSecurityRequirement { [new OpenApiSecuritySchemeReference("oauth2", document)] = scopesDictionary.Keys.ToList() });
     }
 }

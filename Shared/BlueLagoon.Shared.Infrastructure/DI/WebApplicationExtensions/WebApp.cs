@@ -25,6 +25,8 @@ internal sealed class WebApp : IMiddlewaresInstaller
                     .AllowAnyHeader();
             });
         }
+        application.UseExceptionHandler();
+        application.UseStatusCodePages();
         application.UseStaticFiles();
         application.UseStaticFiles(new StaticFileOptions
         {
@@ -53,5 +55,7 @@ internal sealed class WebApp : IMiddlewaresInstaller
         application.UseAntiforgery();
         application.UseAuthentication();
         application.UseAuthorization();
+        application.UseExceptionHandler();
+        application.UseStatusCodePages();
     }
 }
