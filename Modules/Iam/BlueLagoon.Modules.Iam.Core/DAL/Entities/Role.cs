@@ -12,21 +12,12 @@ internal class Role : IdentityRole<Guid>, IBaseEntity
         Activate();
     }
 
-    protected Role(Guid id, string roleName, string displayName)
-    {
-        Id = id;
-        Name = roleName;
-        NormalizedName = roleName.ToUpperInvariant();
-        DisplayName = displayName;
-        Activate();
-    }
-
-    protected Role(ValueObjects.Role role, string displayName)
+    protected Role(ValueObjects.Role role)
     {
         Id = role.Id;
-        Name = role.Value;
-        NormalizedName = role.Value.ToUpperInvariant();
-        DisplayName = displayName;
+        Name = role.Name;
+        NormalizedName = role.Name.ToUpperInvariant();
+        DisplayName = role.DisplayRoleName;
         Activate();
     }
 
@@ -42,11 +33,8 @@ internal class Role : IdentityRole<Guid>, IBaseEntity
 
     public bool IsActive { get; private set; }
 
-    public static Role Create(ValueObjects.Role role, string displayName)
-        => new(role, displayName);
-
-    public static Role Create(Guid id, ValueObjects.Role role, string displayName)
-        => new(id, role, displayName);
+    public static Role Create(ValueObjects.Role role)
+        => new(role);
 
     public void SetCreatorAuditProperties(DateTime createdAt, Guid creatorId)
     {

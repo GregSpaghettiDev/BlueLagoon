@@ -2,38 +2,35 @@
 
 namespace BlueLagoon.Modules.Iam.Core.ValueObjects;
 
-internal sealed record Role
+public sealed record Role
 {
     public const int MaxCharactersNumber = 256;
     public const int MinCharactersNumber = 3;
 
-    public string Value { get; }
+    public string Name { get; }
+
+    public string DisplayRoleName { get; }
 
     public Guid Id { get; }
 
-    public Role(string value)
+    public Role(Guid id, string name, string displayRoleName)
     {
-        if (string.IsNullOrWhiteSpace(value) || value.Length < MinCharactersNumber || value.Length > MaxCharactersNumber)
+        if (string.IsNullOrWhiteSpace(name)
+            || name.Length < MinCharactersNumber
+            || name.Length > MaxCharactersNumber
+            || string.IsNullOrWhiteSpace(displayRoleName)
+            || displayRoleName.Length < MinCharactersNumber
+            || displayRoleName.Length > MaxCharactersNumber)
             throw new InvalidRoleException(MinCharactersNumber, MaxCharactersNumber);
 
-        Value = value;
-        Id = Guid.NewGuid();
-    }
-
-    public Role(Guid id, string value)
-    {
         Id = id;
-        Value = value;
+        Name = name;
+        DisplayRoleName = displayRoleName;
     }
 
-    public static Role IamAdmin => new(new("81B75834-5CDA-4C7D-BC44-2CD49A118C06"), "iam-admin");
+    public static Role IamAdmin => new(new("81B75834-5CDA-4C7D-BC44-2CD49A118C06"), "iam-admin", "Administrator modułu IAM");
 
     public const string IamAdminRoleName = "iam-admin";
 
     public const string IamAdminDisplayRoleName = "Administrator modułu IAM";
-
-    public static implicit operator Role(string name) => new(name);
-    public static implicit operator string(Role name) => name.Value;
-
-    public override string ToString() => Value;
 }

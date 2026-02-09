@@ -43,11 +43,24 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper) : IRol
         if (role is null)
             throw new RoleNotFoundException(roleId);
 
-        var roleClaimsToRemove = role.RoleClaims.Where(x => !permissionIds.Contains(x.ClaimId ?? Guid.Empty)).ToList();
-        var permissionIdsToAdd = permissionIds.Except(roleClaimsToRemove.Select(x => x.ClaimId ?? Guid.Empty)).Where(x => x != Guid.Empty);
-        var roleClaimsToAdd = await dbContext.Permission.ReturnListAsync<Permission, RoleClaim>(x => permissionIdsToAdd.Contains(x.Id), false, mapper.ConfigurationProvider);
+        if (permissionIds.Count > 0)
+        {
+            var roleClaimsToRemove = role.RoleClaims.Where(x => !permissionIds.Contains(x.ClaimId ?? Guid.Empty)).ToList();
+            var permissionIdsToAdd = permissionIds.Except(roleClaimsToRemove?.Select(x => x.ClaimId ?? Guid.Empty) ?? []).Where(x => x != Guid.Empty);
+            var roleClaimsToAdd = await dbContext.Permission.ReturnListAsync<Permission, RoleClaim>(x => permissionIdsToAdd.Contains(x.Id), false, mapper.ConfigurationProvider);
 
-        foreach (var permission in roleClaimsToAdd)
-            dbContext.AddRange(roleClaimsToAdd);     
+            foreach (var permission in roleClaimsToAdd)
+                dbContext.AddRange(roleClaimsToAdd);
+        }
+    }
+
+    public async Task CreateRoleAsync(ValueObjects.Role role, IList<Guid> permissionIds)
+    {
+        if (await dbContext.Roles.AnyAsync(x => x.Name == role.Name || x.DisplayName == role.DisplayRoleName || x.Id == role.Id))
+            throw new RoleAlreadyExistsException(role.Id.ToString(), role.Name, role.DisplayRoleName);
+
+        await dbContext.AddAsync(Role.Create(role));
+
+        await UpdateRolePermissionsAsync(role.Id, permissionIds);
     }
 }

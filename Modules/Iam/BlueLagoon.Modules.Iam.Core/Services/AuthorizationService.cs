@@ -83,9 +83,8 @@ internal sealed class AuthorizationService(IHttpContextAccessor contextAccessor,
                                     .Distinct()
                                     .ToList();
 
-        if (principal.IsInRole(ValueObjects.Role.IamAdmin))
+        if (principal.IsInRole(ValueObjects.Role.IamAdminRoleName))
             authorizedModules.Add("iam");
-
 
         return authorizedModules;
     }

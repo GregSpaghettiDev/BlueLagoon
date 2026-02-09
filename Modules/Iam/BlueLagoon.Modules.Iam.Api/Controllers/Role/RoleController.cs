@@ -25,6 +25,7 @@ internal sealed class RoleController(IHttpContextAccessor httpContextAccessor, I
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(PaginatedList<RoleDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [SwaggerOperation(OperationId = nameof(GetRolesAsync), Summary = "Pobranie listy zdefiniowanych ról", Description = "Zwraca role zdefiniowane w module IAM")]
@@ -40,6 +41,7 @@ internal sealed class RoleController(IHttpContextAccessor httpContextAccessor, I
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(RoleWithPermissionsDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [SwaggerOperation(OperationId = nameof(GetRolesAsync), Summary = "Pobranie listy zdefiniowanych ról", Description = "Zwraca role zdefiniowane w module IAM")]
@@ -50,18 +52,33 @@ internal sealed class RoleController(IHttpContextAccessor httpContextAccessor, I
         return ContentResult(result, HttpStatusCode.OK);
     }
 
-    [HttpGet("{roleId:guid}/permissions")]
-    [Authorize(Policy = AuthorizationPolicies.ReadRoles)]
+    [HttpPut("{roleId:guid}/permissions")]
+    [Authorize(Policy = AuthorizationPolicies.UpdateRole)]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [SwaggerOperation(OperationId = nameof(UpdateRolePermissionsAsync), Summary = "Pobranie listy zdefiniowanych ról", Description = "Zwraca role zdefiniowane w module IAM")]
+    [SwaggerOperation(OperationId = nameof(UpdateRolePermissionsAsync), Summary = "Modyfikacja zestawu upranień", Description = "Dodaje lub usuwa uprawnienia w ramach danej roli")]
     public async Task<IActionResult> UpdateRolePermissionsAsync([FromRoute] Guid RoleId, [FromBody] UpdateRolePermissionsRequest Request)
     {
         await roleService.UpdateRolePermissionsAsync(RoleId, Request.PermissionIdsToReplace);
 
         return NoContentResult();
+    }
+
+    [HttpPost()]
+    [Authorize(Policy = AuthorizationPolicies.AddRole)]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType((int)HttpStatusCode.Created)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
+    [SwaggerOperation(OperationId = nameof(CreateRoleAsync), Summary = "Utworzenie nowej roli", Description = "Tworzy nową rolę")]
+    public async Task<IActionResult> CreateRoleAsync([FromBody] CreateRoleRequest Request)
+    {
+        await roleService.CreateRoleAsync(new Core.ValueObjects.Role(Guid.NewGuid(), Request.Code, Request.Name), Request.RoleIds);
+
+        return CreatedContentResult();
     }
 }
