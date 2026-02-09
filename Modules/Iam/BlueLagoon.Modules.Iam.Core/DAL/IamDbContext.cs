@@ -1,5 +1,4 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL.Entities;
-using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.EntityFramework;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +17,8 @@ internal sealed class IamDbContext(DbContextOptions<IamDbContext> options)
     public DbSet<Module> Module { get; set; }
 
     public DbSet<RegisteredEndpoint> RegisteredEndpoint { get; set; }
+
+    public DbSet<Permission> Permission { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -21,6 +21,11 @@ internal sealed class UserLoginConfiguration : IEntityTypeConfiguration<UserLogi
                     .HasForeignKey(x => x.ModificatorId)
                     .IsRequired();
 
+        builder.HasOne(x => x.User)
+                .WithMany(x => x.UserLogins)
+                .HasForeignKey(x => x.UserId)
+                .IsRequired();
+
         builder.ToTable("user_login");
     }
 }

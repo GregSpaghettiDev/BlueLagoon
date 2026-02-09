@@ -153,6 +153,41 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "permission",
+                schema: "iam",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    description = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
+                    module_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_permission", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_permission_user_creator_id",
+                        column: x => x.creator_id,
+                        principalSchema: "iam",
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_permission_user_modificator_id",
+                        column: x => x.modificator_id,
+                        principalSchema: "iam",
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "registered_endpoint",
                 schema: "iam",
                 columns: table => new
@@ -195,6 +230,7 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    display_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
                     creator_id = table.Column<Guid>(type: "uuid", nullable: false),
                     modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
@@ -218,49 +254,6 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                     table.ForeignKey(
                         name: "FK_role_user_modificator_id",
                         column: x => x.modificator_id,
-                        principalSchema: "iam",
-                        principalTable: "user",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "user_claim",
-                schema: "iam",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
-                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
-                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    claim_type = table.Column<string>(type: "text", nullable: true),
-                    claim_value = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_user_claim", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_user_claim_user_creator_id",
-                        column: x => x.creator_id,
-                        principalSchema: "iam",
-                        principalTable: "user",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_user_claim_user_modificator_id",
-                        column: x => x.modificator_id,
-                        principalSchema: "iam",
-                        principalTable: "user",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_user_claim_user_user_id",
-                        column: x => x.user_id,
                         principalSchema: "iam",
                         principalTable: "user",
                         principalColumn: "id",
@@ -399,12 +392,68 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "user_claim",
+                schema: "iam",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    claim_description = table.Column<string>(type: "text", nullable: true),
+                    module_name = table.Column<string>(type: "text", nullable: true),
+                    claim_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    claim_type = table.Column<string>(type: "text", nullable: true),
+                    claim_value = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_claim", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_user_claim_permission_claim_id",
+                        column: x => x.claim_id,
+                        principalSchema: "iam",
+                        principalTable: "permission",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_user_claim_user_creator_id",
+                        column: x => x.creator_id,
+                        principalSchema: "iam",
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_user_claim_user_modificator_id",
+                        column: x => x.modificator_id,
+                        principalSchema: "iam",
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_user_claim_user_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "iam",
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "role_claim",
                 schema: "iam",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    claim_description = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    module_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    claim_id = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
                     creator_id = table.Column<Guid>(type: "uuid", nullable: false),
                     modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
@@ -418,6 +467,13 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_role_claim", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_role_claim_permission_claim_id",
+                        column: x => x.claim_id,
+                        principalSchema: "iam",
+                        principalTable: "permission",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_role_claim_role_role_id",
                         column: x => x.role_id,
@@ -603,6 +659,18 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_permission_creator_id",
+                schema: "iam",
+                table: "permission",
+                column: "creator_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_permission_modificator_id",
+                schema: "iam",
+                table: "permission",
+                column: "modificator_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_registered_endpoint_creator_id",
                 schema: "iam",
                 table: "registered_endpoint",
@@ -632,6 +700,12 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 table: "role",
                 column: "normalized_name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_role_claim_claim_id",
+                schema: "iam",
+                table: "role_claim",
+                column: "claim_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_role_claim_creator_id",
@@ -706,6 +780,12 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 table: "user",
                 column: "normalized_user_name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_claim_claim_id",
+                schema: "iam",
+                table: "user_claim",
+                column: "claim_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_claim_creator_id",
@@ -811,6 +891,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "authorization",
+                schema: "iam");
+
+            migrationBuilder.DropTable(
+                name: "permission",
                 schema: "iam");
 
             migrationBuilder.DropTable(

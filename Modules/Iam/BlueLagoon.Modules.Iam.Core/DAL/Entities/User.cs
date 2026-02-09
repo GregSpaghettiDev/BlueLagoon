@@ -10,6 +10,39 @@ internal class User : IdentityUser<Guid>, IBaseEntity
     public User()
     {
         Activate();
+
+        #region nav props initialization
+        UserRoles = new HashSet<UserRole>();
+        UserLogins = new HashSet<UserLogin>();
+        UserTokens = new HashSet<UserToken>();
+        UserClaims = new HashSet<UserClaim>();
+        UserCreators = new HashSet<User>();
+        UserModificators = new HashSet<User>();
+        UserTokenCreators = new HashSet<UserToken>();
+        UserTokenModificators = new HashSet<UserToken>();
+        ApplicationCreators = new HashSet<Application>();
+        ApplicationModificators = new HashSet<Application>();
+        AuthorizationCreators = new HashSet<Authorization>();
+        AuthorizationModificators = new HashSet<Authorization>();
+        ModuleCreators = new HashSet<Module>();
+        ModuleModificators = new HashSet<Module>();
+        RoleCreators = new HashSet<Role>();
+        RoleModificators = new HashSet<Role>();
+        RoleClaimCreators = new HashSet<RoleClaim>();
+        RoleClaimModificators = new HashSet<RoleClaim>();
+        TokenCreators = new HashSet<Token>();
+        TokenModificators = new HashSet<Token>();
+        UserClaimCreators = new HashSet<UserClaim>();
+        UserClaimModificators = new HashSet<UserClaim>();
+        UserLoginCreators = new HashSet<UserLogin>();
+        UserLoginModificators = new HashSet<UserLogin>();
+        UserRoleCreators = new HashSet<UserRole>();
+        UserRoleModificators = new HashSet<UserRole>();
+        RegisteredEndpointCreators = new HashSet<RegisteredEndpoint>();
+        RegisteredEndpointModificators = new HashSet<RegisteredEndpoint>();
+        PermissionCreators = new HashSet<Permission>();
+        PermissionModificators = new HashSet<Permission>();
+        #endregion
     }
 
     public UserFirstName FirstName { get; set; }
@@ -61,6 +94,14 @@ internal class User : IdentityUser<Guid>, IBaseEntity
 
     public virtual User Modificator { get; private set; }
 
+    public virtual ICollection<UserToken> UserTokens { get; private set; }
+
+    public virtual ICollection<UserRole> UserRoles { get; private set; }
+
+    public virtual ICollection<UserLogin> UserLogins { get; private set; }
+
+    public virtual ICollection<UserClaim> UserClaims { get; private set; }
+
     public virtual ICollection<User> UserCreators { get; private set; }
 
     public virtual ICollection<User> UserModificators { get; private set; }
@@ -108,6 +149,10 @@ internal class User : IdentityUser<Guid>, IBaseEntity
     public virtual ICollection<RegisteredEndpoint> RegisteredEndpointCreators { get; private set; }
 
     public virtual ICollection<RegisteredEndpoint> RegisteredEndpointModificators { get; private set; }
+
+    public virtual ICollection<Permission> PermissionCreators { get; private set; }
+
+    public virtual ICollection<Permission> PermissionModificators { get; private set; }
     #endregion
 
 }

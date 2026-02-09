@@ -4,7 +4,6 @@ using BlueLagoon.Modules.Iam.Core.DAL.Entities;
 using BlueLagoon.Modules.Iam.Core.Exceptions;
 using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
 using BlueLagoon.Modules.Iam.Core.Services.Dto;
-using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.Linq;
 using BlueLagoon.Shared.DevTools.Pagination;
 using Microsoft.EntityFrameworkCore;

@@ -57,4 +57,6 @@ internal class UserToken : IdentityUserToken<Guid>, IBaseEntity
 
     [InverseProperty(nameof(User.UserTokenModificators))]
     public virtual User Modificator { get; private set; }
+
+    public virtual User User { get; private set; }
 }

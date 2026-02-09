@@ -21,6 +21,11 @@ internal sealed class UserTokenConfiguration : IEntityTypeConfiguration<UserToke
                     .HasForeignKey(x => x.ModificatorId)
                     .IsRequired();
 
+        builder.HasOne(x => x.User)
+                .WithMany(x => x.UserTokens)
+                .HasForeignKey(x => x.UserId)
+                .IsRequired();
+
         builder.ToTable("user_token");
     }
 }

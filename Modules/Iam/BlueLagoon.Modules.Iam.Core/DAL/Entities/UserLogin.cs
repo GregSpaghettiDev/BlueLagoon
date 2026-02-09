@@ -57,4 +57,6 @@ internal class UserLogin : IdentityUserLogin<Guid>, IBaseEntity
 
     [InverseProperty(nameof(User.UserLoginModificators))]
     public virtual User Modificator { get; private set; }
+
+    public virtual User User { get; private set; }
 }

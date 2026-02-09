@@ -57,4 +57,8 @@ internal class UserRole : IdentityUserRole<Guid>, IBaseEntity
 
     [InverseProperty(nameof(User.UserRoleModificators))]
     public virtual User Modificator { get; private set; }
+
+    public virtual User User { get; private set; }
+
+    public virtual Role Role { get; private set; }
 }

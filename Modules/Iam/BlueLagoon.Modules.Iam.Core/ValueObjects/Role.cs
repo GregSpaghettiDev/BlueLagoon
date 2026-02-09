@@ -30,6 +30,8 @@ internal sealed record Role
 
     public const string IamAdminRoleName = "iam-admin";
 
+    public const string IamAdminDisplayRoleName = "Administrator modułu IAM";
+
     public static implicit operator Role(string name) => new(name);
     public static implicit operator string(Role name) => name.Value;
 

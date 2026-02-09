@@ -2,11 +2,13 @@
 
 internal static class AuthorizationPolicies
 {
-    public const string ListModules = nameof(ListModules);
+    public const string IamScopeRequirement = nameof(IamScopeRequirement);
+
+    public const string ReadModules = nameof(ReadModules);
 
     public const string AddModule = nameof(AddModule);
 
     public const string UpdateModule = nameof(UpdateModule);
 
-    public const string IamScopeRequirement = nameof(IamScopeRequirement);
+    public const string ReadRoles = nameof(ReadRoles);
 }

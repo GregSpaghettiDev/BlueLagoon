@@ -12,6 +12,12 @@ internal class RoleClaim : IdentityRoleClaim<Guid>, IBaseEntity
         Activate();
     }
 
+    public string ClaimDescription { get; set; }
+
+    public string ModuleName { get; set; }
+
+    public Guid? ClaimId { get; set; }
+
     public DateTime CreatedAt { get; private set; }
 
     public Guid CreatorId { get; private set; }
@@ -57,4 +63,8 @@ internal class RoleClaim : IdentityRoleClaim<Guid>, IBaseEntity
 
     [InverseProperty(nameof(User.RoleClaimModificators))]
     public virtual User Modificator { get; private set; }
+
+    public virtual Role Role { get; private set; }
+
+    public virtual Permission Permission { get; private set; }
 }

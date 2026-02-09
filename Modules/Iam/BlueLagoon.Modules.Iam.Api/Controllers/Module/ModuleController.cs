@@ -22,7 +22,7 @@ public sealed class ModuleController(IModuleService moduleService, IHttpContextA
     : BaseController(httpContextAccessor)
 {
     [HttpGet]
-    [Authorize(Policy = AuthorizationPolicies.ListModules)]
+    [Authorize(Policy = AuthorizationPolicies.ReadModules)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ModuleDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]

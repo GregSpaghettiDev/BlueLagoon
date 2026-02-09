@@ -12,10 +12,17 @@ internal class UserClaim : IdentityUserClaim<Guid>, IBaseEntity
         Activate();
     }
 
+    public string ClaimDescription { get; set; }
+
+    public string ModuleName { get; set; }
+
+    public Guid? ClaimId { get; set; }
+
+
     public DateTime CreatedAt { get; private set; }
 
     public Guid CreatorId { get; private set; }
-
+    
     public DateTime? ModifiedAt { get; private set; }
 
     public Guid? ModificatorId { get; private set; }
@@ -57,4 +64,8 @@ internal class UserClaim : IdentityUserClaim<Guid>, IBaseEntity
 
     [InverseProperty(nameof(User.UserClaimModificators))]
     public virtual User Modificator { get; private set; }
+
+    public virtual User User { get; private set; }
+
+    public virtual Permission Permission { get; private set; }
 }

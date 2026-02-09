@@ -1,0 +1,53 @@
+﻿using AutoMapper;
+using BlueLagoon.Modules.Iam.Core.DAL;
+using BlueLagoon.Modules.Iam.Core.DAL.Entities;
+using BlueLagoon.Modules.Iam.Core.Dictionaries;
+using BlueLagoon.Modules.Iam.Core.Exceptions;
+using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
+using BlueLagoon.Modules.Iam.Core.Services.Dto;
+using BlueLagoon.Shared.DevTools.Linq;
+using BlueLagoon.Shared.DevTools.Pagination;
+using Microsoft.EntityFrameworkCore;
+
+namespace BlueLagoon.Modules.Iam.Core.Services;
+
+internal sealed class RoleService(IamDbContext dbContext, IMapper mapper) : IRoleService
+{
+    public async Task<PaginatedList<RoleDto>> GetRolesAsync(string searchValue, PaginationParameters paginationParameters)
+    {
+        var queryable = dbContext.Roles
+                                    .AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchValue))
+            queryable = queryable = queryable.Where(x => ((x.Name ?? "") + (x.DisplayName ?? "")).Contains(searchValue));
+
+        return await PaginatedList<RoleDto>.GetPaginatedPageAsync(queryable, paginationParameters, mapper.ConfigurationProvider);
+    }
+
+    public async Task<RoleWithPermissionsDto> GetRoleAsync(Guid roleId)
+    {
+        var role = await dbContext.Roles.ReturnSingleOrDefaultAsync<Role, RoleWithPermissionsDto>(x => x.Id == roleId, false, mapper.ConfigurationProvider);
+
+        var claimIds = role.AssignedPermissions.Where(x => x.ClaimId != null).Select(x => x.ClaimId);
+        role.AvailablePermissions = await dbContext.Permission.ReturnListAsync<Permission, ClaimDto>(x => x.FullPermissionName.ModuleName == Scope.Iam.Name && !claimIds.Contains(x.Id), false, mapper.ConfigurationProvider);
+
+        return role;
+    }
+
+    public async Task UpdateRolePermissionsAsync(Guid roleId, IList<Guid> permissionIds)
+    {
+        var role = await dbContext.Roles
+                            .Include(x => x.RoleClaims)
+                            .Where(x => x.Id == roleId).SingleOrDefaultAsync();
+
+        if (role is null)
+            throw new RoleNotFoundException(roleId);
+
+        var roleClaimsToRemove = role.RoleClaims.Where(x => !permissionIds.Contains(x.ClaimId ?? Guid.Empty)).ToList();
+        var permissionIdsToAdd = permissionIds.Except(roleClaimsToRemove.Select(x => x.ClaimId ?? Guid.Empty)).Where(x => x != Guid.Empty);
+        var roleClaimsToAdd = await dbContext.Permission.ReturnListAsync<Permission, RoleClaim>(x => permissionIdsToAdd.Contains(x.Id), false, mapper.ConfigurationProvider);
+
+        foreach (var permission in roleClaimsToAdd)
+            dbContext.AddRange(roleClaimsToAdd);     
+    }
+}

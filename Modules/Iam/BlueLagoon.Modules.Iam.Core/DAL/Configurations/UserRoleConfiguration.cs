@@ -21,6 +21,16 @@ internal sealed class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
                     .HasForeignKey(x => x.ModificatorId)
                     .IsRequired();
 
+        builder.HasOne(x => x.User)
+                .WithMany(x => x.UserRoles)
+                .HasForeignKey(x => x.UserId)
+                .IsRequired();
+
+        builder.HasOne(x => x.Role)
+                .WithMany(x => x.UserRoles)
+                .HasForeignKey(x => x.RoleId)
+                .IsRequired();
+
         builder.ToTable("user_role");
     }
 }

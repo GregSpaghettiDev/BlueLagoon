@@ -17,5 +17,36 @@ internal sealed class IamProfile : Profile
             {
                 IsDeactivate = s.IsActive
             }));
+
+        CreateMap<Role, RoleDto>()
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.DisplayName))
+            .ForMember(d => d.Code, o => o.MapFrom(s => s.Name))
+            .ForMember(d => d.Options, o => o.MapFrom(s => new RoleOptionsDto
+            {
+                IsDeactivate = s.IsActive,
+                IsDelete = s.IsActive,
+            }));
+
+        CreateMap<Role, RoleWithPermissionsDto>()
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.DisplayName))
+            .ForMember(d => d.Code, o => o.MapFrom(s => s.Name))
+            .ForMember(d => d.AssignedPermissions, o => o.MapFrom(s => s.RoleClaims))
+            .ForMember(d => d.AvailablePermissions, o => o.Ignore())
+            .ForMember(d => d.Options, o => o.MapFrom(s => new RoleOptionsDto
+            {
+                IsDeactivate = s.IsActive,
+                IsDelete = s.IsActive,
+            }));
+
+        CreateMap<RoleClaim, ClaimDto>()
+            .ForMember(d => d.Code, o => o.MapFrom(s => s.ClaimValue))
+            .ForMember(d => d.Description, o => o.MapFrom(s => s.ClaimDescription))
+            .ForMember(d => d.Type, o => o.MapFrom(s => s.ClaimType))
+            .ForMember(d => d.ModuleName, o => o.MapFrom(s => s.ModuleName));
+
+        CreateMap<Permission, ClaimDto>()
+            .ForMember(d => d.Code, o => o.MapFrom(s => s.FullPermissionName.Name))
+            .ForMember(d => d.Description, o => o.MapFrom(s => s.Description))
+            .ForMember(d => d.ModuleName, o => o.MapFrom(s => s.FullPermissionName.ModuleName));
     }
 }

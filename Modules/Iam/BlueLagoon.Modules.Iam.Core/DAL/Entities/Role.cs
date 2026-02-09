@@ -7,23 +7,30 @@ namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
 
 internal class Role : IdentityRole<Guid>, IBaseEntity
 {
-    protected Role() { }
+    protected Role() 
+    {
+        Activate();
+    }
 
-    protected Role(Guid id, string roleName)
+    protected Role(Guid id, string roleName, string displayName)
     {
         Id = id;
         Name = roleName;
         NormalizedName = roleName.ToUpperInvariant();
+        DisplayName = displayName;
         Activate();
     }
 
-    protected Role(ValueObjects.Role role)
+    protected Role(ValueObjects.Role role, string displayName)
     {
         Id = role.Id;
         Name = role.Value;
         NormalizedName = role.Value.ToUpperInvariant();
+        DisplayName = displayName;
         Activate();
     }
+
+    public string DisplayName { get; set; }
 
     public DateTime CreatedAt { get; private set; }
 
@@ -35,11 +42,11 @@ internal class Role : IdentityRole<Guid>, IBaseEntity
 
     public bool IsActive { get; private set; }
 
-    public static Role Create(ValueObjects.Role role)
-        => new(role);
+    public static Role Create(ValueObjects.Role role, string displayName)
+        => new(role, displayName);
 
-    public static Role Create(Guid id, ValueObjects.Role role)
-        => new(id, role);
+    public static Role Create(Guid id, ValueObjects.Role role, string displayName)
+        => new(id, role, displayName);
 
     public void SetCreatorAuditProperties(DateTime createdAt, Guid creatorId)
     {
@@ -76,4 +83,8 @@ internal class Role : IdentityRole<Guid>, IBaseEntity
 
     [InverseProperty(nameof(User.RoleModificators))]
     public virtual User Modificator { get; private set; }
+
+    public virtual ICollection<RoleClaim> RoleClaims { get; private set; }
+
+    public virtual ICollection<UserRole> UserRoles { get; set; }
 }

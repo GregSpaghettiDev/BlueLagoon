@@ -3,6 +3,7 @@ using BlueLagoon.Shared.DevTools.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using BlueLagoon.Shared.DevTools.Base.Abstractions;
+using BlueLagoon.Shared.DevTools.EntityFramework;
 
 namespace BlueLagoon.Modules.Iam.Core.DAL.Configurations;
 
@@ -26,6 +27,11 @@ internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
                     .WithMany(x => x.RoleModificators)
                     .HasForeignKey(x => x.ModificatorId)
                     .IsRequired();
+
+        builder.Property(x => x.DisplayName)
+                .HasColumnName(nameof(Role.DisplayName).ToSnakeCase())
+                .HasMaxLength(256)
+                .IsRequired();
 
         builder.ToTable("role");
     }

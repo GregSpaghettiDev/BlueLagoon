@@ -21,6 +21,16 @@ internal sealed class UserClaimConfiguration : IEntityTypeConfiguration<UserClai
                     .HasForeignKey(x => x.ModificatorId)
                     .IsRequired();
 
+        builder.HasOne(x => x.User)
+                .WithMany(x => x.UserClaims)
+                .HasForeignKey(x => x.UserId)
+                .IsRequired();
+
+        builder.HasOne(x => x.Permission)
+                .WithMany(x => x.UserClaims)
+                .HasForeignKey(x => x.ClaimId)
+                .IsRequired(false);
+
         builder.ToTable("user_claim");
     }
 }

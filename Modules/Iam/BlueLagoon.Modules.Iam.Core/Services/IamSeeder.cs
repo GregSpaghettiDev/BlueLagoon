@@ -67,7 +67,7 @@ internal sealed class IamSeeder(IHostApplicationLifetime lifetime, IServiceProvi
                 }
 
                 if (!await roleManager.RoleExistsAsync(ValueObjects.Role.IamAdmin))
-                    await roleManager.CreateAsync(Role.Create(ValueObjects.Role.IamAdmin));
+                    await roleManager.CreateAsync(Role.Create(ValueObjects.Role.IamAdmin, ValueObjects.Role.IamAdminDisplayRoleName));
 
                 var defaultSystemUser = scope.ServiceProvider.GetRequiredService<DefaultSystemUser>();
                 var user = await context.Users.Where(x => x.Id == defaultSystemUser.Id).SingleOrDefaultAsync();

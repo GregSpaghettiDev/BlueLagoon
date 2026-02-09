@@ -3,7 +3,7 @@ using System.Net;
 
 namespace BlueLagoon.Modules.Iam.Core.Exceptions;
 
-internal class ModuleNotFoundException(Guid Id) : BaseIamCoreException($"Moduł o id {Id} nie został odnaleziony.", "011")
+internal class RoleNotFoundException(Guid Id) : BaseIamCoreException($"Rola o id {Id} nie została odnalezionya.", "012")
 {
     public override HttpStatusCode StatusCode => HttpStatusCode.NotFound;
 }
