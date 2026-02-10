@@ -39,7 +39,7 @@ public sealed class ModuleController(IModuleService moduleService, IHttpContextA
     [HttpPost]
     [Authorize(Policy = AuthorizationPolicies.AddModule)]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType((int)HttpStatusCode.Created)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
@@ -57,13 +57,28 @@ public sealed class ModuleController(IModuleService moduleService, IHttpContextA
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [SwaggerOperation(OperationId = nameof(UpdateModuleAsync),
-         Summary = "Zmienia wartości poszczególnych pól modułu.",
-        Description = "Do zmiany poszczególnych wartości należy w żądaniu zdefiniować odpowiednie pola i ich wartości (IsActive, Name, BaseUrl, OpenApiPath, IsActive).")]
+        Summary = "Zmienia wartości poszczególnych pól modułu.",
+        Description = "Do zmiany poszczególnych wartości należy w żądaniu zdefiniować odpowiednie pola i ich wartości (IsActive, Name, BaseUrl, OpenApiPath, IsActive). " +
+        "Dezaktywacja modułu wiąże się z dezaktywacją endpointów i uprawnień. Uprawnienia przypisane do ról i/lub użytkowników sa trwale z nich usuwane.")]
     public async Task<IActionResult> UpdateModuleAsync([FromRoute] Guid ModuleId, [FromBody] UpdateModuleRequest Request)
     {
         await moduleService.UpdateModuleAsync(ModuleId, Request.Name, Request.BaseUrl, Request.OpenApiPath, Request.IsActive);
+
+        return NoContentResult();
+    }
+
+    [HttpDelete("{moduleId:guid}")]
+    [Authorize(Policy = AuthorizationPolicies.UpdateModule)]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [SwaggerOperation(OperationId = nameof(UpdateModuleAsync), 
+        Summary = "Trwałe usunięcie modułu.", 
+        Description = "Usuwa moduł razem z zarejestrowanymi ednpointami i zdefiniowanymi do nich uprawnieniami. Uprawnienia przypisane do ról i/lub użytkowników sa trwale z nich usuwane.")]
+    public async Task<IActionResult> DeleteModuleAsync([FromRoute] Guid ModuleId)
+    {
+        await moduleService.DeleteModuleAsync(ModuleId);
 
         return NoContentResult();
     }

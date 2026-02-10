@@ -12,4 +12,6 @@ public interface IModuleService
     Task AddModuleAsync(string name, string description, string openApiUri, string baseUrl);
 
     Task UpdateModuleAsync(Guid moduleId, string name, string baseUrl, string openApiPath, bool? isActive);
+
+    Task DeleteModuleAsync(Guid moduleId);
 }

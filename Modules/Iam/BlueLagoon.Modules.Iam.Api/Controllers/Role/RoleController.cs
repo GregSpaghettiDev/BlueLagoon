@@ -68,7 +68,7 @@ internal sealed class RoleController(IHttpContextAccessor httpContextAccessor, I
         return CreatedContentResult();
     }
 
-    [HttpPatch("{roleId:guid}/activate")]
+    [HttpPatch("{roleId:guid}")]
     [Authorize(Policy = AuthorizationPolicies.UpdateRole)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType((int)HttpStatusCode.Created)]
@@ -78,7 +78,8 @@ internal sealed class RoleController(IHttpContextAccessor httpContextAccessor, I
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [SwaggerOperation(OperationId = nameof(UpdateRoleAsync), 
         Summary = "Zmienia wartości poszczególnych pól roli takich jak stan aktywny/nieaktywny czy przypisane uprawnienia ", 
-        Description = "Do zmiany poszczególnych wartości należy w żądaniu zdefiniować odpowiednie pola i ich wartości (IsActive, PermissionIds).")]
+        Description = "Do zmiany poszczególnych wartości należy w żądaniu zdefiniować odpowiednie pola i ich wartości (IsActive, PermissionIds)." +
+        "Dezaktywacja roliu wiąże się z dezaktywacją przypisanych uprawnień. Nie można jednocześnie przypisać uprawnień i dezaktywować roli.")]
     public async Task<IActionResult> UpdateRoleAsync([FromRoute] Guid RoleId, [FromBody] UpdateRoleRequest Request)
     {
         await roleService.UpdateRoleAsync(RoleId, Request.PermissionIds, Request.IsActive);

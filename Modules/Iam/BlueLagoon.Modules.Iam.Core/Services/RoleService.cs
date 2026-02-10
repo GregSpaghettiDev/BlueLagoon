@@ -36,7 +36,7 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpC
         return role;
     }
 
-    async Task UpdateRolePermissionsAsync(Guid roleId, IList<Guid> permissionIds)
+    async Task UpdateOrCreateRolePermissionsAsync(Guid roleId, IList<Guid> permissionIds)
     {
         var roleClaims = await dbContext.RoleClaims
                             .Where(x => x.RoleId == roleId).ToListAsync();
@@ -63,7 +63,7 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpC
 
         httpContextAccessor.HttpContext.AddCreatedResourceId(role.Id);
 
-        await UpdateRolePermissionsAsync(role.Id, permissionIds);
+        await UpdateOrCreateRolePermissionsAsync(role.Id, permissionIds);
     }
 
     public async Task UpdateRoleAsync(Guid roleId, IList<Guid> permissionIds, bool? isActive)
@@ -73,13 +73,32 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpC
             throw new RoleNotFoundException(roleId);
 
         if (isActive.HasValue)
+        {
             if (isActive.Value)
                 role.Deactivate();
+
             else
                 role.Activate();
+            
+            await ChangeActivationStateForAllAssignedPermissionsAsync(role.Id, isActive.Value);
+        }
 
-        if (permissionIds?.Any() ?? false)
-            await UpdateRolePermissionsAsync(roleId, permissionIds);
+        if (permissionIds?.Any() ?? false && isActive != false)
+            await UpdateOrCreateRolePermissionsAsync(roleId, permissionIds);
 
+        if (dbContext.ChangeTracker.HasChanges())
+            await dbContext.SaveChangesAsync();
+
+    }
+
+    private async Task ChangeActivationStateForAllAssignedPermissionsAsync(Guid roleId, bool isActive)
+    {
+        var permissions = await dbContext.RoleClaims.Where(x => x.RoleId == roleId).ToListAsync();
+
+        foreach (var permission in permissions)
+        {
+            if (isActive && !permission.IsActive) permission.Activate();
+            if (!isActive && permission.IsActive) permission.Deactivate();
+        }
     }
 }

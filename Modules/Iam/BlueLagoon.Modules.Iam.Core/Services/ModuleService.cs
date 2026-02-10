@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using OpenIddict.Abstractions;
+using System.Net;
 
 namespace BlueLagoon.Modules.Iam.Core.Services;
 
@@ -94,8 +95,9 @@ internal sealed class ModuleService(IamDbContext dbContext,
 
     public async Task UpdateModuleAsync(Guid moduleId, string name, string baseUrl, string openApiPath, bool? isActive)
     {
-        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId, true)
-            ?? throw new ModuleNotFoundException(moduleId);
+        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId, true);
+            if (module is null)
+                throw new ModuleNotFoundException(moduleId);
 
         if (!string.IsNullOrWhiteSpace(name))
             module.Name = name;
@@ -107,10 +109,66 @@ internal sealed class ModuleService(IamDbContext dbContext,
             module.SetOpenApiPath(openApiPath);
 
         if (isActive.HasValue)
+        {
             if (isActive.Value)
                 module.Activate();
+
             else
                 module.Deactivate();
+
+            await ChangeActivationStateForAllRelatedEndpoinstAsync(module.Name, isActive.Value);
+            await ChangeActivationStateForAllRelatedPermissionsAsync(module.Name, isActive.Value);
+            await DeleteAssignedPermissionsToRoleAsync(module.Name);
+            await DeleteAssignedPermissionsToUserAsync(module.Name);
+        }
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    private async Task ChangeActivationStateForAllRelatedEndpoinstAsync(string moduleName, bool isActive)
+    {
+        var endpoints = await dbContext.RegisteredEndpoint.Where(x => x.ModuleName == moduleName).ToListAsync();
+
+        foreach (var endpoint in endpoints)
+        {
+            if (isActive && !endpoint.IsActive) endpoint.Activate();
+            if (!isActive && endpoint.IsActive) endpoint.Deactivate();
+        }
+    }
+
+    private async Task ChangeActivationStateForAllRelatedPermissionsAsync(string moduleName, bool isActive)
+    {
+        var permissions = await dbContext.Permission.Where(x => x.FullPermissionName.ModuleName == moduleName).ToListAsync();
+
+        foreach (var permission in permissions)
+        {
+            if (isActive && !permission.IsActive) permission.Activate();
+            if (!isActive && permission.IsActive) permission.Deactivate();
+        }
+    }
+
+    private async Task DeleteAssignedPermissionsToRoleAsync(string moduleName)
+    {
+        var roleClaims = await dbContext.RoleClaims.Where(x => x.ModuleName == moduleName).ToListAsync();
+        dbContext.RemoveRange(roleClaims);
+    }
+
+    private async Task DeleteAssignedPermissionsToUserAsync(string moduleName)
+    {
+        var userClaims = await dbContext.UserClaims.Where(x => x.ModuleName == moduleName).ToListAsync();
+        dbContext.RemoveRange(userClaims);
+    }
+
+    public async Task DeleteModuleAsync(Guid moduleId)
+    {
+        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId, true);
+
+        if (module is not null)
+        {
+            await DeleteAssignedPermissionsToRoleAsync(module.Name);
+            await DeleteAssignedPermissionsToUserAsync(module.Name);
+            dbContext.Remove(module);
+        }
 
         await dbContext.SaveChangesAsync();
     }
