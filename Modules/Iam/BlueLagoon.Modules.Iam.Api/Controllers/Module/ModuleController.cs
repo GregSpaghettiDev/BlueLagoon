@@ -44,69 +44,26 @@ public sealed class ModuleController(IModuleService moduleService, IHttpContextA
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [SwaggerOperation(OperationId = nameof(CreateModuleAsync), Summary = "Dodanie modułu do rejestru IAM", Description = "Dodaje wskazany moduł do rejestru IAM")]
-    public async Task<IActionResult> CreateModuleAsync([FromBody] CreateModuleRequest request)
+    public async Task<IActionResult> CreateModuleAsync([FromBody] CreateModuleRequest Request)
     {
-        await moduleService.AddModuleAsync(request.Name, request.Description, request.OpenApiUri, request.BaseUrl);
+        await moduleService.AddModuleAsync(Request.Name, Request.Description, Request.OpenApiUri, Request.BaseUrl);
 
         return CreatedContentResult();
     }
 
-    [HttpPut("{moduleId:guid}/open-api-path")]
+    [HttpPatch("{moduleId:guid}")]
     [Authorize(Policy = AuthorizationPolicies.UpdateModule)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [SwaggerOperation(OperationId = nameof(UpdateOpenApiPathAsync), Summary = "Zaktualizowanie ścieżki do dokumentacji API", Description = "Ustawia nową wartość dla ścieżki wskazującej na dokumentację OpenApi")]
-    public async Task<IActionResult> UpdateOpenApiPathAsync([FromRoute] Guid ModuleId, [FromBody] UpdateOpenApiPathRequest request)
+    [SwaggerOperation(OperationId = nameof(UpdateModuleAsync),
+         Summary = "Zmienia wartości poszczególnych pól modułu.",
+        Description = "Do zmiany poszczególnych wartości należy w żądaniu zdefiniować odpowiednie pola i ich wartości (IsActive, Name, BaseUrl, OpenApiPath, IsActive).")]
+    public async Task<IActionResult> UpdateModuleAsync([FromRoute] Guid ModuleId, [FromBody] UpdateModuleRequest Request)
     {
-        await moduleService.SetOpenApiPathAsync(ModuleId, request.Path);
-
-        return NoContentResult();
-    }
-
-    [HttpPut("{moduleId:guid}/open-api-url")]
-    [Authorize(Policy = AuthorizationPolicies.UpdateModule)]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [SwaggerOperation(OperationId = nameof(UpdateOpenApiUrlAsync), Summary = "Zaktualizowanie url do serwera dokumentacji API", Description = "Ustawia nową wartość dla url wskazującego na serwer dokumentacji OpenApi")]
-    public async Task<IActionResult> UpdateOpenApiUrlAsync([FromRoute] Guid ModuleId, [FromBody] UpdateOpenApiUrlRequest request)
-    {
-        await moduleService.SetOpenApiUrlAsync(ModuleId, request.Url);
-
-        return NoContentResult();
-    }
-
-    [HttpPut("{moduleId:guid}/deactivated")]
-    [Authorize(Policy = AuthorizationPolicies.UpdateModule)]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [SwaggerOperation(OperationId = nameof(DeactivateModuleAsync), Summary = "Dezaktywacja modułu w systemie", Description = "Ustawia moduł w stan zdezaktywowany")]
-    public async Task<IActionResult> DeactivateModuleAsync([FromRoute] Guid ModuleId)
-    {
-        await moduleService.DeactivateModuleAsync(ModuleId);
-
-        return NoContentResult();
-    }
-
-    [HttpPut("{moduleId:guid}/activated")]
-    [Authorize(Policy = AuthorizationPolicies.UpdateModule)]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [SwaggerOperation(OperationId = nameof(ActivateModuleAsync), Summary = "Aktywacja modułu w systemie", Description = "Ustawia moduł w stan aktywny")]
-    public async Task<IActionResult> ActivateModuleAsync([FromRoute] Guid ModuleId)
-    {
-        await moduleService.ActivateModuleAsync(ModuleId);
+        await moduleService.UpdateModuleAsync(ModuleId, Request.Name, Request.BaseUrl, Request.OpenApiPath, Request.IsActive);
 
         return NoContentResult();
     }

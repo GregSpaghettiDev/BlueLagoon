@@ -9,7 +9,7 @@ public interface IRoleService
 
     Task<RoleWithPermissionsDto> GetRoleAsync(Guid roleId);
 
-    Task UpdateRolePermissionsAsync(Guid roleId, IList<Guid> permissionIds);
+    Task UpdateRoleAsync(Guid roleId, IList<Guid> permissionIds, bool? IsActive);
 
     Task CreateRoleAsync(ValueObjects.Role role, IList<Guid> permissionIds);
 }

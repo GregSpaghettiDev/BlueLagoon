@@ -52,27 +52,13 @@ internal sealed class RoleController(IHttpContextAccessor httpContextAccessor, I
         return ContentResult(result, HttpStatusCode.OK);
     }
 
-    [HttpPut("{roleId:guid}/permissions")]
-    [Authorize(Policy = AuthorizationPolicies.UpdateRole)]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [SwaggerOperation(OperationId = nameof(UpdateRolePermissionsAsync), Summary = "Modyfikacja zestawu upranień", Description = "Dodaje lub usuwa uprawnienia w ramach danej roli")]
-    public async Task<IActionResult> UpdateRolePermissionsAsync([FromRoute] Guid RoleId, [FromBody] UpdateRolePermissionsRequest Request)
-    {
-        await roleService.UpdateRolePermissionsAsync(RoleId, Request.PermissionIdsToReplace);
-
-        return NoContentResult();
-    }
-
     [HttpPost()]
     [Authorize(Policy = AuthorizationPolicies.AddRole)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType((int)HttpStatusCode.Created)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType((int)HttpStatusCode.Conflict)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [SwaggerOperation(OperationId = nameof(CreateRoleAsync), Summary = "Utworzenie nowej roli", Description = "Tworzy nową rolę")]
     public async Task<IActionResult> CreateRoleAsync([FromBody] CreateRoleRequest Request)
@@ -80,5 +66,23 @@ internal sealed class RoleController(IHttpContextAccessor httpContextAccessor, I
         await roleService.CreateRoleAsync(new Core.ValueObjects.Role(Guid.NewGuid(), Request.Code, Request.Name), Request.RoleIds);
 
         return CreatedContentResult();
+    }
+
+    [HttpPatch("{roleId:guid}/activate")]
+    [Authorize(Policy = AuthorizationPolicies.UpdateRole)]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType((int)HttpStatusCode.Created)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType((int)HttpStatusCode.Conflict)]
+    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
+    [SwaggerOperation(OperationId = nameof(UpdateRoleAsync), 
+        Summary = "Zmienia wartości poszczególnych pól roli takich jak stan aktywny/nieaktywny czy przypisane uprawnienia ", 
+        Description = "Do zmiany poszczególnych wartości należy w żądaniu zdefiniować odpowiednie pola i ich wartości (IsActive, PermissionIds).")]
+    public async Task<IActionResult> UpdateRoleAsync([FromRoute] Guid RoleId, [FromBody] UpdateRoleRequest Request)
+    {
+        await roleService.UpdateRoleAsync(RoleId, Request.PermissionIds, Request.IsActive);
+
+        return NoContentResult();
     }
 }

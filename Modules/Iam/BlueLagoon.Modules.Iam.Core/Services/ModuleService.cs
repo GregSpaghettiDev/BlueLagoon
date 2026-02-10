@@ -4,8 +4,10 @@ using BlueLagoon.Modules.Iam.Core.DAL.Entities;
 using BlueLagoon.Modules.Iam.Core.Exceptions;
 using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
 using BlueLagoon.Modules.Iam.Core.Services.Dto;
+using BlueLagoon.Shared.DevTools.Http;
 using BlueLagoon.Shared.DevTools.Linq;
 using BlueLagoon.Shared.DevTools.Pagination;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using OpenIddict.Abstractions;
@@ -15,7 +17,8 @@ namespace BlueLagoon.Modules.Iam.Core.Services;
 internal sealed class ModuleService(IamDbContext dbContext,
                                     IMapper mapper,
                                     IHttpClientFactory httpClientFactory,
-                                    IOpenIddictScopeManager scopeManager) 
+                                    IOpenIddictScopeManager scopeManager,
+                                    IHttpContextAccessor httpContextAccessor) 
     : IModuleService
 {
     public Task<PaginatedList<ModuleDto>> GetModulesAsync(string searchValue, PaginationParameters paginationParameters = null)
@@ -84,74 +87,31 @@ internal sealed class ModuleService(IamDbContext dbContext,
         ((Module)module).SetBaseUrl(baseUrl);
         ((Module)module).SetOpenApiPath(openApiUri);
 
+        httpContextAccessor.HttpContext.AddCreatedResourceId(((Module)module).Id);
+
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task SetOpenApiPathAsync(Guid moduleId, string path)
-    {
-        var pathVo = new ValueObjects.Path(path);
-
-        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId && x.IsActive, true)
-            ?? throw new ModuleNotFoundException(moduleId);
-
-        module.SetOpenApiPath(pathVo);
-        await dbContext.SaveChangesAsync();
-    }
-
-    public async Task SetOpenApiUrlAsync(Guid moduleId, string url)
-    {
-        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId && x.IsActive, true)
-            ?? throw new ModuleNotFoundException(moduleId);
-
-        if (string.IsNullOrWhiteSpace(url))
-            throw new InvalidOpenApiUrlException();
-
-        module.SetBaseUrl(url);
-        await dbContext.SaveChangesAsync();
-    }
-
-    public async Task SetOpenApiUrlAndOrPathAsync(Guid moduleId, string url = null, string path = null)
-    {
-        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId && x.IsActive, true)
-            ?? throw new ModuleNotFoundException(moduleId);
-
-        if (!string.IsNullOrWhiteSpace(url))
-            module.SetBaseUrl(url);
-
-        if (!string.IsNullOrWhiteSpace(path))
-        {
-            var pathVo = new ValueObjects.Path(path);
-            module.SetOpenApiPath(pathVo);
-        }
-
-        if (dbContext.ChangeTracker.HasChanges())
-            await dbContext.SaveChangesAsync();
-    }
-
-    public async Task DeactivateModuleAsync(Guid moduleId)
-    {
-        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId && x.IsActive, true)
-            ?? throw new ModuleNotFoundException(moduleId);
-
-        module.Deactivate();
-        await dbContext.SaveChangesAsync();
-    }
-
-    public async Task ActivateModuleAsync(Guid moduleId)
-    {
-        var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId && !x.IsActive, true)
-            ?? throw new ModuleNotFoundException(moduleId);
-
-        module.Activate();
-        await dbContext.SaveChangesAsync();
-    }
-
-    public async Task ChangeNameAsync(Guid moduleId, string newName)
+    public async Task UpdateModuleAsync(Guid moduleId, string name, string baseUrl, string openApiPath, bool? isActive)
     {
         var module = await dbContext.Module.ReturnSingleOrDefaultAsync(x => x.Id == moduleId, true)
             ?? throw new ModuleNotFoundException(moduleId);
 
-        module.Name = newName;
+        if (!string.IsNullOrWhiteSpace(name))
+            module.Name = name;
+
+        if (!string.IsNullOrWhiteSpace(baseUrl))
+            module.SetBaseUrl(baseUrl);
+
+        if (!string.IsNullOrWhiteSpace(openApiPath))
+            module.SetOpenApiPath(openApiPath);
+
+        if (isActive.HasValue)
+            if (isActive.Value)
+                module.Activate();
+            else
+                module.Deactivate();
+
         await dbContext.SaveChangesAsync();
     }
 }

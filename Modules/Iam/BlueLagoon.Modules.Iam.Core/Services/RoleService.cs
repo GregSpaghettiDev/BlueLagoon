@@ -5,13 +5,15 @@ using BlueLagoon.Modules.Iam.Core.Dictionaries;
 using BlueLagoon.Modules.Iam.Core.Exceptions;
 using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
 using BlueLagoon.Modules.Iam.Core.Services.Dto;
+using BlueLagoon.Shared.DevTools.Http;
 using BlueLagoon.Shared.DevTools.Linq;
 using BlueLagoon.Shared.DevTools.Pagination;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlueLagoon.Modules.Iam.Core.Services;
 
-internal sealed class RoleService(IamDbContext dbContext, IMapper mapper) : IRoleService
+internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IRoleService
 {
     public async Task<PaginatedList<RoleDto>> GetRolesAsync(string searchValue, PaginationParameters paginationParameters)
     {
@@ -34,24 +36,22 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper) : IRol
         return role;
     }
 
-    public async Task UpdateRolePermissionsAsync(Guid roleId, IList<Guid> permissionIds)
+    async Task UpdateRolePermissionsAsync(Guid roleId, IList<Guid> permissionIds)
     {
-        var role = await dbContext.Roles
-                            .Include(x => x.RoleClaims)
-                            .Where(x => x.Id == roleId).SingleOrDefaultAsync();
-
-        if (role is null)
-            throw new RoleNotFoundException(roleId);
+        var roleClaims = await dbContext.RoleClaims
+                            .Where(x => x.RoleId == roleId).ToListAsync();
 
         if (permissionIds.Count > 0)
         {
-            var roleClaimsToRemove = role.RoleClaims.Where(x => !permissionIds.Contains(x.ClaimId ?? Guid.Empty)).ToList();
+            var roleClaimsToRemove = roleClaims.Where(x => !permissionIds.Contains(x.ClaimId ?? Guid.Empty)).ToList();
             var permissionIdsToAdd = permissionIds.Except(roleClaimsToRemove?.Select(x => x.ClaimId ?? Guid.Empty) ?? []).Where(x => x != Guid.Empty);
             var roleClaimsToAdd = await dbContext.Permission.ReturnListAsync<Permission, RoleClaim>(x => permissionIdsToAdd.Contains(x.Id), false, mapper.ConfigurationProvider);
 
             foreach (var permission in roleClaimsToAdd)
                 dbContext.AddRange(roleClaimsToAdd);
         }
+
+        await dbContext.SaveChangesAsync();
     }
 
     public async Task CreateRoleAsync(ValueObjects.Role role, IList<Guid> permissionIds)
@@ -61,6 +61,25 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper) : IRol
 
         await dbContext.AddAsync(Role.Create(role));
 
+        httpContextAccessor.HttpContext.AddCreatedResourceId(role.Id);
+
         await UpdateRolePermissionsAsync(role.Id, permissionIds);
+    }
+
+    public async Task UpdateRoleAsync(Guid roleId, IList<Guid> permissionIds, bool? isActive)
+    {
+        var role = await dbContext.Roles.SingleOrDefaultAsync(x => x.Id == roleId);
+        if (role is null)
+            throw new RoleNotFoundException(roleId);
+
+        if (isActive.HasValue)
+            if (isActive.Value)
+                role.Deactivate();
+            else
+                role.Activate();
+
+        if (permissionIds?.Any() ?? false)
+            await UpdateRolePermissionsAsync(roleId, permissionIds);
+
     }
 }
