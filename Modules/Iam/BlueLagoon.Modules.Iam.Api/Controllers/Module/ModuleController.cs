@@ -29,24 +29,24 @@ public sealed class ModuleController(IModuleService moduleService, IHttpContextA
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [SwaggerOperation(OperationId = nameof(GetModulesAsync), Summary = "Pobranie listy modułów", Description = "Zwraca moduły zarejestrowane w IAM")]
-    public async Task<IActionResult> GetModulesAsync([FromQuery] string SearchValue, [FromQuery] PaginationParameters PaginationParameters)
+    public async Task<IActionResult> GetModulesAsync([FromQuery] ModuleListRequest request)
     {
-        var result = await moduleService.GetModulesAsync(SearchValue, PaginationParameters);
+        var result = await moduleService.GetModulesAsync(request.SearchValue, request.PaginationParameters);
 
         return ContentResult(result, HttpStatusCode.OK);
     }
 
     [HttpPost]
-    [Authorize(Policy = AuthorizationPolicies.AddModule)]
+    [Authorize(Policy = AuthorizationPolicies.AddOrDeleteModule)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType((int)HttpStatusCode.Created)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     [SwaggerOperation(OperationId = nameof(CreateModuleAsync), Summary = "Dodanie modułu do rejestru IAM", Description = "Dodaje wskazany moduł do rejestru IAM")]
-    public async Task<IActionResult> CreateModuleAsync([FromBody] CreateModuleRequest Request)
+    public async Task<IActionResult> CreateModuleAsync([FromBody] CreateModuleRequest request)
     {
-        await moduleService.AddModuleAsync(Request.Name, Request.Description, Request.OpenApiUri, Request.BaseUrl);
+        await moduleService.AddModuleAsync(request.Name, request.Description, request.OpenApiUri, request.BaseUrl);
 
         return CreatedContentResult();
     }
@@ -61,24 +61,24 @@ public sealed class ModuleController(IModuleService moduleService, IHttpContextA
         Summary = "Zmienia wartości poszczególnych pól modułu.",
         Description = "Do zmiany poszczególnych wartości należy w żądaniu zdefiniować odpowiednie pola i ich wartości (IsActive, Name, BaseUrl, OpenApiPath, IsActive). " +
         "Dezaktywacja modułu wiąże się z dezaktywacją endpointów i uprawnień. Uprawnienia przypisane do ról i/lub użytkowników sa trwale z nich usuwane.")]
-    public async Task<IActionResult> UpdateModuleAsync([FromRoute] Guid ModuleId, [FromBody] UpdateModuleRequest Request)
+    public async Task<IActionResult> UpdateModuleAsync([FromRoute] Guid moduleId, [FromBody] UpdateModuleRequest request)
     {
-        await moduleService.UpdateModuleAsync(ModuleId, Request.Name, Request.BaseUrl, Request.OpenApiPath, Request.IsActive);
+        await moduleService.UpdateModuleAsync(moduleId, request.Name, request.BaseUrl, request.OpenApiPath, request.IsActive);
 
         return NoContentResult();
     }
 
     [HttpDelete("{moduleId:guid}")]
-    [Authorize(Policy = AuthorizationPolicies.UpdateModule)]
+    [Authorize(Policy = AuthorizationPolicies.AddOrDeleteModule)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [SwaggerOperation(OperationId = nameof(UpdateModuleAsync), 
+    [SwaggerOperation(OperationId = nameof(DeleteModuleAsync), 
         Summary = "Trwałe usunięcie modułu.", 
         Description = "Usuwa moduł razem z zarejestrowanymi ednpointami i zdefiniowanymi do nich uprawnieniami. Uprawnienia przypisane do ról i/lub użytkowników sa trwale z nich usuwane.")]
-    public async Task<IActionResult> DeleteModuleAsync([FromRoute] Guid ModuleId)
+    public async Task<IActionResult> DeleteModuleAsync([FromRoute] Guid moduleId)
     {
-        await moduleService.DeleteModuleAsync(ModuleId);
+        await moduleService.DeleteModuleAsync(moduleId);
 
         return NoContentResult();
     }

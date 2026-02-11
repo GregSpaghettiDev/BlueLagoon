@@ -8,11 +8,11 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace BlueLagoon.Shared.Infrastructure.Swagger;
 
-public class ConfigureSwaggerOptions(IServiceProvider ServiceProvider) : IConfigureOptions<SwaggerGenOptions>
+public class ConfigureSwaggerOptions(IServiceProvider serviceProvider) : IConfigureOptions<SwaggerGenOptions>
 {
     public void Configure(SwaggerGenOptions options)
     {
-        using var scope = ServiceProvider.CreateScope();
+        using var scope = serviceProvider.CreateScope();
 
         var scopeManager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
         var oauthSettings = scope.ServiceProvider.GetRequiredService<Oauth2OidcSettings>();

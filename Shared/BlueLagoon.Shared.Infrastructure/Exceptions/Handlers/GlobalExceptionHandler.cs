@@ -5,13 +5,13 @@ using Microsoft.Extensions.Logging;
 
 namespace BlueLagoon.Shared.Infrastructure.Exceptions.Handlers;
 
-internal sealed class GlobalExceptionHandler(IProblemDetailsService ProblemDetailsService, ILogger<GlobalExceptionHandler> Logger) : IExceptionHandler
+internal sealed class GlobalExceptionHandler(IProblemDetailsService problemDetailsService, ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        Logger.LogError(exception, "Wystąpił nieznany błąd w module Iam: {Message}", exception.Message);
+        logger.LogError(exception, "Wystąpił nieznany błąd w module Iam: {Message}", exception.Message);
 
-        return await ProblemDetailsService.TryWriteAsync(new ProblemDetailsContext
+        return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,
             Exception = exception,

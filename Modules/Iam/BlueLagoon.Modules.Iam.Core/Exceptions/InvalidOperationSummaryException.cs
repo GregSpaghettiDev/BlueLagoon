@@ -3,8 +3,8 @@ using System.Net;
 
 namespace BlueLagoon.Modules.Iam.Core.Exceptions;
 
-public sealed class InvalidOperationSummaryException(int MinCharactersNumber, int MaxCharactersNumber) 
-    : BaseIamCoreException($"Podsumowanie może zawierać od {MinCharactersNumber} do {MaxCharactersNumber} znaków.", "005")
+public sealed class InvalidOperationSummaryException(int minCharactersNumber, int maxCharactersNumber) 
+    : BaseIamCoreException($"Podsumowanie może zawierać od {minCharactersNumber} do {maxCharactersNumber} znaków.", "005")
 {
     public override HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
 }

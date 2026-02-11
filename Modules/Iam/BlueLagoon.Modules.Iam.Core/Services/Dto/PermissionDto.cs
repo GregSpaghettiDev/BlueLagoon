@@ -1,27 +1,27 @@
 ﻿namespace BlueLagoon.Modules.Iam.Core.Services.Dto;
 
-public class RoleDto
+public class PermissionDto
 {
     public Guid Id { get; set; }
-
-    public string Name { get; set; }
 
     public string Code { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
-    public Guid CreatorId { get; set; }
+    public Guid CreatorId { get; set;  }
 
     public string CreatorName { get; set; }
 
     public bool IsActive { get; set; }
 
-    public RoleOptionsDto Options { get; set; }
+    public string Description { get; set; }
+
+    public PermissionOptionsDto Options { get; set; }
 }
 
-public class RoleOptionsDto
+public class PermissionOptionsDto
 {
-    public bool IsDetails { get; set; }
+    public bool IsDetails { get; set; } = true;
 
     public bool IsActivate { get; set; }
 

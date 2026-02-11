@@ -22,8 +22,13 @@ internal static class Extensions
     {
         options.AddPolicy(AuthorizationPolicies.IamScopeRequirement, p => p.RequireClaim(OpenIddictConstants.Claims.Scope, "iam"));
         options.AddPolicy(AuthorizationPolicies.ReadModules, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.read-modules")));
-        options.AddPolicy(AuthorizationPolicies.AddModule, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.add-module")));
+        options.AddPolicy(AuthorizationPolicies.AddOrDeleteModule, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.add-delete-module")));
         options.AddPolicy(AuthorizationPolicies.UpdateModule, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.update-module")));
-        options.AddPolicy(AuthorizationPolicies.ReadModules, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.read-roles")));
+        options.AddPolicy(AuthorizationPolicies.ReadRoles, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.read-roles")));
+        options.AddPolicy(AuthorizationPolicies.AddOrDeleteRole, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.add-delete-role")));
+        options.AddPolicy(AuthorizationPolicies.UpdateRole, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.update-role")));
+        options.AddPolicy(AuthorizationPolicies.ReadPermissions, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.read-permission")));
+        options.AddPolicy(AuthorizationPolicies.AddOrDeletePermission, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.add-delete-permission")));
+        options.AddPolicy(AuthorizationPolicies.UpdatePermission, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.update-permission")));
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace BlueLagoon.Modules.Iam.Api.Controllers.Role.Requests;
 
-internal class CreateRoleRequest
+public sealed class CreateRoleRequest
 {
     public string Name { get; set; }
 

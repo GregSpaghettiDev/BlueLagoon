@@ -1,5 +1,4 @@
 ﻿using BlueLagoon.Modules.Iam.Core.Services.Dto;
-using Microsoft.AspNetCore.Authentication;
 
 namespace BlueLagoon.Modules.Iam.Core.Services.Abstractions;
 

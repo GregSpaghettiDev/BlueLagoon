@@ -4,8 +4,8 @@ using System.Net;
 
 namespace BlueLagoon.Modules.Iam.Core.Exceptions;
 
-public sealed class InvalidUserFirstNameException(int MinCharactersNumber, int MaxCharactersNumber) 
-    : BaseIamCoreException($"Imię użytkownika musi zawierać minimum {NounsGradator.GradateTheNounAccordingToQuantity(MinCharactersNumber, "znak", "znaki", "znaków")} oraz maksymalnie {NounsGradator.GradateTheNounAccordingToQuantity(MaxCharactersNumber, "znak", "znaki", "znaków")}.", "008")
+public sealed class InvalidUserFirstNameException(int minCharactersNumber, int maxCharactersNumber) 
+    : BaseIamCoreException($"Imię użytkownika musi zawierać minimum {NounsGradator.GradateTheNounAccordingToQuantity(minCharactersNumber, "znak", "znaki", "znaków")} oraz maksymalnie {NounsGradator.GradateTheNounAccordingToQuantity(maxCharactersNumber, "znak", "znaki", "znaków")}.", "008")
 {
     public override HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
 }

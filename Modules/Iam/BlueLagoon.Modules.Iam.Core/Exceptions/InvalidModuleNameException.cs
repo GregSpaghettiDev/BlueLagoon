@@ -3,7 +3,7 @@ using System.Net;
 
 namespace BlueLagoon.Modules.Iam.Core.Exceptions;
 
-public sealed class InvalidModuleNameException(int MinCharactersNumber, int MaxCharactersNumber) : BaseIamCoreException($"Nazwa modułu może zawierać od {MinCharactersNumber} do {MaxCharactersNumber} znaków.", "001")
+public sealed class InvalidModuleNameException(int minCharactersNumber, int maxCharactersNumber) : BaseIamCoreException($"Nazwa modułu może zawierać od {minCharactersNumber} do {maxCharactersNumber} znaków.", "001")
 {
     public override HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
 }

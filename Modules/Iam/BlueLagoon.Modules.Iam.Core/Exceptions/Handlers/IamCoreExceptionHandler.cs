@@ -6,17 +6,17 @@ using Microsoft.Extensions.Logging;
 
 namespace BlueLagoon.Modules.Iam.Core.Exceptions.Handlers;
 
-internal sealed class IamCoreExceptionHandler(IProblemDetailsService ProblemDetailsService, ILogger<IamCoreExceptionHandler> Logger) : IExceptionHandler
+internal sealed class IamCoreExceptionHandler(IProblemDetailsService problemDetailsService, ILogger<IamCoreExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         if (exception is not BaseIamCoreException coreException)
             return false;
        
-        Logger.LogError(exception, "Wystąpił wyjątek biznesowy ({Code}) modułu Iam: {Message}", coreException.ErrorCode, coreException.Message);
+        logger.LogError(exception, "Wystąpił wyjątek biznesowy ({Code}) modułu Iam: {Message}", coreException.ErrorCode, coreException.Message);
         httpContext.Response.StatusCode = (int)coreException.StatusCode;
 
-        return await ProblemDetailsService.TryWriteAsync(new ProblemDetailsContext
+        return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,
             Exception = exception,

@@ -6,7 +6,7 @@ internal static class AuthorizationPolicies
 
     public const string ReadModules = nameof(ReadModules);
 
-    public const string AddModule = nameof(AddModule);
+    public const string AddOrDeleteModule = nameof(AddOrDeleteModule);
 
     public const string UpdateModule = nameof(UpdateModule);
 
@@ -14,5 +14,11 @@ internal static class AuthorizationPolicies
 
     public const string UpdateRole = nameof(UpdateRole);
 
-    public const string AddRole = nameof(AddRole);
+    public const string AddOrDeleteRole = nameof(AddOrDeleteRole);
+
+    public const string ReadPermissions = nameof(ReadPermissions);
+
+    public const string UpdatePermission = nameof(UpdatePermission);
+
+    public const string AddOrDeletePermission = nameof(AddOrDeletePermission);
 }

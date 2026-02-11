@@ -101,4 +101,24 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpC
             if (!isActive && permission.IsActive) permission.Deactivate();
         }
     }
+
+    public async Task DeleteRoleAsync(Guid roleId)
+    {
+        var role = await dbContext.Roles
+                                    .Include(x => x.RoleClaims)
+                                    .Include(x => x.UserRoles)
+                                    .Where(x => x.Id == roleId)
+                                    .SingleOrDefaultAsync();
+
+        if (role is not null)
+        {
+            if (role.RoleClaims.Count > 0) dbContext.RemoveRange(role.RoleClaims);
+            if (role.UserRoles.Count > 0) dbContext.RemoveRange(role.UserRoles);
+
+            dbContext.Remove(role);
+
+            await dbContext.SaveChangesAsync();
+        }
+        
+    }
 }

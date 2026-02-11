@@ -12,4 +12,6 @@ public interface IRoleService
     Task UpdateRoleAsync(Guid roleId, IList<Guid> permissionIds, bool? IsActive);
 
     Task CreateRoleAsync(ValueObjects.Role role, IList<Guid> permissionIds);
+
+    Task DeleteRoleAsync(Guid roleId);
 }

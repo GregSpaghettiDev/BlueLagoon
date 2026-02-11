@@ -10,7 +10,9 @@ public class RoleWithPermissionsDto
 
     public DateTime CreatedAt { get; set; }
 
-    public string CreatedBy { get; set; }
+    public Guid CreatorId { get; set; }
+
+    public string CreatorName { get; set; }
 
     public bool IsActive { get; set; }
 
@@ -26,6 +28,10 @@ public class ClaimDto
     public Guid Id { get; set; }
 
     public Guid? ClaimId { get; set; }
+
+    public Guid CreatorId { get; set; }
+
+    public string CreatorName { get; set; }
 
     public string Code { set; get; }
 

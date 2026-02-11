@@ -10,6 +10,8 @@ internal class Role : IdentityRole<Guid>, IBaseEntity
     protected Role() 
     {
         Activate();
+        RoleClaims = new HashSet<RoleClaim>();
+        UserRoles = new HashSet<UserRole>();
     }
 
     protected Role(ValueObjects.Role role)
@@ -19,6 +21,8 @@ internal class Role : IdentityRole<Guid>, IBaseEntity
         NormalizedName = role.Name.ToUpperInvariant();
         DisplayName = role.DisplayRoleName;
         Activate();
+        RoleClaims = new HashSet<RoleClaim>();
+        UserRoles = new HashSet<UserRole>();
     }
 
     public string DisplayName { get; set; }

@@ -10,8 +10,8 @@ using OpenIddict.Abstractions;
 
 namespace BlueLagoon.Shared.Infrastructure.Exceptions.Handlers;
 
-internal sealed class DbOptimisticConcurrencyExceptionHandler(IProblemDetailsService ProblemDetailsService,
-                                                              ILogger<GlobalExceptionHandler> Logger,
+internal sealed class DbOptimisticConcurrencyExceptionHandler(IProblemDetailsService problemDetailsService,
+                                                              ILogger<GlobalExceptionHandler> logger,
                                                               IWebHostEnvironment env)
     : IExceptionHandler
 {
@@ -20,7 +20,7 @@ internal sealed class DbOptimisticConcurrencyExceptionHandler(IProblemDetailsSer
         if (exception is not DbUpdateConcurrencyException dbUpdateConcurrencyException)
             return false;
 
-        Logger.LogError(exception, "Wystąpił konflikt edycji danych {Message}", exception.Message);
+        logger.LogError(exception, "Wystąpił konflikt edycji danych {Message}", exception.Message);
 
         httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
 
@@ -57,6 +57,6 @@ internal sealed class DbOptimisticConcurrencyExceptionHandler(IProblemDetailsSer
 
         problemDetailsContext.ProblemDetails.Detail = detail;
 
-        return await ProblemDetailsService.TryWriteAsync(problemDetailsContext);
+        return await problemDetailsService.TryWriteAsync(problemDetailsContext);
     }
 }

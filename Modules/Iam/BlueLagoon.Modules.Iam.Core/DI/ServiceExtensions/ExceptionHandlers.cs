@@ -9,7 +9,6 @@ internal sealed class ExceptionHandlers : IServicesInstaller
 {
     public void Intstall(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddExceptionHandler<IamApplicationExceptionHandler>();
         services.AddExceptionHandler<IamCoreExceptionHandler>();
     }
 }
