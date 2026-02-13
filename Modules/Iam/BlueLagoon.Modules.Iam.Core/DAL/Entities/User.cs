@@ -1,6 +1,7 @@
 ﻿using BlueLagoon.Modules.Iam.Core.ValueObjects;
 using BlueLagoon.Shared.DevTools.Base.Abstractions;
 using BlueLagoon.Shared.DevTools.Base.Exceptions;
+using BlueLagoon.Shared.DevTools.Tools;
 using Microsoft.AspNetCore.Identity;
 
 namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
@@ -9,6 +10,47 @@ internal class User : IdentityUser<Guid>, IBaseEntity
 {
     public User()
     {
+        Activate();
+
+        #region nav props initialization
+        UserRoles = new HashSet<UserRole>();
+        UserLogins = new HashSet<UserLogin>();
+        UserTokens = new HashSet<UserToken>();
+        UserClaims = new HashSet<UserClaim>();
+        UserCreators = new HashSet<User>();
+        UserModificators = new HashSet<User>();
+        UserTokenCreators = new HashSet<UserToken>();
+        UserTokenModificators = new HashSet<UserToken>();
+        ApplicationCreators = new HashSet<Application>();
+        ApplicationModificators = new HashSet<Application>();
+        AuthorizationCreators = new HashSet<Authorization>();
+        AuthorizationModificators = new HashSet<Authorization>();
+        ModuleCreators = new HashSet<Module>();
+        ModuleModificators = new HashSet<Module>();
+        RoleCreators = new HashSet<Role>();
+        RoleModificators = new HashSet<Role>();
+        RoleClaimCreators = new HashSet<RoleClaim>();
+        RoleClaimModificators = new HashSet<RoleClaim>();
+        TokenCreators = new HashSet<Token>();
+        TokenModificators = new HashSet<Token>();
+        UserClaimCreators = new HashSet<UserClaim>();
+        UserClaimModificators = new HashSet<UserClaim>();
+        UserLoginCreators = new HashSet<UserLogin>();
+        UserLoginModificators = new HashSet<UserLogin>();
+        UserRoleCreators = new HashSet<UserRole>();
+        UserRoleModificators = new HashSet<UserRole>();
+        RegisteredEndpointCreators = new HashSet<RegisteredEndpoint>();
+        RegisteredEndpointModificators = new HashSet<RegisteredEndpoint>();
+        PermissionCreators = new HashSet<Permission>();
+        PermissionModificators = new HashSet<Permission>();
+        #endregion
+    }
+
+    protected User(string firstName, string lastName, string userName)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        UserName = userName;
         Activate();
 
         #region nav props initialization
@@ -70,6 +112,9 @@ internal class User : IdentityUser<Guid>, IBaseEntity
         ModifiedAt = modifiedAt;
         ModificatorId = modificatorId;
     }
+
+    public static User Create(UserFirstName firstName, UserLastName lastName, UserName userName)
+        => new(firstName, lastName, userName);
 
     public void Activate()
     {

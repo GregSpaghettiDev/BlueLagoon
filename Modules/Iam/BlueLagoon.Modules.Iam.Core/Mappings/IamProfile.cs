@@ -64,5 +64,49 @@ internal sealed class IamProfile : Profile
                 IsActivate = !s.IsActive,
                 IsDelete = s.IsActive
             }));
+
+        CreateMap<User, UserDto>()
+            .ForMember(d => d.CreatorName, o => o.MapFrom(s => s.Creator != null ? s.Creator.FirstName + " " + s.Creator.LastName : string.Empty))
+            .ForMember(d => d.AssignedModules, o => o.MapFrom(s => string.Join(", ", s.UserClaims
+                    .Select(uc => uc.ModuleName)
+                    .Concat(s.UserRoles.SelectMany(ur => ur.Role.RoleClaims).Select(rc => rc.ModuleName))
+                    .Distinct())))
+            .ForMember(d => d.Options, o => o.MapFrom(s => new UserOptionsDto
+            {
+                IsActivate = !s.IsActive,
+                IsDetails = true
+            }));
+
+        CreateMap<User, BaseUserDto>()
+            .ForMember(d => d.CreatorName, o => o.MapFrom(s => s.Creator != null ? s.Creator.FirstName + " " + s.Creator.LastName : string.Empty))
+            .ForMember(d => d.Options, o => o.MapFrom(s => new UserOptionsDto
+            {
+                IsActivate = !s.IsActive,
+                IsDetails = true
+            }));
+
+        CreateMap<RoleClaim, UserPermissionDto>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
+            .ForMember(d => d.IsFromRole, o => o.MapFrom(_ => true))
+            .ForMember(d => d.Code, o => o.MapFrom(s => s.ClaimValue))
+            .ForMember(d => d.ModuleName, o => o.MapFrom(s => s.ModuleName))
+            .ForMember(d => d.Description, o => o.MapFrom(s => s.ClaimDescription))
+            .ForMember(d => d.RoleId, o => o.MapFrom(s => s.RoleId))
+            .ForMember(d => d.RoleName, o => o.MapFrom(s => s.Role.Name));
+
+        CreateMap<UserClaim, UserPermissionDto>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
+            .ForMember(d => d.IsFromRole, o => o.MapFrom(_ => false))
+            .ForMember(d => d.Code, o => o.MapFrom(s => s.ClaimValue))
+            .ForMember(d => d.ModuleName, o => o.MapFrom(s => s.ModuleName))
+            .ForMember(d => d.Description, o => o.MapFrom(s => s.ClaimDescription))
+            .ForMember(d => d.RoleId, o => o.MapFrom(_ => (Guid?)null))
+            .ForMember(d => d.RoleName, o => o.MapFrom(_ => (string)null));
+
+        CreateMap<UserRole, UserRoleDto>()
+            .ForMember(d => d.RoleId, o => o.MapFrom(s => s.RoleId))
+            .ForMember(d => d.RoleCode, o => o.MapFrom(s => s.Role.Name))
+            .ForMember(d => d.RoleName, o => o.MapFrom(s => s.Role.DisplayName))
+            .ForMember(d => d.AccesingModules, o => o.MapFrom(s => string.Join(", ", s.Role.RoleClaims.Select(x => x.ModuleName))));
     }
 }

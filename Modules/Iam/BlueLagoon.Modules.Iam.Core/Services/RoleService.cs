@@ -28,7 +28,7 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpC
 
     public async Task<RoleWithPermissionsDto> GetRoleAsync(Guid roleId)
     {
-        var role = await dbContext.Roles.ReturnSingleOrDefaultAsync<Role, RoleWithPermissionsDto>(x => x.Id == roleId, false, mapper.ConfigurationProvider);
+        var role = await dbContext.Roles.ReturnSingleOrDefaultAsync<DAL.Entities.Role, RoleWithPermissionsDto>(x => x.Id == roleId, false, mapper.ConfigurationProvider);
 
         var claimIds = role.AssignedPermissions.Where(x => x.ClaimId != null).Select(x => x.ClaimId);
         role.AvailablePermissions = await dbContext.Permission.ReturnListAsync<Permission, ClaimDto>(x => x.FullPermissionName.ModuleName == Scope.Iam.Name && !claimIds.Contains(x.Id), false, mapper.ConfigurationProvider);
@@ -68,7 +68,7 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpC
 
     public async Task UpdateRoleAsync(Guid roleId, IList<Guid> permissionIds, bool? isActive)
     {
-        var role = await dbContext.Roles.SingleOrDefaultAsync(x => x.Id == roleId);
+        var role = await dbContext.Roles.SingleOrDefaultAsync(x => x.Id == roleId && x.Id != ValueObjects.Role.IamAdmin.Id);
         if (role is null)
             throw new RoleNotFoundException(roleId);
 
@@ -107,7 +107,7 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpC
         var role = await dbContext.Roles
                                     .Include(x => x.RoleClaims)
                                     .Include(x => x.UserRoles)
-                                    .Where(x => x.Id == roleId)
+                                    .Where(x => x.Id == roleId && x.Id != ValueObjects.Role.IamAdmin.Id)
                                     .SingleOrDefaultAsync();
 
         if (role is not null)
@@ -119,6 +119,5 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpC
 
             await dbContext.SaveChangesAsync();
         }
-        
     }
 }

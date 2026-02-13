@@ -3,7 +3,7 @@ using System.Net;
 
 namespace BlueLagoon.Modules.Iam.Core.Exceptions;
 
-internal class ModuleAlreadyExistsException(string name) : BaseIamCoreException($"Moduł o nazwie {name} istnieje już w systemie.", "010")
+internal class ModuleAlreadyExistsException(string name) : BaseIamCoreException($"Moduł o nazwie {name} istnieje już w systemie.", "011")
 {
     public override HttpStatusCode StatusCode => HttpStatusCode.Conflict;
 }

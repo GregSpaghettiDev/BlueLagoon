@@ -1,0 +1,18 @@
+﻿using BlueLagoon.Shared.DevTools.Pagination;
+
+namespace BlueLagoon.Modules.Iam.Api.Controllers.User.Requests;
+
+public sealed class UserListRequest
+{
+    public string FirstName { get; set; }
+
+    public string LastName { get; set; }
+
+    public string Email { get; set; }
+
+    public IEnumerable<Guid> RoleIds { get; set; }
+
+    public IEnumerable<string> PermissionNames { get; set;  }
+
+    public PaginationParameters PaginationParameters { get; set; }
+}

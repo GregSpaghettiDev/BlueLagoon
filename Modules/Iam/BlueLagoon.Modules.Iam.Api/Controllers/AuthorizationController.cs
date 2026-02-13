@@ -9,7 +9,7 @@ using IAuthorizationService = BlueLagoon.Modules.Iam.Core.Services.Abstractions.
 namespace BlueLagoon.Modules.Iam.Api.Controllers;
 
 [ApiExplorerSettings(IgnoreApi = true)]
-public class AuthorizationController(IAuthorizationService authorizationService) : Controller
+internal class AuthorizationController(IAuthorizationService authorizationService) : Controller
 {
     [HttpGet("~/connect/authorize")]
     [HttpPost("~/connect/authorize")]

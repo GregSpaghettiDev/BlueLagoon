@@ -3,7 +3,6 @@ using BlueLagoon.Modules.Iam.Core.Dictionaries;
 using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
 using BlueLagoon.Modules.Iam.Core.Services.Dto;
 using BlueLagoon.Shared.DevTools.Api;
-using BlueLagoon.Shared.DevTools.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +17,7 @@ namespace BlueLagoon.Modules.Iam.Api.Controllers.Module;
 [Tags(IamModule.BasePath)]
 [Route(IamModule.BasePath + "/modules")]
 [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, Policy = AuthorizationPolicies.IamScopeRequirement)]
-public sealed class ModuleController(IModuleService moduleService, IHttpContextAccessor httpContextAccessor)
+internal sealed class ModuleController(IModuleService moduleService, IHttpContextAccessor httpContextAccessor)
     : BaseController(httpContextAccessor)
 {
     [HttpGet]

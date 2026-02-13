@@ -21,4 +21,10 @@ internal static class AuthorizationPolicies
     public const string UpdatePermission = nameof(UpdatePermission);
 
     public const string AddOrDeletePermission = nameof(AddOrDeletePermission);
+
+    public const string ReadUsers = nameof(ReadUsers);
+
+    public const string UpdateUser = nameof(UpdateUser);
+
+    public const string AddOrDeleteUser = nameof(AddOrDeleteUser);
 }

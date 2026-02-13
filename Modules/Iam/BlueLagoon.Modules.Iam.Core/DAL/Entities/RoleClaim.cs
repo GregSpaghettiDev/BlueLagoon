@@ -11,7 +11,7 @@ internal class RoleClaim : IdentityRoleClaim<Guid>, IBaseEntity
     {
         Activate();
     }
-
+    
     public string ClaimDescription { get; set; }
 
     public string ModuleName { get; set; }

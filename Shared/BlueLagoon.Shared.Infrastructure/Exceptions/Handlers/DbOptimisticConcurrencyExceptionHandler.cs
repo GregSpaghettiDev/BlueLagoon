@@ -27,7 +27,7 @@ internal sealed class DbOptimisticConcurrencyExceptionHandler(IProblemDetailsSer
         var userId = httpContext.GetUserIdAsGuid();
         var userFullName = string.Concat(httpContext.GetClaimValueByName(OpenIddictConstants.Claims.GivenName), " ", httpContext.GetClaimValueByName(OpenIddictConstants.Claims.FamilyName));
 
-        string detail = $"Dane zostały zmienione przez innego użytkownika ({userFullName}). Odśwież formularz i zedytuj dane ponownie.";
+        string detail = $"Dane zostały zmienione lub wprowadzone przez innego użytkownika ({userFullName}). Odśwież formularz i zedytuj dane ponownie.";
         var problemDetailsContext = new ProblemDetailsContext
         {
             HttpContext = httpContext,
@@ -39,7 +39,7 @@ internal sealed class DbOptimisticConcurrencyExceptionHandler(IProblemDetailsSer
                 Title = "Konflikt edycji danych",
                 Extensions =
                 {
-                    ["errorCode"] = "IAM_CONCURRENCY_CONFLICT"
+                    ["errorCode"] = "CONCURRENCY_CONFLICT"
                 }
             }
         };

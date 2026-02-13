@@ -18,7 +18,7 @@ namespace BlueLagoon.Modules.Iam.Api.Controllers.Permission;
 [Tags(IamModule.BasePath)]
 [Route(IamModule.BasePath + "/permissions")]
 [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, Policy = AuthorizationPolicies.IamScopeRequirement)]
-public sealed class ModuleController(IPermissionService permissionService, IHttpContextAccessor httpContextAccessor)
+internal sealed class ModuleController(IPermissionService permissionService, IHttpContextAccessor httpContextAccessor)
     : BaseController(httpContextAccessor)
 {
     [HttpGet]
@@ -28,8 +28,8 @@ public sealed class ModuleController(IPermissionService permissionService, IHttp
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [SwaggerOperation(OperationId = nameof(GetRolesAsync), Summary = "Pobranie listy zdefiniowanych uprawnień", Description = "Zwraca listę uprawnień z możliwością filtrowania po dostępnych parametrach.")]
-    public async Task<IActionResult> GetRolesAsync([FromQuery] PermissionListRequest request)
+    [SwaggerOperation(OperationId = nameof(GetPermissionsAsync), Summary = "Pobranie listy zdefiniowanych uprawnień", Description = "Zwraca listę uprawnień z możliwością filtrowania po dostępnych parametrach.")]
+    public async Task<IActionResult> GetPermissionsAsync([FromQuery] PermissionListRequest request)
     {
         var result = await permissionService.GetPermissionsAsync(request.SearchValue, request.PaginationParameters);
 
@@ -43,8 +43,8 @@ public sealed class ModuleController(IPermissionService permissionService, IHttp
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [SwaggerOperation(OperationId = nameof(GetRolesAsync), Summary = "Pobranie informacji o uprawnieniu", Description = "Zwraca inforacje dotyczące konkretnego uprawnienia")]
-    public async Task<IActionResult> GetRoleAsync([FromRoute] Guid permissionId)
+    [SwaggerOperation(OperationId = nameof(GetPermissionAsync), Summary = "Pobranie informacji o uprawnieniu", Description = "Zwraca inforacje dotyczące konkretnego uprawnienia")]
+    public async Task<IActionResult> GetPermissionAsync([FromRoute] Guid permissionId)
     {
         var result = await permissionService.GetPermissionAsync(permissionId);
 

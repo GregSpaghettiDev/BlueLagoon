@@ -1,5 +1,4 @@
 ﻿using BlueLagoon.Modules.Iam.Api.Controllers.Account.Requests;
-using BlueLagoon.Modules.Iam.Core.DAL.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +13,7 @@ namespace BlueLagoon.Modules.Iam.Api.Controllers.Account;
 [Route("account")]
 [Tags(IamModule.BasePath)]
 [ApiExplorerSettings(IgnoreApi = true)]
-internal class AccountController(SignInManager<User> signInManager, UserManager<User> userManager) : Controller
+internal sealed class AccountController(SignInManager<Core.DAL.Entities.User> signInManager, UserManager<Core.DAL.Entities.User> userManager) : Controller
 {
     [HttpPost("login")]
     [Consumes("application/x-www-form-urlencoded")]

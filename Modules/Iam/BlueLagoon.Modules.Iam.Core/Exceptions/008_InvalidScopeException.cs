@@ -5,7 +5,7 @@ using System.Net;
 namespace BlueLagoon.Modules.Iam.Core.Exceptions;
 
 public sealed class InvalidScopeException(int minCharactersNumber) 
-    : BaseIamCoreException($"Niepoprawna nazwa aplikacji. Nazwa aplikacji musi zawierać minimum {NounsGradator.GradateTheNounAccordingToQuantity(minCharactersNumber, "znak", "znaki", "znaków")}.", "007")
+    : BaseIamCoreException($"Niepoprawna nazwa aplikacji. Nazwa aplikacji musi zawierać minimum {NounsGradator.GradateTheNounAccordingToQuantity(minCharactersNumber, "znak", "znaki", "znaków")}.", "008")
 {
     public override HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
 }
