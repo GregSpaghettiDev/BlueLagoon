@@ -28,7 +28,7 @@ internal sealed class ModuleService(IamDbContext dbContext,
                                     .AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(searchValue))
-            queryable = queryable.Where(x => ((x.Name ?? "") + (x.DisplayName ?? "")).Contains(searchValue));
+            queryable = queryable.Where(x => x.Name.Contains(searchValue));
 
         return PaginatedList<ModuleDto>.GetPaginatedPageAsync(queryable, paginationParameters, mapper.ConfigurationProvider);
     }

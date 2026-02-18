@@ -27,4 +27,10 @@ internal static class AuthorizationPolicies
     public const string UpdateUser = nameof(UpdateUser);
 
     public const string AddOrDeleteUser = nameof(AddOrDeleteUser);
+
+    public const string ReadSecurityMappings = nameof(ReadSecurityMappings);
+
+    public const string UpdateSecurityMappings = nameof(UpdateSecurityMappings);
+
+    public const string AddOrDeleteSecurityMappings = nameof(AddOrDeleteSecurityMappings);
 }

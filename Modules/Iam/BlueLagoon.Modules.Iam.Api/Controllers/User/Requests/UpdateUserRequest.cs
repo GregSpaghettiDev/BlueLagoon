@@ -10,14 +10,7 @@ public sealed class UpdateUserRequest
 
     public string Email { get; set; }
 
-    public IList<Guid> RoleIds { get; set; }
+    public IList<string> RoleNames { get; set; }
 
-    public IList<Guid> PermissionIds { get; set; }
-}
-
-public sealed class  RoleRequest
-{
-    public Guid Id { get; set; }
-
-    public string Name { get; set; }
+    public IList<string> PermissionNames { get; set; }
 }
