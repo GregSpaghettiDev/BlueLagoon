@@ -58,7 +58,10 @@ internal class Role : IdentityRole<Guid>, IBaseEntity
             throw new InvalidActivationFlagException(nameof(Role));
 
         if (!IsActive)
+        {
             IsActive = true;
+            ConcurrencyStamp = Guid.NewGuid().ToString();
+        }
     }
 
     public void Deactivate()
@@ -67,7 +70,10 @@ internal class Role : IdentityRole<Guid>, IBaseEntity
             throw new InvalidDeactivationFlagException(nameof(Role));
 
         if (IsActive)
+        {
             IsActive = false;
+            ConcurrencyStamp = Guid.NewGuid().ToString();
+        }
     }
 
     [InverseProperty(nameof(User.RoleCreators))]

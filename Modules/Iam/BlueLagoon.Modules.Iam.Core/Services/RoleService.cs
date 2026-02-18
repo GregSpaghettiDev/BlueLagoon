@@ -9,19 +9,22 @@ using BlueLagoon.Shared.DevTools.Http;
 using BlueLagoon.Shared.DevTools.Linq;
 using BlueLagoon.Shared.DevTools.Pagination;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlueLagoon.Modules.Iam.Core.Services;
 
-internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : IRoleService
+internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor, RoleManager<Role> roleManager) : IRoleService
 {
     public async Task<PaginatedList<RoleDto>> GetRolesAsync(string searchValue, PaginationParameters paginationParameters)
     {
         var queryable = dbContext.Roles
                                     .AsNoTracking();
 
+        var normalizedSearchValue = searchValue.ToUpperInvariant(); 
+
         if (!string.IsNullOrWhiteSpace(searchValue))
-            queryable = queryable = queryable.Where(x => ((x.Name ?? "") + (x.DisplayName ?? "")).Contains(searchValue));
+            queryable = queryable = queryable.Where(x => x.NormalizedName.Contains(normalizedSearchValue));
 
         return await PaginatedList<RoleDto>.GetPaginatedPageAsync(queryable, paginationParameters, mapper.ConfigurationProvider);
     }
@@ -38,32 +41,62 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpC
 
     async Task UpdateOrCreateRolePermissionsAsync(Guid roleId, IList<Guid> permissionIds)
     {
-        var roleClaims = await dbContext.RoleClaims
-                            .Where(x => x.RoleId == roleId).ToListAsync();
+        var currentRoleClaims = await dbContext.RoleClaims
+                                                    .Where(x => x.RoleId == roleId)
+                                                    .ToListAsync();
 
-        if (permissionIds.Count > 0)
+        var desiredRoleClaimIds = permissionIds is null 
+                                        ? currentRoleClaims.Select(x => x.ClaimId ?? Guid.Empty).Where(x => x != Guid.Empty).ToHashSet()
+                                        : permissionIds.ToHashSet();
+        
+      
+        var roleClaimsToRemove = currentRoleClaims.Where(x => !desiredRoleClaimIds.Contains(x.ClaimId ?? Guid.Empty)).Where(x => x.ClaimId != null).ToArray();
+
+        var currentRoleClaimIds = currentRoleClaims.Select(x => x.ClaimId ?? Guid.Empty).Where(x => x != Guid.Empty).ToHashSet();
+        var roleClaimIdsToAdd = desiredRoleClaimIds.Where(x => !currentRoleClaimIds.Contains(x)).ToArray();
+        
+        if (roleClaimsToRemove.Length > 0)
+            dbContext.RemoveRange(roleClaimsToRemove);
+
+        if (roleClaimIdsToAdd.Length > 0)
         {
-            var roleClaimsToRemove = roleClaims.Where(x => !permissionIds.Contains(x.ClaimId ?? Guid.Empty)).ToList();
-            var permissionIdsToAdd = permissionIds.Except(roleClaimsToRemove?.Select(x => x.ClaimId ?? Guid.Empty) ?? []).Where(x => x != Guid.Empty);
-            var roleClaimsToAdd = await dbContext.Permission.ReturnListAsync<Permission, RoleClaim>(x => permissionIdsToAdd.Contains(x.Id), false, mapper.ConfigurationProvider);
-
-            foreach (var permission in roleClaimsToAdd)
-                dbContext.AddRange(roleClaimsToAdd);
+            var permissionsToAdd = await dbContext.Permission.AsNoTracking().Where(x => roleClaimIdsToAdd.Contains(x.Id)).Select(x => new RoleClaim
+            {
+                RoleId = roleId,
+                ClaimType = "permission",
+                ClaimValue = x.FullPermissionName.FullPermissionName,
+                ClaimDescription = x.Description,
+                ClaimId = x.Id,
+                ModuleName = x.FullPermissionName.ModuleName
+            }).ToListAsync();
+            
+            dbContext.RoleClaims.AddRange(permissionsToAdd);
         }
-
-        await dbContext.SaveChangesAsync();
     }
 
     public async Task CreateRoleAsync(ValueObjects.Role role, IList<Guid> permissionIds)
     {
-        if (await dbContext.Roles.AnyAsync(x => x.Name == role.Name || x.DisplayName == role.DisplayRoleName || x.Id == role.Id))
+        if (await dbContext.Roles.AnyAsync(x => x.NormalizedName == role.NormalizedName || x.Id == role.Id))
             throw new RoleAlreadyExistsException(role.Id.ToString(), role.Name, role.DisplayRoleName);
 
-        await dbContext.AddAsync(Role.Create(role));
+        using var transaction = await dbContext.Database.BeginTransactionAsync();
 
-        httpContextAccessor.HttpContext.AddCreatedResourceId(role.Id);
+        try
+        {
+            await roleManager.CreateAsync(Role.Create(role));
 
-        await UpdateOrCreateRolePermissionsAsync(role.Id, permissionIds);
+            httpContextAccessor.HttpContext.AddCreatedResourceId(role.Id);
+
+            await UpdateOrCreateRolePermissionsAsync(role.Id, permissionIds);
+
+            await dbContext.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task UpdateRoleAsync(Guid roleId, IList<Guid> permissionIds, bool? isActive)
@@ -75,10 +108,10 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpC
         if (isActive.HasValue)
         {
             if (isActive.Value)
-                role.Deactivate();
+                role.Activate();
 
             else
-                role.Activate();
+                role.Deactivate();
             
             await ChangeActivationStateForAllAssignedPermissionsAsync(role.Id, isActive.Value);
         }
@@ -115,7 +148,7 @@ internal sealed class RoleService(IamDbContext dbContext, IMapper mapper, IHttpC
             if (role.RoleClaims.Count > 0) dbContext.RemoveRange(role.RoleClaims);
             if (role.UserRoles.Count > 0) dbContext.RemoveRange(role.UserRoles);
 
-            dbContext.Remove(role);
+            await roleManager.DeleteAsync(role);
 
             await dbContext.SaveChangesAsync();
         }
