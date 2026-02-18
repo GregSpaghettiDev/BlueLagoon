@@ -1,5 +1,6 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL;
 using BlueLagoon.Modules.Iam.Core.DAL.Entities;
+using BlueLagoon.Modules.Iam.Core.DAL.Identity;
 using BlueLagoon.Shared.DevTools.Installers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,8 @@ internal sealed class Identity : IServicesInstaller
         })
         .AddEntityFrameworkStores<IamDbContext>()
         .AddDefaultTokenProviders();
+
+        services.AddScoped<IUserStore<User>, IamUserStore>();
 
         services.ConfigureApplicationCookie(options =>
         {

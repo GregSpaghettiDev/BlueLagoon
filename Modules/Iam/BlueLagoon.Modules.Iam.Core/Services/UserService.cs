@@ -19,7 +19,7 @@ namespace BlueLagoon.Modules.Iam.Core.Services;
 internal sealed class UserService(UserManager<User> userManager,
                                   IMapper mapper,
                                   IamDbContext dbContext,
-                                  IEnumerable<IIdentityErrorPolicy> identityErrorPolicies) 
+                                  IEnumerable<IIdentityErrorPolicy> identityErrorPolicies)
     : IUserService
 {
     public async Task<PaginatedList<UserDto>> GetUsersAsync(string firstName, string lastName, string email, PaginationParameters paginationParameters, IEnumerable<Guid> roleIds = null, IEnumerable<string> permissionNames = null)
@@ -149,12 +149,14 @@ internal sealed class UserService(UserManager<User> userManager,
                                                         .ToListAsync();
 
             var permissionNames = permissions.Select(x => x.FullPermissionName.FullPermissionName).ToList();
-            var rolePermissionSet = rolePermissions.ToHashSet<string>();
-            permissionsExistingInRoles = permissionNames.Where(x => rolePermissionSet.Contains(x)).ToHashSet<string>();
+            var rolePermissionSet = rolePermissions.ToHashSet();
+            permissionsExistingInRoles = permissionNames.Where(rolePermissionSet.Contains).ToHashSet();
             permissionsToAdd = permissionNames.Where(x => !permissionsExistingInRoles.Contains(x)).ToList();
 
             await userManager.AddClaimsAsync(user, permissionsToAdd.Select(x => new Claim("permission", x)));
         }
+
+        await dbContext.SaveChangesAsync();
 
         return new CreatedUserDto
         {
@@ -191,5 +193,97 @@ internal sealed class UserService(UserManager<User> userManager,
             }).Max();
 
         return new(baseUserName.FirstName, $"{baseUserName.LastName}{suffix+1}");
+    }
+
+    public async Task UpdateUserAsync(Guid userId, bool? isActive, string firstName, string lastName, string email, IList<string> requestedPermissions, IList<string> requestedRoles)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+
+        if (user is null)
+            throw new UserNotFoundException(userId);
+        
+        var currentUserRolesAndClaims = await dbContext.Users.AsNoTracking()
+                                                                .Where(x => x.Id == user.Id)
+                                                                .Select(x => new
+                                                                {
+                                                                    x.Id,
+                                                                    Roles = x.UserRoles.Select(x => x.Role.Name).ToHashSet(StringComparer.OrdinalIgnoreCase),
+                                                                    DirectPermissions = x.UserClaims.Select(x => x.ClaimValue).ToHashSet(StringComparer.OrdinalIgnoreCase)
+                                                                }).SingleOrDefaultAsync();
+
+        var desiredRoles = requestedRoles is null 
+                                    ? currentUserRolesAndClaims.Roles
+                                    : requestedRoles.ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var desiredPermissions =
+                            requestedPermissions is null
+                                ? currentUserRolesAndClaims.DirectPermissions
+                                : requestedPermissions.ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var rolesToAdd = desiredRoles.Where(x => !currentUserRolesAndClaims.Roles.Contains(x));
+        var rolesToRemove = currentUserRolesAndClaims.Roles.Where(x => !desiredRoles.Contains(x));
+
+        var normalizedFinalRoles = desiredRoles.Select(x => x.ToUpperInvariant())
+                                               .Distinct()
+                                               .ToArray();
+
+        var finalRolePermissions =
+                normalizedFinalRoles.Length > 0
+                    ? await dbContext.Roles.AsNoTracking()
+                                           .Where(x => normalizedFinalRoles.Contains(x.NormalizedName))
+                                           .SelectMany(x => x.RoleClaims.Select(x => x.ClaimValue))
+                                           .ToHashSetAsync(StringComparer.OrdinalIgnoreCase)
+                    : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        //Remove permissions taken by roles.
+        //Permissions from role has higher priority than direct permissions, so if permission is assigned by role, it should not be added as direct permission even if it is requested or exists in current collection of direct permissions.
+        var normalizedDirectPermissions =
+                desiredPermissions.Where(x => !finalRolePermissions.Contains(x)).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var permissionsToAdd = normalizedDirectPermissions.Where(x => !currentUserRolesAndClaims.DirectPermissions.Contains(x));
+        var permissionsToRemove = currentUserRolesAndClaims.DirectPermissions.Where(x => !normalizedDirectPermissions.Contains(x));
+
+        using var transaction = await dbContext.Database.BeginTransactionAsync();
+        try
+        {
+            if (rolesToAdd?.Any() ?? false)
+                await userManager.AddToRolesAsync(user, rolesToAdd);
+
+            if (rolesToRemove?.Any() ?? false)
+                await userManager.RemoveFromRolesAsync(user, rolesToRemove);
+
+            if (permissionsToAdd?.Any() ?? false)
+                await userManager.AddClaimsAsync(user, permissionsToAdd.Select(x => new Claim("permission", x)));
+
+            if (permissionsToRemove?.Any() ?? false)
+                await userManager.RemoveClaimsAsync(user, permissionsToRemove.Select(x => new Claim("permission", x)));
+
+            if (isActive.HasValue)
+            {
+                if (isActive.Value)
+                    user.Deactivate();
+                else
+                    user.Activate();
+            }
+
+            if (!string.IsNullOrEmpty(firstName))
+                user.FirstName = firstName;
+
+            if (!string.IsNullOrEmpty(lastName))
+                user.LastName = lastName;
+
+            if (!string.IsNullOrEmpty(email))
+                user.Email = email;
+
+            if (dbContext.ChangeTracker.HasChanges())
+                await dbContext.SaveChangesAsync();
+
+            await transaction.CommitAsync(); 
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 }

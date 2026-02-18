@@ -1,5 +1,7 @@
-﻿using BlueLagoon.Modules.Iam.Api.Controllers.User.Requests;
+﻿using BlueLagoon.Modules.Iam.Api.Controllers.Role.Requests;
+using BlueLagoon.Modules.Iam.Api.Controllers.User.Requests;
 using BlueLagoon.Modules.Iam.Core.Dictionaries;
+using BlueLagoon.Modules.Iam.Core.Services;
 using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
 using BlueLagoon.Modules.Iam.Core.Services.Dto;
 using BlueLagoon.Shared.DevTools.Api;
@@ -101,6 +103,23 @@ internal sealed class UserController(IUserService userService, IHttpContextAcces
                                           request.RepeatedPassword,
                                           request.RoleIds,
                                           request.PermissionIds);
+
+        return NoContentResult();
+    }
+
+    [HttpPatch("{userId:guid}")]
+    [Authorize(Policy = AuthorizationPolicies.AddOrDeleteUser)]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType((int)HttpStatusCode.Conflict)]
+    [SwaggerOperation(OperationId = nameof(UpdateUserRequest),
+        Summary = "Zmienia wartości poszczególnych pól użytkownika takich jak stan aktywny/nieaktywny, imię, nazwisko, email, przypisane uprawnienia.",
+        Description = "Do zmiany poszczególnych wartości należy w żądaniu zdefiniować odpowiednie pola i ich wartości (IsActive, PermissionIds, FirstName, LastName, Email)." +
+        "Nie można jednocześnie przypisać uprawnień i dezaktywować użytkownika.")]
+    public async Task<IActionResult> UpdateRoleAsync([FromRoute] Guid userId, [FromBody] UpdateUserRequest request)
+    {
+        await userService.UpdateUserAsync(userId, request.IsActive, request.FirstName, request.LastName, request.Email, request.PermissionIds, request.RoleIds);
 
         return NoContentResult();
     }

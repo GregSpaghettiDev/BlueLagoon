@@ -9,6 +9,8 @@ public sealed record Role
 
     public string Name { get; }
 
+    public string NormalizedName => Name.ToUpperInvariant();
+
     public string DisplayRoleName { get; }
 
     public Guid Id { get; }
