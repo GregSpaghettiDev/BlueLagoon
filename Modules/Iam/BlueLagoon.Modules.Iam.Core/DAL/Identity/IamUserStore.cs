@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace BlueLagoon.Modules.Iam.Core.DAL.Identity;
 
-internal sealed class IamUserStore : UserStore<User, Role, IamDbContext, Guid>
+internal sealed class IamUserStore : UserStore<User, Role, IamDbContext, Guid, UserClaim, UserRole, UserLogin, UserToken, RoleClaim>
 {
     public IamUserStore(IamDbContext context, IdentityErrorDescriber errorDescriber = null)
         : base(context, errorDescriber)
     {
-        AutoSaveChanges = true;
+        AutoSaveChanges = false;
     }
 }
