@@ -2,6 +2,7 @@
 using BlueLagoon.Modules.Iam.Core.ValueObjects;
 using BlueLagoon.Shared.DevTools.Base;
 using BlueLagoon.Shared.DevTools.EntityFramework;
+using EFCore.ComplexIndexes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,6 +10,8 @@ namespace BlueLagoon.Modules.Iam.Core.DAL.Configurations;
 
 internal sealed class RegisteredEndpointConfiguration : IEntityTypeConfiguration<RegisteredEndpoint>
 {
+    public static string UniqueIndexNameModuleNameHttpMethodPath = "UX_registered_endpoint_module_name_http_method_path";
+
     public void Configure(EntityTypeBuilder<RegisteredEndpoint> builder)
     {
         builder.GenerateBasePropertiesRules();
@@ -28,6 +31,7 @@ internal sealed class RegisteredEndpointConfiguration : IEntityTypeConfiguration
                 .HasColumnName(nameof(RegisteredEndpoint.ModuleName).ToSnakeCase())
                 .HasMaxLength(ModuleName.MaxCharactersNumber)
                 .IsRequired();
+
             cpb.IsRequired();
         });
 
@@ -53,5 +57,7 @@ internal sealed class RegisteredEndpointConfiguration : IEntityTypeConfiguration
                 .IsRequired();
             cpb.IsRequired(false);
         });
+
+        builder.HasComplexCompositeIndex(x => new { x.ModuleName.Value, x.HttpMethod, Path = x.Path.Value }, true, null, UniqueIndexNameModuleNameHttpMethodPath);
     }
 }

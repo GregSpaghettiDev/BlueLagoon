@@ -23,7 +23,7 @@ internal sealed class UserController(IUserService userService, IHttpContextAcces
     : BaseController(httpContextAccessor)
 {
     [HttpGet]
-    [Authorize(Policy = AuthorizationPolicies.ReadUsers)]
+    [Authorize(Policy = AuthorizationPolicies.ReadUser)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(PaginatedList<UserDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -45,7 +45,7 @@ internal sealed class UserController(IUserService userService, IHttpContextAcces
     }
 
     [HttpGet("{userId:guid}")]
-    [Authorize(Policy = AuthorizationPolicies.ReadUsers)]
+    [Authorize(Policy = AuthorizationPolicies.ReadUser)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(BaseUserDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -62,15 +62,15 @@ internal sealed class UserController(IUserService userService, IHttpContextAcces
     }
 
     [HttpGet("{userId:guid}/roles")]
-    [Authorize(Policy = AuthorizationPolicies.ReadUsers)]
+    [Authorize(Policy = AuthorizationPolicies.ReadUser)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(PaginatedList<UserRoleDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [SwaggerOperation(OperationId = nameof(GetUserRolesAsync),
-        Summary = "Pobranie informacji o użytkowniku",
-        Description = "Zwraca inforacje dotyczące konkretnego użytkownika wraz z bezpośrednio przypisanymi uprawnieniami")]
+        Summary = "Pobranie informacji o rolach użytkownika",
+        Description = "Zwraca listę ról przypisanych do użytkownika")]
     public async Task<IActionResult> GetUserRolesAsync([FromRoute] Guid userId, [FromQuery] UserRolesListRequest request)
     {
         var result = await userService.GetUserRolesAsync(userId,
@@ -115,7 +115,7 @@ internal sealed class UserController(IUserService userService, IHttpContextAcces
         Summary = "Zmienia wartości poszczególnych pól użytkownika takich jak stan aktywny/nieaktywny, imię, nazwisko, email, przypisane uprawnienia.",
         Description = "Do zmiany poszczególnych wartości należy w żądaniu zdefiniować odpowiednie pola i ich wartości (IsActive, PermissionNames, RoleNames, FirstName, LastName, Email)." +
         "Nie można jednocześnie przypisać uprawnień i dezaktywować użytkownika.")]
-    public async Task<IActionResult> UpdateRoleAsync([FromRoute] Guid userId, [FromBody] UpdateUserRequest request)
+    public async Task<IActionResult> UpdateUserAsync([FromRoute] Guid userId, [FromBody] UpdateUserRequest request)
     {
         await userService.UpdateUserAsync(userId,
                                           request.IsActive,

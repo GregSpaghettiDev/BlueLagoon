@@ -1,5 +1,4 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL.Entities;
-using BlueLagoon.Shared.DevTools.Base;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;

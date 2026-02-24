@@ -9,9 +9,9 @@ using BlueLagoon.Shared.DevTools.Linq;
 using BlueLagoon.Shared.DevTools.Pagination;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi;
 using OpenIddict.Abstractions;
-using System.Net;
 
 namespace BlueLagoon.Modules.Iam.Core.Services;
 
@@ -19,7 +19,8 @@ internal sealed class ModuleService(IamDbContext dbContext,
                                     IMapper mapper,
                                     IHttpClientFactory httpClientFactory,
                                     IOpenIddictScopeManager scopeManager,
-                                    IHttpContextAccessor httpContextAccessor) 
+                                    IHttpContextAccessor httpContextAccessor,
+                                    ILogger<ModuleService> logger) 
     : IModuleService
 {
     public Task<PaginatedList<ModuleDto>> GetModulesAsync(string searchValue, PaginationParameters paginationParameters = null)
@@ -45,8 +46,11 @@ internal sealed class ModuleService(IamDbContext dbContext,
         var result = OpenApiDocument.Parse(openApiContent);
 
         if (result.Diagnostic.Errors.Any())
+        {
+            logger.LogError("Dokumentacja Open Api zawiera błędy: {errors}", string.Join(", ", result.Diagnostic.Errors.Select(x => x.Message)));
             throw new InvalidOperationException("Dokumentacja Open Api zawiera błędy: " + string.Join(", ", result.Diagnostic.Errors.Select(x => x.Message)));
-
+        }
+            
         var discoveredEndpoints =
             result.Document.Paths
                             .SelectMany(p => p.Value.Operations.Select(o =>
@@ -56,7 +60,7 @@ internal sealed class ModuleService(IamDbContext dbContext,
                                 HttpMethod = o.Key.ToString().ToUpper(),
                                 OperationId = o.Value.OperationId,
                                 Summary = o.Value.Summary,
-                                Tags = o.Value.Tags?.Select(t => t.Name).ToList()
+                                Tags = o.Value.Tags?.Select(t => t.Name).ToHashSet()
                             }))
                             .Where(e => e.Tags != null && e.Tags.Contains(moduleCode))
                             .ToList();
@@ -65,9 +69,11 @@ internal sealed class ModuleService(IamDbContext dbContext,
                                                         .AsNoTracking()
                                                         .Where(x => x.ModuleName == moduleCode)
                                                         .Select(x => x.Path)
-                                                        .ToListAsync();
+                                                        .ToHashSetAsync();
 
         discoveredEndpoints.RemoveAll(x => registeredEndpoints.Contains(x.Path));
+
+        logger.LogInformation(string.Join(Environment.NewLine, discoveredEndpoints.Select(x => $"{x.ModuleCode} {x.HttpMethod} {x.Path} {x.OperationId}")));
 
         return discoveredEndpoints;
     }

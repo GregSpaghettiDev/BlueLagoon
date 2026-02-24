@@ -27,11 +27,11 @@ internal static class Extensions
         options.AddPolicy(AuthorizationPolicies.ReadRoles, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.read-roles")));
         options.AddPolicy(AuthorizationPolicies.AddOrDeleteRole, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.add-delete-role")));
         options.AddPolicy(AuthorizationPolicies.UpdateRole, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.update-role")));
-        options.AddPolicy(AuthorizationPolicies.ReadPermissions, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.read-permission")));
+        options.AddPolicy(AuthorizationPolicies.ReadPermission, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.read-permission")));
         options.AddPolicy(AuthorizationPolicies.AddOrDeletePermission, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.add-delete-permission")));
         options.AddPolicy(AuthorizationPolicies.UpdatePermission, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.update-permission")));
-        options.AddPolicy(AuthorizationPolicies.ReadSecurityMappings, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.read-security-mappings")));
-        options.AddPolicy(AuthorizationPolicies.AddOrDeleteSecurityMappings, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.add-security-mappings")));
-        options.AddPolicy(AuthorizationPolicies.UpdateSecurityMappings, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.update-security-mappings")));
+        options.AddPolicy(AuthorizationPolicies.ReadEndpoint, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.read-endpoint")));
+        options.AddPolicy(AuthorizationPolicies.AddOrDeleteEndpoint, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.add-delete-endpoint")));
+        options.AddPolicy(AuthorizationPolicies.UpdateEndpoint, p => p.RequireAssertion(context => context.User.IsInRole(ValueObjects.Role.IamAdminRoleName) || context.User.HasClaim("permission", "iam.update-endpoint")));
     }
 }

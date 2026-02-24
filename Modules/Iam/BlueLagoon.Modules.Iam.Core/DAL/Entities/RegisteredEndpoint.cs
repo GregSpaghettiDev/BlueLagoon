@@ -10,6 +10,8 @@ internal class RegisteredEndpoint : BaseEntity<RegisteredEndpoint>
     protected RegisteredEndpoint()
     {
         Activate();
+        RegisteredEndpointPermissions = new HashSet<RegisteredEndpointPermission>();
+        //RegisteredEndpointRoles = new HashSet<RegisteredEndpointRole>();
     }
 
     private RegisteredEndpoint(ModuleName moduleName, HttpMethod httpMethod, Path endpointPath, OperationId operationId, OperationDescription description)
@@ -21,6 +23,8 @@ internal class RegisteredEndpoint : BaseEntity<RegisteredEndpoint>
         OperationId = operationId;
         OperationDescription = description;
         Activate();
+        RegisteredEndpointPermissions = new HashSet<RegisteredEndpointPermission>();
+        //RegisteredEndpointRoles = new HashSet<RegisteredEndpointRole>();
     }
 
     public ModuleName ModuleName { get; private set; }
@@ -41,4 +45,7 @@ internal class RegisteredEndpoint : BaseEntity<RegisteredEndpoint>
 
     [InverseProperty(nameof(User.RegisteredEndpointModificators))]
     public virtual User Modificator { get; private set; }
+
+    public virtual ICollection<RegisteredEndpointPermission> RegisteredEndpointPermissions { get; private set; }
+    //public virtual ICollection<RegisteredEndpointRole> RegisteredEndpointRoles { get; private set; }
 }

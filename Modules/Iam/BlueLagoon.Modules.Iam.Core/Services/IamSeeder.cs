@@ -38,10 +38,16 @@ internal sealed class IamSeeder(IHostApplicationLifetime lifetime, IServiceProvi
                 var iamBaseUrl = configuration.GetSection("iam:module:baseUrl");
 
                 if (string.IsNullOrWhiteSpace(iamBaseUrl?.Value))
+                {
+                    logger.LogError("Nie podano adresu bazowego (baseUrl) modułu IAM w konfiguracji aplikacji.");
                     throw new InvalidOperationException("Nie podano adresu bazowego (baseUrl) modułu IAM w konfiguracji aplikacji.");
+                }
 
                 if (string.IsNullOrWhiteSpace(openApiPath?.Value))
+                {
+                    logger.LogError("Nie podano ścieżki do OpenAPI (openApiPath) modułu IAM w konfiguracji aplikacji.");
                     throw new InvalidOperationException("Nie podano ścieżki do OpenAPI (openApiPath) modułu IAM w konfiguracji aplikacji.");
+                }
 
                 Uri openApiUri = new(new(iamBaseUrl.Value), openApiPath.Value);
 
@@ -49,31 +55,43 @@ internal sealed class IamSeeder(IHostApplicationLifetime lifetime, IServiceProvi
                 ((Module)module).SetOpenApiPath(openApiUri.ToString());
                 var discoveredEndpoints = await moduleService.GetEndpointDefinitionsFromOpenApi(openApiUri.ToString(), ((Module)module).Name);
 
-                foreach (var endpoint in discoveredEndpoints)
+                string endpointPath = null;
+                try
                 {
-                    var ep = RegisteredEndpoint.Create(((Module)module).Name, new HttpMethod(endpoint.HttpMethod), endpoint.Path, endpoint.OperationId, endpoint.Summary);
-
-                    try
+                   
+                    foreach (var endpoint in discoveredEndpoints)
                     {
+                        endpointPath = endpoint.Path;
+                        var ep = RegisteredEndpoint.Create(((Module)module).Name, new HttpMethod(endpoint.HttpMethod), endpoint.Path, endpoint.OperationId, endpoint.Summary);
+
                         await context.AddAsync(ep);
+                        await context.SaveChangesAsync();
                     }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "Błąd podczas dodawania endpointu {Endpoint} do bazy danych.", endpoint.Path);
-                        throw;
-                    }
-
-                    await context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Błąd podczas dodawania endpointu {Endpoint} do bazy danych.", endpointPath);
+                    throw;
                 }
 
                 if (!await roleManager.RoleExistsAsync(ValueObjects.Role.IamAdminRoleName))
                     await roleManager.CreateAsync(Role.Create(ValueObjects.Role.IamAdmin));
 
                 var defaultSystemUser = scope.ServiceProvider.GetRequiredService<DefaultSystemUser>();
-                var user = await context.Users.Where(x => x.Id == defaultSystemUser.Id).SingleOrDefaultAsync();
-                if (user is not null && !await userManager.IsInRoleAsync(user, ValueObjects.Role.IamAdminRoleName))
-                    await userManager.AddToRoleAsync(user, ValueObjects.Role.IamAdminRoleName);
+                try
+                {
+                    var user = await userManager.FindByIdAsync(defaultSystemUser.Id.ToString());
+                    if (user is not null && !await userManager.IsInRoleAsync(user, ValueObjects.Role.IamAdminRoleName))
+                        await userManager.AddToRoleAsync(user, ValueObjects.Role.IamAdminRoleName);
+                }
+                catch (Exception ex) 
+                {
+                    var exc = ex;
 
+                    throw;
+                }
+
+                
             });
         });
 

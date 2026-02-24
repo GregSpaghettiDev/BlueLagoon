@@ -445,6 +445,53 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "registered_endpoint_permission",
+                schema: "iam",
+                columns: table => new
+                {
+                    registered_endpoint_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    permission_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: false),
+                    creator_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "timestamp(0) without time zone", nullable: true),
+                    modificator_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_registered_endpoint_permission", x => new { x.registered_endpoint_id, x.permission_id });
+                    table.ForeignKey(
+                        name: "FK_registered_endpoint_permission_permission_permission_id",
+                        column: x => x.permission_id,
+                        principalSchema: "iam",
+                        principalTable: "permission",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_registered_endpoint_permission_registered_endpoint_register~",
+                        column: x => x.registered_endpoint_id,
+                        principalSchema: "iam",
+                        principalTable: "registered_endpoint",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_registered_endpoint_permission_user_creator_id",
+                        column: x => x.creator_id,
+                        principalSchema: "iam",
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_registered_endpoint_permission_user_modificator_id",
+                        column: x => x.modificator_id,
+                        principalSchema: "iam",
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "role_claim",
                 schema: "iam",
                 columns: table => new
@@ -683,6 +730,24 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 column: "modificator_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_registered_endpoint_permission_creator_id",
+                schema: "iam",
+                table: "registered_endpoint_permission",
+                column: "creator_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_registered_endpoint_permission_modificator_id",
+                schema: "iam",
+                table: "registered_endpoint_permission",
+                column: "modificator_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_registered_endpoint_permission_permission_id",
+                schema: "iam",
+                table: "registered_endpoint_permission",
+                column: "permission_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_role_creator_id",
                 schema: "iam",
                 table: "role",
@@ -852,6 +917,13 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 schema: "iam",
                 table: "user_token",
                 column: "modificator_id");
+
+            migrationBuilder.CreateIndex(
+                name: "UX_registered_endpoint_module_name_http_method_path",
+                schema: "iam",
+                table: "registered_endpoint",
+                columns: new[] { "module_name", "http_method", "path" },
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -862,7 +934,7 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                 schema: "iam");
 
             migrationBuilder.DropTable(
-                name: "registered_endpoint",
+                name: "registered_endpoint_permission",
                 schema: "iam");
 
             migrationBuilder.DropTable(
@@ -887,6 +959,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "user_token",
+                schema: "iam");
+
+            migrationBuilder.DropTable(
+                name: "registered_endpoint",
                 schema: "iam");
 
             migrationBuilder.DropTable(

@@ -236,7 +236,8 @@ internal sealed class UserService(UserManager<User> userManager,
                     : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         //Remove permissions taken by roles.
-        //Permissions from role has higher priority than direct permissions, so if permission is assigned by role, it should not be added as direct permission even if it is requested or exists in current collection of direct permissions.
+        //Permissions from role has higher priority than direct permissions, so if permission is assigned by role,
+        //it should not be added as direct permission even if it is requested or exists in current collection of direct permissions.
         var normalizedDirectPermissions =
                 desiredPermissions.Where(x => !finalRolePermissions.Contains(x)).ToHashSet(StringComparer.OrdinalIgnoreCase);
 

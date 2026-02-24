@@ -44,7 +44,7 @@ internal sealed class RoleController(IHttpContextAccessor httpContextAccessor, I
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-    [SwaggerOperation(OperationId = nameof(GetRolesAsync), Summary = "Pobranie listy zdefiniowanych ról", Description = "Zwraca role zdefiniowane w module IAM")]
+    [SwaggerOperation(OperationId = nameof(GetRoleAsync), Summary = "Pobranie informacji o konkretnej roli i jej uprawnieniach", Description = "Zwraca rolę i uprawnienia do niej przypisane")]
     public async Task<IActionResult> GetRoleAsync([FromRoute] Guid roleId)
     {
         var result = await roleService.GetRoleAsync(roleId);
@@ -93,9 +93,9 @@ internal sealed class RoleController(IHttpContextAccessor httpContextAccessor, I
     [SwaggerOperation(OperationId = nameof(DeletRoleAsync),
         Summary = "Trwałe usunięcie modułu.",
         Description = "Usuwa moduł razem z zarejestrowanymi ednpointami i zdefiniowanymi do nich uprawnieniami. Uprawnienia przypisane do ról i/lub użytkowników sa trwale z nich usuwane.")]
-    public async Task<IActionResult> DeletRoleAsync([FromRoute] Guid moduleId)
+    public async Task<IActionResult> DeletRoleAsync([FromRoute] Guid roleId)
     {
-        await roleService.DeleteRoleAsync(moduleId);
+        await roleService.DeleteRoleAsync(roleId);
 
         return NoContentResult();
     }

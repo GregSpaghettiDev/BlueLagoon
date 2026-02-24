@@ -22,7 +22,7 @@ internal sealed class ModuleController(IPermissionService permissionService, IHt
     : BaseController(httpContextAccessor)
 {
     [HttpGet]
-    [Authorize(Policy = AuthorizationPolicies.ReadPermissions)]
+    [Authorize(Policy = AuthorizationPolicies.ReadPermission)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(PaginatedList<PermissionDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -37,7 +37,7 @@ internal sealed class ModuleController(IPermissionService permissionService, IHt
     }
 
     [HttpGet("{permissionId:guid}")]
-    [Authorize(Policy = AuthorizationPolicies.ReadPermissions)]
+    [Authorize(Policy = AuthorizationPolicies.ReadPermission)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(RoleWithPermissionsDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]

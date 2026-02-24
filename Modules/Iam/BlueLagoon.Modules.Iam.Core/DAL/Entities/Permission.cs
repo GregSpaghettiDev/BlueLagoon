@@ -9,18 +9,25 @@ internal class Permission : BaseEntity<Permission>
     protected Permission()
     {
         Activate();
-        RoleClaims = new HashSet<RoleClaim>();
-        UserClaims = new HashSet<UserClaim>();
+        InitializeNavigationProperties();
     }
 
     private Permission(PermissionName name, string description)
     {
         Activate();
-        RoleClaims = new HashSet<RoleClaim>();
-        UserClaims = new HashSet<UserClaim>();
+        InitializeNavigationProperties();
         FullPermissionName = name;
         Description = description;
         Id = Guid.NewGuid();
+    }
+
+    private void InitializeNavigationProperties()
+    {
+        #region nav properties initialization
+        RoleClaims = new HashSet<RoleClaim>();
+        UserClaims = new HashSet<UserClaim>();
+        RegisteredEndpointPermissions = new HashSet<RegisteredEndpointPermission>();
+        #endregion
     }
 
     public PermissionName FullPermissionName { get; private set; }
@@ -42,4 +49,6 @@ internal class Permission : BaseEntity<Permission>
     public virtual ICollection<RoleClaim> RoleClaims { get; private set; }
 
     public virtual ICollection<UserClaim> UserClaims { get; private set; }
+
+    public virtual ICollection<RegisteredEndpointPermission> RegisteredEndpointPermissions { get; private set; }
 }

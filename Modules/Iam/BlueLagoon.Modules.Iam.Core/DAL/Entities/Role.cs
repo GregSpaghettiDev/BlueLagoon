@@ -12,6 +12,7 @@ internal class Role : IdentityRole<Guid>, IBaseEntity
         Activate();
         RoleClaims = new HashSet<RoleClaim>();
         UserRoles = new HashSet<UserRole>();
+        //RegisteredEndpointRoles = new HashSet<RegisteredEndpointRole>();
     }
 
     protected Role(ValueObjects.Role role)
@@ -23,6 +24,7 @@ internal class Role : IdentityRole<Guid>, IBaseEntity
         Activate();
         RoleClaims = new HashSet<RoleClaim>();
         UserRoles = new HashSet<UserRole>();
+        //RegisteredEndpointRoles = new HashSet<RegisteredEndpointRole>();
     }
 
     public string DisplayName { get; set; }
@@ -85,4 +87,6 @@ internal class Role : IdentityRole<Guid>, IBaseEntity
     public virtual ICollection<RoleClaim> RoleClaims { get; private set; }
 
     public virtual ICollection<UserRole> UserRoles { get; set; }
+
+    //public virtual ICollection<RegisteredEndpointRole> RegisteredEndpointRoles { get; private set; }
 }

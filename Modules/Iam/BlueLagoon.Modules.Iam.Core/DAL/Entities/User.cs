@@ -1,7 +1,6 @@
 ﻿using BlueLagoon.Modules.Iam.Core.ValueObjects;
 using BlueLagoon.Shared.DevTools.Base.Abstractions;
 using BlueLagoon.Shared.DevTools.Base.Exceptions;
-using BlueLagoon.Shared.DevTools.Tools;
 using Microsoft.AspNetCore.Identity;
 
 namespace BlueLagoon.Modules.Iam.Core.DAL.Entities;
@@ -11,39 +10,7 @@ internal class User : IdentityUser<Guid>, IBaseEntity
     public User()
     {
         Activate();
-
-        #region nav props initialization
-        UserRoles = new HashSet<UserRole>();
-        UserLogins = new HashSet<UserLogin>();
-        UserTokens = new HashSet<UserToken>();
-        UserClaims = new HashSet<UserClaim>();
-        UserCreators = new HashSet<User>();
-        UserModificators = new HashSet<User>();
-        UserTokenCreators = new HashSet<UserToken>();
-        UserTokenModificators = new HashSet<UserToken>();
-        ApplicationCreators = new HashSet<Application>();
-        ApplicationModificators = new HashSet<Application>();
-        AuthorizationCreators = new HashSet<Authorization>();
-        AuthorizationModificators = new HashSet<Authorization>();
-        ModuleCreators = new HashSet<Module>();
-        ModuleModificators = new HashSet<Module>();
-        RoleCreators = new HashSet<Role>();
-        RoleModificators = new HashSet<Role>();
-        RoleClaimCreators = new HashSet<RoleClaim>();
-        RoleClaimModificators = new HashSet<RoleClaim>();
-        TokenCreators = new HashSet<Token>();
-        TokenModificators = new HashSet<Token>();
-        UserClaimCreators = new HashSet<UserClaim>();
-        UserClaimModificators = new HashSet<UserClaim>();
-        UserLoginCreators = new HashSet<UserLogin>();
-        UserLoginModificators = new HashSet<UserLogin>();
-        UserRoleCreators = new HashSet<UserRole>();
-        UserRoleModificators = new HashSet<UserRole>();
-        RegisteredEndpointCreators = new HashSet<RegisteredEndpoint>();
-        RegisteredEndpointModificators = new HashSet<RegisteredEndpoint>();
-        PermissionCreators = new HashSet<Permission>();
-        PermissionModificators = new HashSet<Permission>();
-        #endregion
+        InitializeNavigationProperties();
     }
 
     protected User(string firstName, string lastName, string userName)
@@ -52,8 +19,12 @@ internal class User : IdentityUser<Guid>, IBaseEntity
         LastName = lastName;
         UserName = userName;
         Activate();
+        InitializeNavigationProperties();
+    }
 
-        #region nav props initialization
+    private void InitializeNavigationProperties()
+    {
+        #region nav properties initialization
         UserRoles = new HashSet<UserRole>();
         UserLogins = new HashSet<UserLogin>();
         UserTokens = new HashSet<UserToken>();
@@ -84,6 +55,10 @@ internal class User : IdentityUser<Guid>, IBaseEntity
         RegisteredEndpointModificators = new HashSet<RegisteredEndpoint>();
         PermissionCreators = new HashSet<Permission>();
         PermissionModificators = new HashSet<Permission>();
+        RegisteredEndpointPermissionCreators = new HashSet<RegisteredEndpointPermission>();
+        RegisteredEndpointPermissionModificators = new HashSet<RegisteredEndpointPermission>();
+        //RegisteredEndpointRoleCreators = new HashSet<RegisteredEndpointRole>();
+        //RegisteredEndpointRoleModificators = new HashSet<RegisteredEndpointRole>();
         #endregion
     }
 
@@ -198,6 +173,13 @@ internal class User : IdentityUser<Guid>, IBaseEntity
     public virtual ICollection<Permission> PermissionCreators { get; private set; }
 
     public virtual ICollection<Permission> PermissionModificators { get; private set; }
-    #endregion
 
+    public virtual ICollection<RegisteredEndpointPermission> RegisteredEndpointPermissionCreators { get; private set; }
+
+    public virtual ICollection<RegisteredEndpointPermission> RegisteredEndpointPermissionModificators { get; private set; }
+
+    //public virtual ICollection<RegisteredEndpointRole> RegisteredEndpointRoleCreators { get; private set; }
+
+    //public virtual ICollection<RegisteredEndpointRole> RegisteredEndpointRoleModificators { get; private set; }
+    #endregion
 }

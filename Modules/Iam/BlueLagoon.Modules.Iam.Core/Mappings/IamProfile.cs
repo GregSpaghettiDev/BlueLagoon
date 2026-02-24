@@ -108,5 +108,35 @@ internal sealed class IamProfile : Profile
             .ForMember(d => d.RoleCode, o => o.MapFrom(s => s.Role.Name))
             .ForMember(d => d.RoleName, o => o.MapFrom(s => s.Role.DisplayName))
             .ForMember(d => d.AccesingModules, o => o.MapFrom(s => string.Join(", ", s.Role.RoleClaims.Select(x => x.ModuleName))));
+
+        CreateMap<RegisteredEndpoint, RegisteredEndpointDto>()
+            .ForMember(d => d.ModuleName, o => o.MapFrom(s => s.ModuleName))
+            .ForMember(d => d.Path, o => o.MapFrom(s => s.Path))
+            .ForMember(d => d.OperationId, o => o.MapFrom(s => s.OperationId))
+            .ForMember(d => d.CreatorName, o => o.MapFrom(s => s.Creator != null ? s.Creator.FirstName + " " + s.Creator.LastName : string.Empty))
+            .ForMember(d => d.ModificatorName, o => o.MapFrom(s => s.Modificator != null ? s.Modificator.FirstName + " " + s.Modificator.LastName : string.Empty))
+            .ForMember(d => d.HasPermissionMappings, o => o.MapFrom(s => s.RegisteredEndpointPermissions.Count > 0));
+
+        CreateMap<RegisteredEndpoint, RegisteredEndpointDto>()
+            .ForMember(d => d.ModuleName, o => o.MapFrom(s => s.ModuleName))
+            .ForMember(d => d.Path, o => o.MapFrom(s => s.Path))
+            .ForMember(d => d.OperationId, o => o.MapFrom(s => s.OperationId))
+            .ForMember(d => d.CreatorName, o => o.MapFrom(s => s.Creator != null ? s.Creator.FirstName + " " + s.Creator.LastName : string.Empty))
+            .ForMember(d => d.ModificatorName, o => o.MapFrom(s => s.Modificator != null ? s.Modificator.FirstName + " " + s.Modificator.LastName : string.Empty))
+            .ForMember(d => d.HasPermissionMappings, o => o.MapFrom(s => s.RegisteredEndpointPermissions.Count > 0));
+
+        CreateMap<RegisteredEndpointPermission, EndpointRequirementDto>()
+            .ForMember(d => d.RegisteredEndpointId, o => o.MapFrom(s => s.RegisteredEndpointId))
+            .ForMember(d => d.PermissionId, o => o.MapFrom(s => s.PermissionId))
+            .ForMember(d => d.Code, o => o.MapFrom(s => s.Permission.FullPermissionName.Name))
+            .ForMember(d => d.ModuleName, o => o.MapFrom(s => s.Permission.FullPermissionName.ModuleName))
+            .ForMember(d => d.Description, o => o.MapFrom(s => s.Permission.Description));
+
+        CreateMap<Permission, EndpointRequirementDto>()
+            .ForMember(d => d.RegisteredEndpointId, o => o.MapFrom(s => (Guid?)null))
+            .ForMember(d => d.PermissionId, o => o.MapFrom(s => s.Id))
+            .ForMember(d => d.Code, o => o.MapFrom(s => s.FullPermissionName.Name))
+            .ForMember(d => d.ModuleName, o => o.MapFrom(s => s.FullPermissionName.ModuleName))
+            .ForMember(d => d.Description, o => o.MapFrom(s => s.Description));
     }
 }

@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EFCore.ComplexIndexes" Version="2.0.2" />
+    <PackageReference Include="EFCore.ComplexIndexes.PostgreSQL" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2" />
 
     <PackageReference Include="OpenIddict.AspNetCore" Version="7.2.0" />
@@ -21,7 +23,6 @@
 
   <ItemGroup>
     <Folder Include="DAL\Migrations\" />
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

@@ -20,6 +20,8 @@ internal sealed class IamDbContext(DbContextOptions<IamDbContext> options)
 
     public DbSet<Permission> Permission { get; set; }
 
+    public DbSet<RegisteredEndpointPermission> RegisteredEndpointPermission { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

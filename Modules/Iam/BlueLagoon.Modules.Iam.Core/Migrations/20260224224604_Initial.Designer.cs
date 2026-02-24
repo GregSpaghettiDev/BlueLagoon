@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlueLagoon.Modules.Iam.Core.Migrations
 {
     [DbContext(typeof(IamDbContext))]
-    [Migration("20260209143911_Initial")]
+    [Migration("20260224224604_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -468,6 +468,57 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                     b.HasIndex("ModificatorId");
 
                     b.ToTable("registered_endpoint", "iam");
+
+                    b.HasAnnotation("CustomIndex:CompositeIndexes", "[{\"paths\":[\"ModuleName.Value\",\"HttpMethod\",\"Path.Value\"],\"unique\":true,\"name\":\"UX_registered_endpoint_module_name_http_method_path\"}]");
+                });
+
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpointPermission", b =>
+                {
+                    b.Property<Guid>("RegisteredEndpointId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("registered_endpoint_id");
+
+                    b.Property<Guid>("PermissionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("permission_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("creator_id");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<Guid?>("ModificatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("modificator_id");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp(0)")
+                        .HasColumnName("modified_at");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("RegisteredEndpointId", "PermissionId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModificatorId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("registered_endpoint_permission", "iam");
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", b =>
@@ -1191,6 +1242,41 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                     b.Navigation("Modificator");
                 });
 
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpointPermission", b =>
+                {
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
+                        .WithMany("RegisteredEndpointPermissionCreators")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Modificator")
+                        .WithMany("RegisteredEndpointPermissionModificators")
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.Permission", "Permission")
+                        .WithMany("RegisteredEndpointPermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint", "RegisteredEndpoint")
+                        .WithMany("RegisteredEndpointPermissions")
+                        .HasForeignKey("RegisteredEndpointId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modificator");
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("RegisteredEndpoint");
+                });
+
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", b =>
                 {
                     b.HasOne("BlueLagoon.Modules.Iam.Core.DAL.Entities.User", "Creator")
@@ -1433,9 +1519,16 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Permission", b =>
                 {
+                    b.Navigation("RegisteredEndpointPermissions");
+
                     b.Navigation("RoleClaims");
 
                     b.Navigation("UserClaims");
+                });
+
+            modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.RegisteredEndpoint", b =>
+                {
+                    b.Navigation("RegisteredEndpointPermissions");
                 });
 
             modelBuilder.Entity("BlueLagoon.Modules.Iam.Core.DAL.Entities.Role", b =>
@@ -1466,6 +1559,10 @@ namespace BlueLagoon.Modules.Iam.Core.Migrations
                     b.Navigation("RegisteredEndpointCreators");
 
                     b.Navigation("RegisteredEndpointModificators");
+
+                    b.Navigation("RegisteredEndpointPermissionCreators");
+
+                    b.Navigation("RegisteredEndpointPermissionModificators");
 
                     b.Navigation("RoleClaimCreators");
 

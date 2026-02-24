@@ -1,6 +1,5 @@
 ﻿using BlueLagoon.Shared.Infrastructure.Exceptions.Abstractions;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -8,8 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace BlueLagoon.Shared.Infrastructure.Exceptions.Handlers;
 
 internal sealed class AggregateExceptionHandler(IProblemDetailsService problemDetailsService,
-                                         ILogger<AggregateExceptionHandler> logger,
-                                         IWebHostEnvironment env)
+                                         ILogger<AggregateExceptionHandler> logger)
     : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)

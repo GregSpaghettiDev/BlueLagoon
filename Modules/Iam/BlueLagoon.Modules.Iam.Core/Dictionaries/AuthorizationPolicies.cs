@@ -16,21 +16,21 @@ internal static class AuthorizationPolicies
 
     public const string AddOrDeleteRole = nameof(AddOrDeleteRole);
 
-    public const string ReadPermissions = nameof(ReadPermissions);
+    public const string ReadPermission = nameof(ReadPermission);
 
     public const string UpdatePermission = nameof(UpdatePermission);
 
     public const string AddOrDeletePermission = nameof(AddOrDeletePermission);
 
-    public const string ReadUsers = nameof(ReadUsers);
+    public const string ReadUser = nameof(ReadUser);
 
     public const string UpdateUser = nameof(UpdateUser);
 
     public const string AddOrDeleteUser = nameof(AddOrDeleteUser);
 
-    public const string ReadSecurityMappings = nameof(ReadSecurityMappings);
+    public const string ReadEndpoint = nameof(ReadEndpoint);
 
-    public const string UpdateSecurityMappings = nameof(UpdateSecurityMappings);
+    public const string UpdateEndpoint = nameof(UpdateEndpoint);
 
-    public const string AddOrDeleteSecurityMappings = nameof(AddOrDeleteSecurityMappings);
+    public const string AddOrDeleteEndpoint = nameof(AddOrDeleteEndpoint);
 }
