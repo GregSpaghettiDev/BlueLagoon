@@ -19,10 +19,11 @@ internal sealed class WebApp : IMiddlewaresInstaller
             application.UseCors(options =>
             {
                 options
-                    .AllowAnyOrigin()
+                    .WithOrigins("http://localhost:4200")
                     .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                     .WithExposedHeaders("Content-Disposition")
-                    .AllowAnyHeader();
+                    .AllowAnyHeader()
+                    .AllowCredentials();
             });
         }
         application.UseExceptionHandler();

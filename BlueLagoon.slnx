@@ -9,6 +9,7 @@
   <Folder Name="/Modules/Iam/">
     <Project Path="Modules/Iam/BlueLagoon.Modules.Iam.Api/BlueLagoon.Modules.Iam.Api.csproj" Id="624bffa4-2fde-4c75-b90e-b53fe0ae2b95" />
     <Project Path="Modules/Iam/BlueLagoon.Modules.Iam.Core/BlueLagoon.Modules.Iam.Core.csproj" Id="0f83b5b6-8677-4409-b346-5fb25523e96a" />
+    <Project Path="Modules/Iam/BlueLagoon.Modules.Iam.Tests.Integration/BlueLagoon.Modules.Iam.Tests.Integration.csproj" Id="cf2f31f6-1618-4777-b22a-0a0224b83d17" />
   </Folder>
   <Folder Name="/Modules/InfrastructureManagement/" />
   <Folder Name="/Modules/Notifications/">

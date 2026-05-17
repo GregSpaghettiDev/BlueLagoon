@@ -6,8 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BlueLagoon.Shared.Infrastructure.Exceptions.Handlers;
 
-internal sealed class AggregateExceptionHandler(IProblemDetailsService problemDetailsService,
-                                         ILogger<AggregateExceptionHandler> logger)
+internal sealed class AggregateExceptionHandler(IProblemDetailsService problemDetailsService, ILogger<AggregateExceptionHandler> logger)
     : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)

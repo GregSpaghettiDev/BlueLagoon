@@ -10,7 +10,9 @@ if (builder.Environment.IsDevelopment())
     Env.Load(Path.Combine(builder.Environment.ContentRootPath, "..", "docker", ".env"));
 
 builder.Configuration.AddEnvironmentVariables(prefix: "Blue_");
-builder.Host.ConfigureModules();
+if (!builder.Environment.IsEnvironment("Testing"))
+    builder.Host.ConfigureModules();
+
 builder.InstallInfrastructureBuilderProviders(builder.Configuration);
 
 IList<Assembly> assemblies = ModuleLoader.LoadAssemblies(builder.Configuration, "BlueLagoon.Modules.");
@@ -32,7 +34,7 @@ app.InstallInfrastructureMiddlewares(assemblies);
 app.MapControllers();
 app.MapRazorComponents<BlueLagoon.Modules.Iam.Api.Components.App>();
 
-app.Logger.LogInformation($"Loaded modules: {string.Join(", ", modules.Select(x => x.Name))}");
+app.Logger.LogInformation($"Loaded modules: {string.Join(Environment.NewLine, modules.Select(x => x.Name))}");
 
 assemblies.Clear();
 modules.Clear();

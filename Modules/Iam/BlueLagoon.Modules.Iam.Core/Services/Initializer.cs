@@ -72,7 +72,8 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
                     OpenIddictConstants.Permissions.Scopes.Email,
                     OpenIddictConstants.Permissions.Scopes.Profile,
                     OpenIddictConstants.Permissions.Scopes.Roles,
-                    OpenIddictConstants.Permissions.Prefixes.Scope + Scope.Iam.Name
+                    OpenIddictConstants.Permissions.Prefixes.Scope + Scope.Iam.Name,
+                   // OpenIddictConstants.Permissions.Prefixes.Scope + Scope.Notifications.Name
                 },
                 Requirements =
                 {
@@ -101,8 +102,7 @@ internal sealed class Initializer(IServiceProvider serviceProvider) : IHostedSer
                     OpenIddictConstants.Permissions.Scopes.Email,
                     OpenIddictConstants.Permissions.Scopes.Profile,
                     OpenIddictConstants.Permissions.Prefixes.Scope + Scope.Iam.Name,
-                    OpenIddictConstants.Permissions.Prefixes.Scope + "notification",
-                    OpenIddictConstants.Permissions.Prefixes.Scope + "sales-contracting"
+                  //  OpenIddictConstants.Permissions.Prefixes.Scope + Scope.Notifications.Name
                 }
             });
         }

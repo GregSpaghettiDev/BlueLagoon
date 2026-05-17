@@ -1,5 +1,4 @@
 ﻿using BlueLagoon.Modules.Iam.Core.DAL.Entities;
-using BlueLagoon.Modules.Iam.Core.DI.ServiceExtensions;
 using BlueLagoon.Modules.Iam.Core.Services.Abstractions;
 using BlueLagoon.Modules.Iam.Core.Services.Dto;
 using BlueLagoon.Shared.DevTools.Http;

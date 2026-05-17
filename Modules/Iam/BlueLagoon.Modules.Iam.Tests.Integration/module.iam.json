@@ -1,0 +1,17 @@
+{
+  "iam": {
+    "module": {
+      "name": "Iam",
+      "enabled": true
+    }
+  },
+
+  "DefaultSystemUser": {
+    "Id": "E685969B-EA41-442C-B2BB-DA6021BA1D70",
+    "Username": "system.user",
+    "Password": "ChangeMe",
+    "FirstName": "System",
+    "LastName": "User",
+    "Email": "system.user@blue-lagoon"
+  }
+}

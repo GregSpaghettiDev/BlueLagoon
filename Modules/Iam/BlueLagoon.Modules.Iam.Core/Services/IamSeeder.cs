@@ -30,8 +30,12 @@ internal sealed class IamSeeder(IHostApplicationLifetime lifetime, IServiceProvi
                 var scopeManager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
-                var module = await scopeManager.FindByNameAsync(Scope.Iam.Name);
-                module ??= await scopeManager.CreateAsync(new OpenIddictScopeDescriptor { Name = Scope.Iam.Name, DisplayName = Scope.Iam.Description, Resources = { Scope.Resource } });
+                var iamModule = await scopeManager.FindByNameAsync(Scope.Iam.Name);
+                iamModule ??= await scopeManager.CreateAsync(new OpenIddictScopeDescriptor { Name = Scope.Iam.Name, DisplayName = Scope.Iam.Description, Resources = { Scope.Resource } });
+
+                var profileScopeName = nameof(OpenIddictConstants.Permissions.Scopes.Profile).ToLower();
+                var profileScope = await scopeManager.FindByNameAsync(OpenIddictConstants.Permissions.Scopes.Profile);
+                profileScope ??= await scopeManager.CreateAsync(new OpenIddictScopeDescriptor { Name = profileScopeName, DisplayName = profileScopeName, Resources = { Scope.Resource } });
 
                 var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
                 var openApiPath = configuration.GetSection("iam:module:openApiPath");
@@ -51,9 +55,9 @@ internal sealed class IamSeeder(IHostApplicationLifetime lifetime, IServiceProvi
 
                 Uri openApiUri = new(new(iamBaseUrl.Value), openApiPath.Value);
 
-                ((Module)module).SetBaseUrl(iamBaseUrl?.Value);
-                ((Module)module).SetOpenApiPath(openApiUri.ToString());
-                var discoveredEndpoints = await moduleService.GetEndpointDefinitionsFromOpenApi(openApiUri.ToString(), ((Module)module).Name);
+                ((Module)iamModule).SetBaseUrl(iamBaseUrl?.Value);
+                ((Module)iamModule).SetOpenApiPath(openApiUri.ToString());
+                var discoveredEndpoints = await moduleService.GetEndpointDefinitionsFromOpenApi(openApiUri.ToString(), ((Module)iamModule).Name);
 
                 string endpointPath = null;
                 try
@@ -62,7 +66,7 @@ internal sealed class IamSeeder(IHostApplicationLifetime lifetime, IServiceProvi
                     foreach (var endpoint in discoveredEndpoints)
                     {
                         endpointPath = endpoint.Path;
-                        var ep = RegisteredEndpoint.Create(((Module)module).Name, new HttpMethod(endpoint.HttpMethod), endpoint.Path, endpoint.OperationId, endpoint.Summary);
+                        var ep = RegisteredEndpoint.Create(((Module)iamModule).Name, new HttpMethod(endpoint.HttpMethod), endpoint.Path, endpoint.OperationId, endpoint.Summary);
 
                         await context.AddAsync(ep);
                         await context.SaveChangesAsync();

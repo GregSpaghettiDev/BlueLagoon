@@ -25,4 +25,8 @@
     <Folder Include="DAL\Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="BlueLagoon.Modules.Iam.Tests.Integration" />
+  </ItemGroup>
+  
 </Project>
